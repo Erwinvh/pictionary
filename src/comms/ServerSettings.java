@@ -45,6 +45,7 @@ public class ServerSettings {
         return language;
     }
 
+
     public String getServerAddress() {
         return serverAddress;
     }
@@ -52,4 +53,5 @@ public class ServerSettings {
     public int getPort() {
         return port;
     }
+
 }

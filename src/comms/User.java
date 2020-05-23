@@ -9,11 +9,14 @@ public class User implements Serializable {
     private String name;
     private Image profileImage;
     private int score;
+    private boolean isHost;
+    private boolean isDrawing;
 
-    public User(String name, Image profileImage) {
+    public User(String name, Image profileImage, boolean isHost) {
         this.name = name;
         this.profileImage = profileImage;
         this.score = 0;
+        this.isHost = isHost;
     }
 
     public String getName() {
@@ -42,5 +45,9 @@ public class User implements Serializable {
 
     public void addscore(int addedPoints){
         this.score+=addedPoints;
+    }
+
+    public boolean isHost() {
+        return isHost;
     }
 }
