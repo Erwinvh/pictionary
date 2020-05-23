@@ -19,7 +19,7 @@ public class HomeWindow {
         base.getChildren().add(getJoinHostButtons());
         base.setAlignment(Pos.CENTER);
         homeWindowScene = new Scene(base);
-        
+
     }
 
 
