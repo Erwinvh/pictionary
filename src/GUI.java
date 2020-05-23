@@ -1,4 +1,4 @@
-import Windows.GameWindow;
+import windows.GameWindow;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

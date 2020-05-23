@@ -1,4 +1,4 @@
-package Windows;
+package windows;
 
 public class LobbyWindow {
 
