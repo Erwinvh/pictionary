@@ -7,9 +7,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
 
 import java.util.ArrayList;
-
 
 public class LobbyWindow {
 
@@ -18,6 +18,7 @@ public class LobbyWindow {
 
     public LobbyWindow() {
         HBox base = new HBox();
+        base.setSpacing(40);
         base.getChildren().add(getGameSettingsBox());
         ScrollPane listscroller = new ScrollPane();
         listscroller.setContent(getLobbyListBox());
@@ -27,6 +28,7 @@ public class LobbyWindow {
 
     public VBox getGameSettingsBox(){
         VBox gameSettingsBox = new VBox();
+        gameSettingsBox.setSpacing(10);
 
         Label amountOfRoundsLabel = new Label("Amount of rounds:");
         ComboBox roundsComboBox = getComboBox(50);
@@ -43,9 +45,12 @@ public class LobbyWindow {
         Label maxAmountPlayersLabel = new Label("Max. amount of players:");
         ComboBox maxAmountPlayersComboBox = getComboBox(20);
 
-        Label privateGameCode = new Label();
+        Button startGameButton = new Button("Start game");
+        startGameButton.setOnAction(event -> {
 
-        gameSettingsBox.getChildren().addAll(amountOfRoundsLabel,roundsComboBox,languageLabel,languageComboBox,timePerRoundLabel,timePerRoundComboBox,maxAmountPlayersLabel,maxAmountPlayersComboBox, privateGameCode);
+        });
+
+        gameSettingsBox.getChildren().addAll(amountOfRoundsLabel,roundsComboBox,languageLabel,languageComboBox,timePerRoundLabel,timePerRoundComboBox,maxAmountPlayersLabel,maxAmountPlayersComboBox, startGameButton);
         return gameSettingsBox;
     }
 
@@ -76,6 +81,4 @@ public class LobbyWindow {
         comboBox.getSelectionModel().selectFirst();
         return comboBox;
     }
-
-
 }
