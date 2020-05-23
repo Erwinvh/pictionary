@@ -1,5 +1,6 @@
 package windows;
 
+import comms.Client;
 import comms.Message;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -30,9 +31,7 @@ public class GameWindow {
         this.chatArrayList.add(new Message("tester 2", "test that"));
         this.chatArrayList.add(new Message("tester", "test this"));
 
-
         base.getChildren().add(getInfoVBox());
-
 
         this.gameWindowScene = new Scene(base);
     }
@@ -75,7 +74,7 @@ public class GameWindow {
 
         sendButton.setOnAction(event -> {
             if (messageInput.getText() != null) {
-                Message newMessage = new Message("tester", messageInput.getText());
+                Message newMessage = new Message(Client.getInstance().getUser().getName(), messageInput.getText());
                 addNewMessage(newMessage);
                 messageInput.clear();
             }
@@ -99,7 +98,7 @@ public class GameWindow {
         HBox messageBox = new HBox();
         messageBox.getChildren().add(messageLabel);
 
-        if (newMessage.getUsername().equals("tester")) {
+        if (newMessage.getUsername().equals(Client.getInstance().getUser().getName())) {
             messageColumn = 2;
         }
 
