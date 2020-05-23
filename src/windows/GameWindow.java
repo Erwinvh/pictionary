@@ -1,5 +1,6 @@
 package windows;
 
+import comms.Client;
 import comms.Message;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -25,12 +26,12 @@ public class GameWindow {
 
         //TODO canvashere
         // base.getChildren().add(canvasshit);
-        base.getChildren().add(getInfoVBox());
-
         //test
         this.chatArrayList.add(new Message("tester1", "test this"));
         this.chatArrayList.add(new Message("tester 2", "test that"));
         this.chatArrayList.add(new Message("tester", "test this"));
+
+        base.getChildren().add(getInfoVBox());
 
         this.gameWindowScene = new Scene(base);
     }
@@ -60,7 +61,7 @@ public class GameWindow {
         chatMessagesBox.setVgap(10);
 
         for (Message message : chatArrayList) {
-            addNewMessage(message);
+                addNewMessage(message);
         }
 
         return chatMessagesBox;
@@ -73,7 +74,8 @@ public class GameWindow {
 
         sendButton.setOnAction(event -> {
             if (messageInput.getText() != null) {
-                new Message("tester", messageInput.getText());
+                Message newMessage = new Message(Client.getInstance().getUser().getName(), messageInput.getText());
+                addNewMessage(newMessage);
                 messageInput.clear();
             }
         });
@@ -87,13 +89,16 @@ public class GameWindow {
 
         Label messageLabel = new Label(newMessage.toString());
 
+        if (!chatArrayList.contains(newMessage))
+            chatArrayList.add(newMessage);
+
         int messageRow = chatArrayList.indexOf(newMessage);
         int messageColumn = 1;
 
         HBox messageBox = new HBox();
         messageBox.getChildren().add(messageLabel);
 
-        if (newMessage.getUsername().equals("tester")) {
+        if (newMessage.getUsername().equals(Client.getInstance().getUser().getName())) {
             messageColumn = 2;
         }
 

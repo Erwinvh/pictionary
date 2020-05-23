@@ -1,6 +1,8 @@
 package comms;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -14,22 +16,32 @@ public class Client {
 
     private User user;
 
-    public Client (User user) {
+    // static inner class - inner classes are not loaded until they are referenced.
+    private static class ClientHolder {
+        private static Client client = new Client();
+    }
+
+    // global access point
+    public static Client getInstance() {
+        return ClientHolder.client;
+    }
+
+    private Client () {
         this.clientSocket = null;
         this.connected = false;
 
         this.objectInputStream = null;
         this.objectOutputStream = null;
-
-        this.user = user;
-
-        // TODO: 23/05/2020 launch GUI
     }
 
     public boolean connectToServer(String serverAddress, int serverPort) {
         if (this.connected) {
             System.out.println("Client already connected with the server.");
             return true;
+        }
+
+        if (this.user == null) {
+            throw new NullPointerException("User has not yet been defined! Remember to call setUser() before trying to connect to a server!");
         }
 
         try {
@@ -73,5 +85,16 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setUser(User user){
+        this.user = user;
+    }
+
+    public User getUser() {
+        if (this.user == null)
+            throw new NullPointerException("User has not yet been defined! Remember to call setUser() before trying to connect to a server!");
+
+        return user;
     }
 }
