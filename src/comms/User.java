@@ -2,7 +2,9 @@ package comms;
 
 import javafx.scene.image.Image;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 
     private String name;
     private Image profileImage;

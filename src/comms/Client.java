@@ -5,96 +5,73 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Client {
-    
-    private String host;
-    private int port;
-    private Socket socket;
-    private boolean connected;
 
-//    private DataInputStream in;
-//    private DataOutputStream out;
+    private Socket clientSocket;
+    private boolean connected;
 
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
 
-    public Client (String host, int port) {
-        this.host = host;
-        this.port = port;
+    private User user;
 
-        this.socket = null;
+    public Client (User user) {
+        this.clientSocket = null;
         this.connected = false;
-//        this.in = null;
-//        this.out = null;
+
         this.objectInputStream = null;
         this.objectOutputStream = null;
+
+        this.user = user;
+
+        // TODO: 23/05/2020 launch GUI
     }
 
-//    public boolean connectData ( ) {
-//        if (this.connected) {
-//            System.out.println("Client already connected with the server.");
-//            return true;
-//        }
-//
-//        try {
-//            this.socket = new Socket(this.host, this.port);
-//            this.connected = true;
-//
-//            this.in = new DataInputStream(this.socket.getInputStream());
-//            this.out = new DataOutputStream(this.socket.getOutputStream());
-//
-//            String serverId = this.in.readUTF();
-//            System.out.println("Connected with server: " + serverId);
-//
-//            Scanner scanner = new Scanner(System.in);
-//            while (this.connected) {
-//                System.out.print("Type here your message: ");
-//                String message = scanner.nextLine();
-//                this.out.writeUTF(message);
-//
-//                String response = this.in.readUTF();
-//                System.out.println("Got server response: " + response);
-//            }
-//
-//        } catch (IOException e) {
-//            System.out.println("Could not connect to the server: " + e.getMessage());
-//        }
-//
-//        return false;
-//    }
-
-    public boolean connectObject ( ) {
+    public boolean connectToServer(String serverAddress, int serverPort) {
         if (this.connected) {
             System.out.println("Client already connected with the server.");
             return true;
         }
 
         try {
-            this.socket = new Socket(this.host, this.port);
+            this.clientSocket = new Socket(serverAddress, serverPort);
             this.connected = true;
 
-            this.objectOutputStream = new ObjectOutputStream(this.socket.getOutputStream());
-            this.objectInputStream = new ObjectInputStream(this.socket.getInputStream());
+            this.objectOutputStream = new ObjectOutputStream(this.clientSocket.getOutputStream());
+            this.objectInputStream = new ObjectInputStream(this.clientSocket.getInputStream());
 
-//            Message serverId = (Message) this.objectInputStream.readObject(); // instanceof
-//            System.out.println("Connected with server: " + serverId.getMessage());
+            this.objectOutputStream.writeObject(this.user);
 
+            // FIXME: 23/05/2020 Possible blocking call
             Scanner scanner = new Scanner(System.in);
             while (this.connected) {
                 System.out.print("Type here your message: ");
-                String message = scanner.nextLine();
-//                this.objectOutputStream.writeObject(new Message(message));
 
-//                Message response = (Message) this.objectInputStream.readObject();
-//                System.out.println("Got server response: " + response.getMessage());
+                String messageText = scanner.nextLine();
+                Message message = new Message(user.getName(), messageText);
+                this.objectOutputStream.writeObject(message);
+
+                Object objectIn = this.objectInputStream.readObject();
+                if (objectIn instanceof Message){
+                    Message incomingMessage = (Message) this.objectInputStream.readObject();
+                    // TODO: 23/05/2020 Show this incoming message in GUI
+                } // TODO: 23/05/2020 else if (objectIn instanceof Drawing)
             }
 
         } catch (IOException e) {
-            System.out.println("Could not connect to the server: " + e.getMessage());
+            System.out.println("Could not connect to the server due to: " + e.getMessage());
 
-        } /*catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        }*/
+        }
 
         return false;
+    }
+
+    public void disconnectFromServer(){
+        try {
+            this.clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -4,15 +4,15 @@ public class ServerSettings {
     private int rounds;
     private int timeInSeconds;
     private int maxPlayers;
-    private String Language;
+    private String language;
     private String serverAddress;
-    private String port;
+    private int port;
 
-    public ServerSettings(int rounds, int timeInSeconds, int maxPlayers, String language, String serverAddress, String port) {
+    public ServerSettings(int rounds, int timeInSeconds, int maxPlayers, String language, String serverAddress, int port) {
         this.rounds = rounds;
         this.timeInSeconds = timeInSeconds;
         this.maxPlayers = maxPlayers;
-        Language = language;
+        this.language = language;
         this.serverAddress = serverAddress;
         this.port = port;
     }
@@ -42,26 +42,14 @@ public class ServerSettings {
     }
 
     public String getLanguage() {
-        return Language;
-    }
-
-    public void setLanguage(String language) {
-        Language = language;
+        return language;
     }
 
     public String getServerAddress() {
         return serverAddress;
     }
 
-    public void setServerAddress(String serverAddress) {
-        this.serverAddress = serverAddress;
-    }
-
-    public String getPort() {
+    public int getPort() {
         return port;
-    }
-
-    public void setPort(String port) {
-        this.port = port;
     }
 }

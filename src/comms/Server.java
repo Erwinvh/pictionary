@@ -1,81 +1,105 @@
 package comms;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 
 public class Server {
-    String host;
-    int port;
 
-    ServerSocket server;
-    boolean running;
+    private ServerSettings serverSettings;
 
-    public Server(String host, int port) {
-        this.host = host;
-        this.port = port;
-        this.server = null;
+    private ServerSocket serverSocket;
+    private boolean running;
+
+//    private List<Client> connectedClients;
+//    private List<User> connectedUsers;
+
+    private HashMap<Socket, User> connectedSockets;
+
+    private final String JOIN_MESSAGE = " has joined the room!";
+    private final String LEAVE_MESSAGE = " has left the room!";
+
+    public Server(ServerSettings serverSettings) {
+        this.serverSettings = serverSettings;
+        this.serverSocket = null;
         this.running = false;
-    }
 
-    public void start() throws IOException{
-        if (this.server != null) {
-            System.out.println("Server already created socket, please stop first!");
-            return;
-        }
+        this.connectedSockets = new HashMap<>();
 
-        this.server = new ServerSocket(this.port);
-        this.running = true;
-
-        while (this.running) {
-            System.out.println("Waiting for client to connect...");
-            final Socket client = this.server.accept();
-
-            new Thread(() -> handleClientConnectionObject(client)).start();
-        }
-    }
-
-    private void handleClientConnectionObject(Socket client) {
-        System.out.println("Client connected, handling connection.");
-
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(client.getInputStream());
-             ObjectOutputStream objectOutputStream = new ObjectOutputStream(client.getOutputStream())
-        ) {
-            boolean connected = true;
-            //out.writeObject(new Message("I am object server 2.0"));
-
-            while (connected) {
-                //Message message = (Message) in.readObject();
-                //out.writeObject(message);
-            }
-
-            client.close();
-
+        try {
+            start();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-//    private void handleClientConnectionData(Socket client) {
-//        System.out.println("Client connected, handling connection.");
-//
-//        try (DataInputStream in = new DataInputStream(client.getInputStream());
-//             DataOutputStream out = new DataOutputStream(client.getOutputStream())
-//        ) {
-//            boolean connected = true;
-//            out.writeUTF("Hi I am server 1.0");
-//
-//            while (connected) {
-//                String message = in.readUTF();
-//                out.writeUTF(message);
-//            }
-//
-//            client.close();
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    private void start() throws IOException {
+        if (this.serverSocket != null) {
+            System.out.println("Server already created socket, please stop first!");
+            return;
+        }
+
+        this.serverSocket = new ServerSocket(this.serverSettings.getPort());
+        this.running = true;
+
+        // TODO: 23/05/2020 Add client that is hosting the serverSocket to the list as well?
+
+        while (this.running) {
+            System.out.println("Waiting for client to connect...");
+            final Socket client = this.serverSocket.accept();
+
+            new Thread(() -> handleClientConnectionObject(client)).start();
+        }
+    }
+
+    private void stop() throws IOException {
+        serverSocket.close();
+    }
+
+    private void handleClientConnectionObject(Socket socket) {
+        System.out.println("Client connected, handling connection.");
+
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream())
+        ) {
+            boolean connected = true;
+
+            User user = (User) objectInputStream.readObject();
+            connectedSockets.put(socket, user);
+
+            objectOutputStream.writeObject(new Message(user.getName(), JOIN_MESSAGE));
+
+            while (connected) {
+                Object objectIn = objectInputStream.readObject();
+
+                if (objectIn instanceof Message){
+                    objectOutputStream.writeObject(objectIn);
+
+
+                } // TODO: 23/05/2020 else if (objectIn instanceof DrawingCanvas)
+
+                //Message message = (Message) in.readObject();
+                //out.writeObject(message);
+            }
+
+            objectOutputStream.writeObject(new Message(user.getName(), LEAVE_MESSAGE));
+            socket.close();
+
+        } catch (IOException | ClassNotFoundException e) {
+            connectedSockets.remove(socket);
+        }
+    }
+
+    public void nextRound(){
+
+    }
+
+    private void nextDrawer(){
+
+    }
 
     public boolean getRunning() {
         return running;
