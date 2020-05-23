@@ -10,7 +10,7 @@ import javafx.scene.layout.VBox;
 
 public class HomeWindow {
 
-    private Scene HomeWindowScene;
+    private Scene homeWindowScene;
 
     public HomeWindow() {
         VBox base = new VBox();
@@ -18,24 +18,21 @@ public class HomeWindow {
         base.getChildren().add(getPlayerInformation());
         base.getChildren().add(getJoinHostButtons());
         base.setAlignment(Pos.CENTER);
-        HomeWindowScene = new Scene(base);
-
-
-
-
+        homeWindowScene = new Scene(base);
+        
     }
 
 
     public HBox getPlayerInformation(){
-        HBox PlayerInfo = new HBox();
+        HBox playerInfo = new HBox();
         TextField username = new TextField();
-        Button LeftButton = new Button("<-");
+        Button leftButton = new Button("<-");
         ImageView profileImage = new ImageView();
-        Button RightButton = new Button("->");
-        PlayerInfo.getChildren().addAll(username,LeftButton,profileImage,RightButton);
-        PlayerInfo.setSpacing(10);
-        PlayerInfo.setAlignment(Pos.CENTER);
-        return PlayerInfo;
+        Button rightButton = new Button("->");
+        playerInfo.getChildren().addAll(username,leftButton,profileImage,rightButton);
+        playerInfo.setSpacing(10);
+        playerInfo.setAlignment(Pos.CENTER);
+        return playerInfo;
     }
 
     public GridPane getJoinHostButtons(){
@@ -62,6 +59,6 @@ public class HomeWindow {
     }
 
     public Scene getHomeWindowScene() {
-        return HomeWindowScene;
+        return homeWindowScene;
     }
 }
