@@ -1,11 +1,9 @@
 package Windows;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import comms.Message;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.*;
@@ -20,7 +18,7 @@ public class GameWindow {
     private Label roleLabel = new Label();
     private ArrayList<Message> chatArrayList= new ArrayList<>();
     private ScrollPane chatLog;
-    private VBox chatbox = new VBox();
+    private GridPane chatbox = new GridPane();
 
     public GameWindow(Stage primaryStage) {
 
@@ -43,7 +41,7 @@ public class GameWindow {
         Button sendButton = new Button("send");
         sendButton.setOnAction(event -> {
             if (messageInput.getText() != null) {
-                new Message("tester", messageInput.getText());
+                new Message(, messageInput.getText());
             }
         });
         input.getChildren().add(messageInput);
@@ -71,23 +69,22 @@ chatlogsetup();
     public void chatlogsetup(){
         for (Message message: chatArrayList) {
             Label label = new Label(message.toString());
-            HBox hBox=new HBox();
-            hBox.getChildren().add(label);
+            int row = chatArrayList.indexOf(message);
+            int column = 1;
             if (message.getUsername().equals("tester")) {
-                hBox.setAlignment(Pos.BASELINE_RIGHT);
+column=2;
             }
-            this.chatbox.setSpacing(10);
-            this.chatbox.getChildren().add(hBox);
+            this.chatbox.add(label,column,row);
 
         }
     }
 
-    public void chatLogUpdate(Message newMessage){
-        HBox MessageBox = new HBox();
-        if (newMessage.getUsername().equals("tester")){
-        }
-        MessageBox.getChildren().add(new Label(newMessage.toString()));
-        this.chatbox.getChildren().add(MessageBox);
-    }
+//    public void chatLogUpdate(Message newMessage){
+//        HBox MessageBox = new HBox();
+//        if (newMessage.getUsername().equals("tester")){
+//        }
+//        MessageBox.getChildren().add(new Label(newMessage.toString()));
+//        this.chatbox.getChildren().add(MessageBox);
+//    }
 
 }
