@@ -53,31 +53,36 @@ public class Server {
 
             new Thread(() -> handleClientConnectionObject(client)).start();
         }
+
+        System.out.println("Server stopped");
     }
 
     private void stop() throws IOException {
+        System.out.println("Stopping server...");
         serverSocket.close();
     }
 
     private void handleClientConnectionObject(Socket socket) {
-        System.out.println("Client connected, handling connection.");
+        System.out.println("A new client has connected (" + socket.toString() + "), handling connection.");
 
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream())
         ) {
             boolean connected = true;
 
+            // The client will send itself when connected
             User user = (User) objectInputStream.readObject();
             connectedSockets.put(socket, user);
 
-            objectOutputStream.writeObject(new Message(user.getName(), JOIN_MESSAGE));
+            sendMessageToAllClients(new Message(user.getName(), JOIN_MESSAGE));
 
             while (connected) {
                 Object objectIn = objectInputStream.readObject();
 
                 if (objectIn instanceof Message){
-                    objectOutputStream.writeObject(objectIn);
-
+                    System.out.println(objectIn.toString());
+                    // Notify all connected clients a new message has been received
+                    sendMessageToAllClients((Message) objectIn);
 
                 } // TODO: 23/05/2020 else if (objectIn instanceof DrawingCanvas)
 
@@ -85,7 +90,8 @@ public class Server {
                 //out.writeObject(message);
             }
 
-            objectOutputStream.writeObject(new Message(user.getName(), LEAVE_MESSAGE));
+            sendMessageToAllClients(new Message(user.getName(), LEAVE_MESSAGE));
+            connectedSockets.remove(socket);
             socket.close();
 
         } catch (IOException | ClassNotFoundException e) {
@@ -99,6 +105,17 @@ public class Server {
 
     private void nextDrawer(){
 
+    }
+
+    private void sendMessageToAllClients(Message message){
+        for (Socket socket : connectedSockets.keySet()) {
+            try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream())) {
+                objectOutputStream.writeObject(message);
+//                objectOutputStream.notify();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public boolean getRunning() {

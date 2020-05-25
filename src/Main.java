@@ -1,4 +1,7 @@
 import comms.Client;
+import comms.Server;
+import comms.ServerSettings;
+import comms.User;
 import windows.GameWindow;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -7,7 +10,16 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     public static void main(String[] args) {
-        Client.getInstance();
+
+//        new Thread(() -> {
+//            ServerSettings serverSettings = new ServerSettings(2, 10, 10, "English", "localhost", 10000);
+//            new Server(serverSettings);
+//        }).start();
+
+
+        //Client.getInstance();
+        Client.getInstance().setUser(new User("Arne", null, false));
+        Client.getInstance().connectToServer("localhost", 10000);
     }
 
     @Override

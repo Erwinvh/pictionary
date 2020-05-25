@@ -61,7 +61,7 @@ public class GameWindow {
         chatMessagesBox.setVgap(10);
 
         for (Message message : chatArrayList) {
-                addNewMessage(message);
+            addNewMessage(message);
         }
 
         return chatMessagesBox;
@@ -75,6 +75,9 @@ public class GameWindow {
         sendButton.setOnAction(event -> {
             if (messageInput.getText() != null) {
                 Message newMessage = new Message(Client.getInstance().getUser().getName(), messageInput.getText());
+
+                // Make the client send the message to the server
+                Client.getInstance().sendMessage(newMessage);
                 addNewMessage(newMessage);
                 messageInput.clear();
             }

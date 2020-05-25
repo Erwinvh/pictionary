@@ -51,27 +51,51 @@ public class Client {
             this.objectOutputStream = new ObjectOutputStream(this.clientSocket.getOutputStream());
             this.objectInputStream = new ObjectInputStream(this.clientSocket.getInputStream());
 
-            this.objectOutputStream.writeObject(this.user);
+            this.objectOutputStream.writeObject(this.getUser());
 
-            // FIXME: 23/05/2020 Possible blocking call
+            new Thread(this::handleIncomingData).start();
+
             Scanner scanner = new Scanner(System.in);
-            while (this.connected) {
-                System.out.print("Type here your message: ");
-
+            while(this.connected){
+                System.out.print("Type your message here: ");
+//
                 String messageText = scanner.nextLine();
+//                String messageText = objectInputStream.readUTF();
                 Message message = new Message(user.getName(), messageText);
                 this.objectOutputStream.writeObject(message);
 
                 Object objectIn = this.objectInputStream.readObject();
-                if (objectIn instanceof Message){
+                if (objectIn instanceof Message) {
                     Message incomingMessage = (Message) this.objectInputStream.readObject();
+                    System.out.println(incomingMessage.toString());
                     // TODO: 23/05/2020 Show this incoming message in GUI
                 } // TODO: 23/05/2020 else if (objectIn instanceof Drawing)
             }
 
-        } catch (IOException e) {
-            System.out.println("Could not connect to the server due to: " + e.getMessage());
+//            new Thread(this::handleOutgoingData).start();
 
+            //
+//            while (this.connected) {
+//                System.out.print("Type your message here: ");
+//
+//                //String messageText = scanner.nextLine();
+//                String messageText = objectInputStream.readUTF();
+//                Message message = new Message(user.getName(), messageText);
+//                this.objectOutputStream.writeObject(message);
+//
+//                Object objectIn = this.objectInputStream.readObject();
+//                if (objectIn instanceof Message) {
+//                    Message incomingMessage = (Message) this.objectInputStream.readObject();
+//                    System.out.println(incomingMessage.toString());
+//                    // TODO: 23/05/2020 Show this incoming message in GUI
+//                } // TODO: 23/05/2020 else if (objectIn instanceof Drawing)
+//            }
+
+            System.out.println("Client disconnected");
+            clientSocket.close();
+
+        } catch (IOException e) {
+            System.out.println("Could not connect to the server due to: " + e.toString());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -79,10 +103,48 @@ public class Client {
         return false;
     }
 
+    private void handleIncomingData() {
+        try {
+            Object objectIn = this.objectInputStream.readObject();
+
+            if (objectIn instanceof Message) {
+                Message incomingMessage = (Message) this.objectInputStream.readObject();
+                System.out.println(incomingMessage.toString());
+            } else if(objectIn instanceof DrawUpdate) {
+                // Draw update shit
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void disconnectFromServer(){
         try {
             this.clientSocket.close();
+            this.connected = false;
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMessage(Message message){
+        if (!this.connected)
+            throw new IllegalStateException("Client is not connected and thus cannot send a message.");
+
+        try {
+            objectOutputStream.writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void receiveMessage(Message message) {
+        if (!this.connected)
+            throw new IllegalStateException("Client is not connected and thus cannot send a message.");
+
+        try {
+            objectInputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
