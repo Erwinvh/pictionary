@@ -30,6 +30,8 @@ public class GameWindow {
         this.chatArrayList.add(new Message("tester1", "test this"));
         this.chatArrayList.add(new Message("tester 2", "test that"));
         this.chatArrayList.add(new Message("tester", "test this"));
+        
+        base.getChildren().add(getInfoVBox());
 
         base.getChildren().add(getInfoVBox());
 
