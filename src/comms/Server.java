@@ -5,7 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Server {
 
@@ -18,6 +20,7 @@ public class Server {
 //    private List<User> connectedUsers;
 
     private HashMap<Socket, User> connectedSockets;
+    private List<ObjectOutputStream> objectOutputStreams;
 
     private final String JOIN_MESSAGE = " has joined the room!";
     private final String LEAVE_MESSAGE = " has left the room!";
@@ -28,6 +31,7 @@ public class Server {
         this.running = false;
 
         this.connectedSockets = new HashMap<>();
+        this.objectOutputStreams = new ArrayList<>();
 
         try {
             start();
@@ -65,19 +69,21 @@ public class Server {
     private void handleClientConnectionObject(Socket socket) {
         System.out.println("A new client has connected (" + socket.toString() + "), handling connection.");
 
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream())) {
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream())) {
             boolean connected = true;
 
             // The client will send itself when connected
             User user = (User) objectInputStream.readObject();
             connectedSockets.put(socket, user);
+            objectOutputStreams.add(objectOutputStream);
 
             sendToAllClients(new Message(user.getName(), JOIN_MESSAGE));
 
             while (connected) {
                 Object objectIn = objectInputStream.readObject();
 
-                if (objectIn instanceof Message || objectIn instanceof DrawUpdate){
+                if (objectIn instanceof Message || objectIn instanceof DrawUpdate) {
                     System.out.println(objectIn.toString());
                     // Notify all connected clients a new message or DrawUpdate has been received
                     sendToAllClients(objectIn);
@@ -94,17 +100,17 @@ public class Server {
         }
     }
 
-    public void nextRound(){
+    public void nextRound() {
 
     }
 
-    private void nextDrawer(){
+    private void nextDrawer() {
 
     }
 
-    private void sendToAllClients(Object obj){
-        for (Socket socket : connectedSockets.keySet()) {
-            try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream())) {
+    private void sendToAllClients(Object obj) {
+        for (ObjectOutputStream objectOutputStream : objectOutputStreams) {
+            try {
                 objectOutputStream.writeObject(obj);
             } catch (IOException e) {
                 e.printStackTrace();

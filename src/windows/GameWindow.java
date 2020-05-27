@@ -19,6 +19,7 @@ import org.jfree.fx.FXGraphics2D;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
@@ -79,6 +80,12 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
                 final WritableImage writableImage = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
                 imageToDraw = canvas.snapshot(new SnapshotParameters(), writableImage);
                 canvas2.getGraphicsContext2D().drawImage(imageToDraw, 0, 0);
+
+                BufferedImage bi = new BufferedImage((int) canvas.getWidth(), (int) canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
+                Graphics2D g2 = bi.createGraphics();
+
+
+                Client.getInstance().sendObject(imageToDraw);
 //                graphics.setColor(Color.white);
 //                graphics.fillOval((int)me.getSceneX()-radius, (int)me.getSceneY()-radius, radius * 2, radius * 2);
             }
