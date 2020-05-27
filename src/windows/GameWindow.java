@@ -58,7 +58,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         VBox drawSideSetup = new VBox();
 
         HBox ButtonsBox = new HBox();
-        ButtonsBox.getChildren().addAll(setupColourButtons(), getSizeButtons());
+        ButtonsBox.getChildren().addAll(setupColourButtons(), getSizeButtons(),getClearCanvasButton());
 
         setupCanvas();
 
@@ -137,6 +137,15 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         hBox.getChildren().addAll(smallButton, mediumButton, largeButton);
 
         return hBox;
+    }
+
+    public Button getClearCanvasButton(){
+        Button button = new Button("Clear canvas");
+        button.setOnAction(event -> {
+            DrawUpdate drawUpdate= new DrawUpdate(0,Color.white,null,true);
+
+            Client.getInstance().sendObject(drawUpdate);});
+        return button;
     }
 
     private void draw(FXGraphics2D graphics) {
@@ -219,12 +228,17 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
     @Override
     public void onDrawUpdate(DrawUpdate drawUpdate) {
         Platform.runLater(() -> {
-            int brushSize = drawUpdate.getBrushSize();
-            graphics.setColor(drawUpdate.getColor());
+            if (drawUpdate.isShouldClearCanvas()) {
+                graphics.clearRect(0,0,(int)canvas.getWidth(),(int)canvas.getHeight());
+            }
+            else{
+                int brushSize = drawUpdate.getBrushSize();
+                graphics.setColor(drawUpdate.getColor());
 
-            Point2D point = drawUpdate.getPosition();
+                Point2D point = drawUpdate.getPosition();
 
-            graphics.fillOval((int) point.getX() - brushSize, (int) point.getY() - brushSize, brushSize * 2, brushSize * 2);
+                graphics.fillOval((int) point.getX() - brushSize, (int) point.getY() - brushSize, brushSize * 2, brushSize * 2);
+            }
         });
     }
 

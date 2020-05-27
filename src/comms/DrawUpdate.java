@@ -7,13 +7,14 @@ import java.io.Serializable;
 public class DrawUpdate implements Serializable {
     private int brushSize;
     private Color color;
-
+private boolean shouldClearCanvas;
     private Point2D position;
 
-    public DrawUpdate(int brushSize, Color color, Point2D position) {
+    public DrawUpdate(int brushSize, Color color, Point2D position, boolean shouldClearCanvas) {
         this.brushSize = brushSize;
         this.color = color;
         this.position = position;
+        this.shouldClearCanvas = shouldClearCanvas;
     }
 
     public int getBrushSize() {
@@ -26,6 +27,10 @@ public class DrawUpdate implements Serializable {
 
     public Point2D getPosition() {
         return position;
+    }
+
+    public boolean isShouldClearCanvas() {
+        return shouldClearCanvas;
     }
 
     @Override
