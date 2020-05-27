@@ -51,7 +51,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         this.chatArrayList.add(new Message("tester 2", "test that"));
         this.chatArrayList.add(new Message("tester", "test this"));
 
-        base.getChildren().addAll(fullDrawSetup(), canvas2, getInfoVBox());
+        base.getChildren().addAll(fullDrawSetup(), getInfoVBox());
     }
 
     private VBox fullDrawSetup() {
@@ -219,6 +219,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
     @Override
     public void onDrawUpdate(DrawUpdate drawUpdate) {
         Platform.runLater(() -> {
+
             int brushSize = drawUpdate.getBrushSize();
             graphics.setColor(drawUpdate.getColor());
 
