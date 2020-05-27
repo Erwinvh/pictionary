@@ -52,6 +52,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         this.gameWindowScene = new Scene(base);
 
         graphics = new FXGraphics2D(canvas.getGraphicsContext2D());
+        brushColor = Color.black;
         positions = new ArrayList<>();
 
         this.chatArrayList.add(new Message("tester1", "test this"));
@@ -87,7 +88,10 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
     private void onMouseClicked(MouseEvent mouseEvent) {
         this.positions.clear();
         this.positions.add(new Point2D.Double(mouseEvent.getX(), mouseEvent.getY()));
-
+        if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) graphics.setColor(brushColor);
+        else{graphics.setColor(Color.white);
+        }
+        graphics.fillOval((int) mouseEvent.getSceneX() - radius, (int) mouseEvent.getSceneY() - radius, radius * 2, radius * 2);
         DrawUpdate drawUpdate = new DrawUpdate(radius, graphics.getColor(), this.positions);
         Client.getInstance().sendObject(drawUpdate);
     }
@@ -100,17 +104,11 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
 
     private void onMouseDragged(MouseEvent mouseEvent) {
         if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+            graphics.setColor(brushColor);
             graphics.fillOval((int) mouseEvent.getSceneX() - radius, (int) mouseEvent.getSceneY() - radius, radius * 2, radius * 2);
             positions.add(new Point2D.Double(mouseEvent.getSceneX(), mouseEvent.getSceneY()));
 
         } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
-//            final WritableImage writableImage = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
-//            imageToDraw = canvas.snapshot(new SnapshotParameters(), writableImage);
-//            canvas2.getGraphicsContext2D().drawImage(imageToDraw, 0, 0);
-//
-//            BufferedImage bi = new BufferedImage((int) canvas.getWidth(), (int) canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
-//            Graphics2D g2 = bi.createGraphics();
-
             graphics.setColor(Color.white);
             graphics.fillOval((int) mouseEvent.getSceneX() - radius, (int) mouseEvent.getSceneY() - radius, radius * 2, radius * 2);
 
@@ -132,28 +130,27 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
 
         greenButton.setOnAction(event -> {
             brushColor = Color.green;
-
         });
         redButton.setOnAction(event -> {
             brushColor = Color.red;
         });
         blackButton.setOnAction(event -> {
-            graphics.setColor(Color.black);
+            brushColor = Color.black;
         });
         blueButton.setOnAction(event -> {
-            graphics.setColor(Color.blue);
+            brushColor = Color.blue;
         });
         yellowButton.setOnAction(event -> {
-            graphics.setColor(Color.yellow);
+            brushColor = Color.yellow;
         });
         orangeButton.setOnAction(event -> {
-            graphics.setColor(Color.orange);
+            brushColor = Color.orange;
         });
         purpleButton.setOnAction(event -> {
-            graphics.setColor(Color.magenta);
+            brushColor = Color.magenta;
         });
         pinkButton.setOnAction(event -> {
-            graphics.setColor(Color.pink);
+            brushColor = Color.pink;
         });
 
         gridpane.add(blackButton, 1, 1);
