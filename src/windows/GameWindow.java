@@ -2,7 +2,6 @@ package windows;
 
 import comms.*;
 import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -19,18 +18,21 @@ import org.jfree.fx.FXGraphics2D;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.List;
 
 public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
 
     private Scene gameWindowScene;
     private WritableImage imageToDraw;
-    private ArrayList<Message> chatArrayList = new ArrayList<>();
+    private List<Message> chatArrayList = new ArrayList<>();
     private GridPane chatMessagesBox;
     private Canvas canvas = new Canvas();
     private int radius = 30;
-    private FXGraphics2D graphics = new FXGraphics2D(canvas.getGraphicsContext2D());
+    private FXGraphics2D graphics;
+
+    private List<Point2D> positions;
 
     private Canvas canvas2;
 
@@ -48,6 +50,9 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
 
         this.gameWindowScene = new Scene(base);
 
+        graphics = new FXGraphics2D(canvas.getGraphicsContext2D());
+        positions = new ArrayList<>();
+
         this.chatArrayList.add(new Message("tester1", "test this"));
         this.chatArrayList.add(new Message("tester 2", "test that"));
         this.chatArrayList.add(new Message("tester", "test this"));
@@ -55,45 +60,64 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         base.getChildren().addAll(fullDrawSetup(), canvas2, getInfoVBox());
     }
 
-    public VBox fullDrawSetup(){
+    private VBox fullDrawSetup() {
         VBox drawSideSetup = new VBox();
 
         HBox ButtonsBox = new HBox();
-        ButtonsBox.getChildren().addAll(colorButtonSetup(),sizeButtons());
+        ButtonsBox.getChildren().addAll(setupColourButtons(), sizeButtons());
 
-        Canvassetup();
+        setupCanvas();
 
         drawSideSetup.getChildren().addAll(canvas, ButtonsBox);
         return drawSideSetup;
     }
 
-    public void Canvassetup(){
+    private void setupCanvas() {
         canvas.setWidth(600);
         canvas.setHeight(600);
 
-        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, (MouseEvent me) -> {
-            //TODO
-            // make an if() for can draw from user.
-            if (me.getButton().equals(MouseButton.PRIMARY)) {
-                graphics.fillOval((int) me.getSceneX() - radius, (int) me.getSceneY() - radius, radius * 2, radius * 2);
-            } else if (me.getButton().equals(MouseButton.SECONDARY)) {
-                final WritableImage writableImage = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
-                imageToDraw = canvas.snapshot(new SnapshotParameters(), writableImage);
-                canvas2.getGraphicsContext2D().drawImage(imageToDraw, 0, 0);
+        canvas.setOnMouseClicked(this::onMouseClicked);
+        canvas.setOnMouseDragged(this::onMouseDragged);
+        canvas.setOnMouseDragReleased(this::onMouseDragReleased);
 
-                BufferedImage bi = new BufferedImage((int) canvas.getWidth(), (int) canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
-                Graphics2D g2 = bi.createGraphics();
-
-
-                Client.getInstance().sendObject(imageToDraw);
-//                graphics.setColor(Color.white);
-//                graphics.fillOval((int)me.getSceneX()-radius, (int)me.getSceneY()-radius, radius * 2, radius * 2);
-            }
-        });
         draw(new FXGraphics2D(canvas.getGraphicsContext2D()));
     }
 
-    public GridPane colorButtonSetup() {
+    private void onMouseClicked(MouseEvent mouseEvent) {
+        this.positions.clear();
+        this.positions.add(new Point2D.Double(mouseEvent.getX(), mouseEvent.getY()));
+
+        DrawUpdate drawUpdate = new DrawUpdate(radius, graphics.getColor(), this.positions);
+        Client.getInstance().sendObject(drawUpdate);
+    }
+
+    private void onMouseDragReleased(MouseEvent mouseEvent) {
+        DrawUpdate drawUpdate = new DrawUpdate(radius, graphics.getColor(), this.positions);
+        Client.getInstance().sendObject(drawUpdate);
+        positions.clear();
+    }
+
+    private void onMouseDragged(MouseEvent mouseEvent) {
+        if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+            graphics.fillOval((int) mouseEvent.getSceneX() - radius, (int) mouseEvent.getSceneY() - radius, radius * 2, radius * 2);
+            positions.add(new Point2D.Double(mouseEvent.getSceneX(), mouseEvent.getSceneY()));
+
+        } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
+//            final WritableImage writableImage = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
+//            imageToDraw = canvas.snapshot(new SnapshotParameters(), writableImage);
+//            canvas2.getGraphicsContext2D().drawImage(imageToDraw, 0, 0);
+//
+//            BufferedImage bi = new BufferedImage((int) canvas.getWidth(), (int) canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
+//            Graphics2D g2 = bi.createGraphics();
+
+            graphics.setColor(Color.white);
+            graphics.fillOval((int) mouseEvent.getSceneX() - radius, (int) mouseEvent.getSceneY() - radius, radius * 2, radius * 2);
+
+            positions.add(new Point2D.Double(mouseEvent.getSceneX(), mouseEvent.getSceneY()));
+        }
+    }
+
+    private GridPane setupColourButtons() {
         GridPane gridpane = new GridPane();
 
         Button greenButton = new Button("green");
@@ -104,6 +128,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         Button orangeButton = new Button("orange");
         Button purpleButton = new Button("purple");
         Button pinkButton = new Button("pink");
+
         greenButton.setOnAction(event -> {
             graphics.setColor(Color.green);
         });
@@ -141,22 +166,22 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         return gridpane;
     }
 
-    public HBox sizeButtons(){
+    public HBox sizeButtons() {
         HBox hBox = new HBox();
 
         Button smallButton = new Button("small");
         smallButton.setOnAction(event -> {
-            radius=10;
+            radius = 10;
         });
         Button mediumButton = new Button("mid");
         mediumButton.setOnAction(event -> {
-            radius=20;
+            radius = 20;
         });
         Button largeButton = new Button("large");
         largeButton.setOnAction(event -> {
-            radius=30;
+            radius = 30;
         });
-        hBox.getChildren().addAll(smallButton,mediumButton,largeButton);
+        hBox.getChildren().addAll(smallButton, mediumButton, largeButton);
 
         return hBox;
     }

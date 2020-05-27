@@ -1,13 +1,9 @@
 import comms.Client;
-import comms.Server;
-import comms.ServerSettings;
 import comms.User;
-import windows.GameWindow;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import windows.HomeWindow;
-import windows.LobbyWindow;
+import windows.GameWindow;
 
 public class Main extends Application {
 

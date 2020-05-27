@@ -91,6 +91,7 @@ public class Server {
             }
 
             connectedSockets.remove(socket);
+            // TODO: 27/05/2020 Remove objectoutputstream from list
             socket.close();
 
             sendToAllClients(new Message(user.getName(), LEAVE_MESSAGE));
