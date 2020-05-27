@@ -39,7 +39,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
 
         Client.getInstance().setDrawUpdateListener(this);
         Client.getInstance().setChatUpdateListener(this);
-        
+
         HBox base = new HBox();
 
         canvas2 = new Canvas();

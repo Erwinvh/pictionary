@@ -65,34 +65,29 @@ public class Server {
     private void handleClientConnectionObject(Socket socket) {
         System.out.println("A new client has connected (" + socket.toString() + "), handling connection.");
 
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream())
-        ) {
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream())) {
             boolean connected = true;
 
             // The client will send itself when connected
             User user = (User) objectInputStream.readObject();
             connectedSockets.put(socket, user);
 
-            sendMessageToAllClients(new Message(user.getName(), JOIN_MESSAGE));
+            sendToAllClients(new Message(user.getName(), JOIN_MESSAGE));
 
             while (connected) {
                 Object objectIn = objectInputStream.readObject();
 
-                if (objectIn instanceof Message){
+                if (objectIn instanceof Message || objectIn instanceof DrawUpdate){
                     System.out.println(objectIn.toString());
-                    // Notify all connected clients a new message has been received
-                    sendMessageToAllClients((Message) objectIn);
-
-                } // TODO: 23/05/2020 else if (objectIn instanceof DrawingCanvas)
-
-                //Message message = (Message) in.readObject();
-                //out.writeObject(message);
+                    // Notify all connected clients a new message or DrawUpdate has been received
+                    sendToAllClients(objectIn);
+                }
             }
 
-            sendMessageToAllClients(new Message(user.getName(), LEAVE_MESSAGE));
             connectedSockets.remove(socket);
             socket.close();
+
+            sendToAllClients(new Message(user.getName(), LEAVE_MESSAGE));
 
         } catch (IOException | ClassNotFoundException e) {
             connectedSockets.remove(socket);
@@ -107,16 +102,19 @@ public class Server {
 
     }
 
-    private void sendMessageToAllClients(Message message){
+    private void sendToAllClients(Object obj){
         for (Socket socket : connectedSockets.keySet()) {
             try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream())) {
-                objectOutputStream.writeObject(message);
-//                objectOutputStream.notify();
+                objectOutputStream.writeObject(obj);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
+
+//    private void sendDrawUpdateToAllClients(DrawUpdate drawUpdate){
+//        sendToAllClients(drawUpdate);
+//    }
 
     public boolean getRunning() {
         return running;
