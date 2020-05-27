@@ -1,0 +1,22 @@
+[
+    {
+        "english":"English",
+        "dutch":"Engels"
+    },
+    {
+        "english":"Dutch",
+        "dutch":"Nederlands"
+    },
+    {
+        "english":"Windmill",
+        "dutch":"Molen"
+    },
+    {
+        "english":"Computer",
+        "dutch":"computer"
+    },
+    {
+        "english":"Donkey",
+        "dutch":"Ezel"
+    }
+]
