@@ -19,8 +19,8 @@ public class Server {
     private HashMap<Socket, User> connectedSockets;
     private List<ObjectOutputStream> objectOutputStreams;
 
-    private final String JOIN_MESSAGE = " has joined the room!";
-    private final String LEAVE_MESSAGE = " has left the room!";
+    private final String JOIN_MESSAGE = "has joined the room!";
+    private final String LEAVE_MESSAGE = "has left the room!";
 
     public Server(ServerSettings serverSettings) {
         this.serverSettings = serverSettings;
@@ -80,6 +80,10 @@ public class Server {
             while (connected) {
                 Object objectIn = objectInputStream.readObject();
 
+                if (objectIn instanceof Boolean) {
+                    connected = (boolean) objectIn;
+                }
+
                 if (objectIn instanceof Message || objectIn instanceof DrawUpdate) {
                     // Notify all connected clients a new message or DrawUpdate has been received
                     sendToAllClients(objectIn);
@@ -87,10 +91,14 @@ public class Server {
             }
 
             connectedSockets.remove(socket);
-            // TODO: 27/05/2020 Remove objectoutputstream from list
+            objectOutputStreams.remove(objectOutputStream);
             socket.close();
 
             sendToAllClients(new Message(user.getName(), LEAVE_MESSAGE));
+
+            if (connectedSockets.size() == 0) {
+                stop();
+            }
 
         } catch (IOException | ClassNotFoundException e) {
             connectedSockets.remove(socket);
@@ -106,6 +114,8 @@ public class Server {
     }
 
     private void sendToAllClients(Object obj) {
+        System.out.println("Sending \"" + obj.toString() + "\" to " + connectedSockets.size() + " clients...");
+
         for (ObjectOutputStream objectOutputStream : objectOutputStreams) {
             try {
                 objectOutputStream.writeObject(obj);

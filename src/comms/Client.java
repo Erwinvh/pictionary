@@ -18,6 +18,8 @@ public class Client {
     private DrawUpdateListener drawUpdateListener;
     private ChatUpdateListener chatUpdateListener;
 
+    private Thread incomingDataThread;
+
     // static inner class - inner classes are not loaded until they are referenced.
     private static class ClientHolder {
         private static Client client = new Client();
@@ -55,7 +57,8 @@ public class Client {
 
             this.objectOutputStream.writeObject(this.getUser());
 
-            new Thread(this::handleIncomingData).start();
+            incomingDataThread = new Thread(this::handleIncomingData);
+            incomingDataThread.start();
 
             System.out.println("Client " + user.getName() + " successfully connected!");
 
@@ -69,7 +72,7 @@ public class Client {
     }
 
     private void handleIncomingData() {
-        while (true) {
+        while (this.connected) {
             try {
                 Object objectIn = this.objectInputStream.readObject();
 
@@ -93,10 +96,14 @@ public class Client {
 
     public void disconnectFromServer() {
         try {
-            System.out.println(this.user.getName() + " is willingly disconnecting from server...");
-            this.clientSocket.close();
+            sendObject(Boolean.FALSE);
             this.connected = false;
-        } catch (IOException e) {
+            System.out.println(this.user.getName() + " is willingly disconnecting from server...");
+
+            incomingDataThread.join();
+
+            this.clientSocket.close();
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }

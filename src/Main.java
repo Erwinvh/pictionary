@@ -34,6 +34,7 @@ public class Main extends Application {
     public void stop() throws Exception {
         super.stop();
         Client.getInstance().disconnectFromServer();
-        System.exit(0);
+//        System.exit(0);
+//        Runtime.getRuntime().exit(0);
     }
 }
