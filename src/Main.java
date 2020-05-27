@@ -22,8 +22,10 @@ public class Main extends Application {
 
 
         //Client.getInstance();
-        Client.getInstance().setUser(new User("Arne", null, false));
+//        Client.getInstance().setUser(new User("Arne", null, false));
+        Client.getInstance().setUser(new User("Arne",false));
         Client.getInstance().connectToServer("localhost", 10000);
+        launch();
     }
 
     @Override

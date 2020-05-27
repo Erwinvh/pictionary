@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Client {
 
@@ -58,6 +57,7 @@ public class Client {
 
             new Thread(this::handleIncomingData).start();
 //            new Thread(this::handleOutgoingData).start();
+            return true;
 
         } catch (IOException e) {
             System.out.println("Could not connect to the server due to: " + e.toString());

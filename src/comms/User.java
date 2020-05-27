@@ -7,14 +7,14 @@ import java.io.Serializable;
 public class User implements Serializable {
 
     private String name;
-    private Image profileImage;
+//    private Image profileImage;
     private int score;
     private boolean isHost;
     private boolean isDrawing;
 
-    public User(String name, Image profileImage, boolean isHost) {
+    public User(String name, /*Image profileImage, */boolean isHost) {
         this.name = name;
-        this.profileImage = profileImage;
+//        this.profileImage = profileImage;
         this.score = 0;
         this.isHost = isHost;
     }
@@ -26,14 +26,14 @@ public class User implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-
-    public Image getProfileImage() {
-        return profileImage;
-    }
-
-    public void setProfileImage(Image profileImage) {
-        this.profileImage = profileImage;
-    }
+//
+//    public Image getProfileImage() {
+//        return profileImage;
+//    }
+//
+//    public void setProfileImage(Image profileImage) {
+//        this.profileImage = profileImage;
+//    }
 
     public int getScore() {
         return score;

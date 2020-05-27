@@ -14,7 +14,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
 import javafx.stage.Stage;
 import org.jfree.fx.FXGraphics2D;
 
@@ -202,7 +201,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
                 Message newMessage = new Message(Client.getInstance().getUser().getName(), messageInput.getText());
 
                 // Make the client send the message to the server
-                Client.getInstance().sendMessage(newMessage);
+                Client.getInstance().sendObject(newMessage);
                 addNewMessage(newMessage);
                 messageInput.clear();
             }
