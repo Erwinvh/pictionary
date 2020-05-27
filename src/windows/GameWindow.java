@@ -35,8 +35,6 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
 
     private List<Point2D> positions;
 
-    private Canvas canvas2;
-
     public GameWindow(Stage primaryStage) {
         primaryStage.setTitle("Pictionary - Game");
 
@@ -44,10 +42,6 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         Client.getInstance().setChatUpdateListener(this);
 
         HBox base = new HBox();
-
-        canvas2 = new Canvas();
-        canvas2.setWidth(600);
-        canvas2.setHeight(600);
 
         this.gameWindowScene = new Scene(base);
 
@@ -255,11 +249,6 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         HBox messageBox = new HBox();
         messageBox.getChildren().add(messageLabel);
 
-//        if (newMessage.getUsername().equals(Client.getInstance().getUser().getName())) {
-//            messageColumn = 2;
-//        }
-
-//        chatMessagesBox.add(messageBox, messageColumn, messageRow);
     }
 
     public Scene getGameWindowScene() {
@@ -269,10 +258,6 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
     @Override
     public void onDrawUpdate(DrawUpdate drawUpdate) {
         // TODO: 27/05/2020 Update canvas using the DrawUpdate
-        System.out.println("drawupdate");
-//        if (Client.getInstance().getUser().isDrawing()) {
-//            return;
-//        }
     DrawerNotDrawing draw = new DrawerNotDrawing();
     draw.run(drawUpdate);
     }
