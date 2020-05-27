@@ -70,6 +70,12 @@ public class Client {
         try {
             Object objectIn = this.objectInputStream.readObject();
 
+            if (this.chatUpdateListener == null)
+                throw new NullPointerException("ChatUpdateListener was null! Fix your shit");
+
+            if (this.drawUpdateListener == null)
+                throw new NullPointerException("DrawUpdateListener was null! Fix your shit");
+
             if (objectIn instanceof Message) {
                 chatUpdateListener.onChatUpdate((Message) objectIn);
             } else if (objectIn instanceof DrawUpdate) {
@@ -137,7 +143,7 @@ public class Client {
         this.drawUpdateListener = drawUpdateListener;
     }
 
-    public void setChatUpdateListener(ChatUpdateListener chatUpdateListener){
+    public void setChatUpdateListener(ChatUpdateListener chatUpdateListener) {
         this.chatUpdateListener = chatUpdateListener;
     }
 }
