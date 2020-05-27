@@ -1,7 +1,6 @@
 package windows;
 
-import comms.Client;
-import comms.Message;
+import comms.*;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -14,7 +13,7 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
-public class GameWindow {
+public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
 
     private Scene gameWindowScene;
 
@@ -22,6 +21,10 @@ public class GameWindow {
     private GridPane chatMessagesBox;
 
     public GameWindow(Stage primaryStage) {
+
+        Client.getInstance().setDrawUpdateListener(this);
+        Client.getInstance().setChatUpdateListener(this);
+        
         HBox base = new HBox();
 
         //TODO canvashere
@@ -112,5 +115,15 @@ public class GameWindow {
 
     public Scene getGameWindowScene() {
         return this.gameWindowScene;
+    }
+
+    @Override
+    public void onDrawUpdate(DrawUpdate drawUpdate) {
+        // TODO: 27/05/2020 Update canvas using the DrawUpdate
+    }
+
+    @Override
+    public void onChatUpdate(Message message) {
+        addNewMessage(message);
     }
 }

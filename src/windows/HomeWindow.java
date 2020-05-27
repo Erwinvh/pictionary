@@ -57,7 +57,7 @@ public class HomeWindow {
             }
             setImageView();
         });
-        
+
         profileImage.setFitHeight(120);
         profileImage.setFitWidth(120);
 
