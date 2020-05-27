@@ -185,7 +185,6 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         return hBox;
     }
 
-
     public void draw(FXGraphics2D graphics) {
         graphics.setTransform(new AffineTransform());
         graphics.setBackground(java.awt.Color.white);
@@ -260,7 +259,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
 //            messageColumn = 2;
 //        }
 
-        chatMessagesBox.add(messageBox, messageColumn, messageRow);
+//        chatMessagesBox.add(messageBox, messageColumn, messageRow);
     }
 
     public Scene getGameWindowScene() {
@@ -274,10 +273,18 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
 //        if (Client.getInstance().getUser().isDrawing()) {
 //            return;
 //        }
-        int brushsize = drawUpdate.getBrushSize();
-        graphics.setColor(drawUpdate.getColor());
-        for (Point2D point : drawUpdate.getPositions()) {
-            graphics.fillOval((int) point.getX() - brushsize, (int) point.getY() - brushsize, brushsize * 2, brushsize * 2);
+    DrawerNotDrawing draw = new DrawerNotDrawing();
+    draw.run(drawUpdate);
+    }
+
+    class DrawerNotDrawing extends Thread{
+        public void run(DrawUpdate drawUpdate) {
+            int brushsize = drawUpdate.getBrushSize();
+            graphics.setColor(drawUpdate.getColor());
+            for (Point2D point : drawUpdate.getPositions()) {
+                graphics.fillOval((int) point.getX() - brushsize, (int) point.getY() - brushsize, brushsize * 2, brushsize * 2);
+            }
+
         }
     }
 
