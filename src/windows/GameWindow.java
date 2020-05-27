@@ -8,7 +8,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -33,7 +32,6 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
     private FXGraphics2D graphics;
     private Color brushColor;
 
-
     public GameWindow(Stage primaryStage) {
         primaryStage.setTitle("Pictionary - Game");
 
@@ -51,7 +49,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         this.chatArrayList.add(new Message("tester 2", "test that"));
         this.chatArrayList.add(new Message("tester", "test this"));
 
-        base.getChildren().addAll(fullDrawSetup(), canvas2, getInfoVBox());
+        base.getChildren().addAll(fullDrawSetup(), getInfoVBox());
     }
 
     private VBox fullDrawSetup() {
@@ -196,7 +194,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
 
                 // Make the client send the message to the server
                 Client.getInstance().sendObject(newMessage);
-                addNewMessage(newMessage);
+                //addNewMessage(newMessage);
                 messageInput.clear();
             }
         });
@@ -219,6 +217,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         HBox messageBox = new HBox();
         messageBox.getChildren().add(messageLabel);
 
+        Platform.runLater(() -> this.chatMessagesBox.add(messageBox, messageColumn, messageRow));
     }
 
     public Scene getGameWindowScene() {
