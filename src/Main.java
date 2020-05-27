@@ -6,10 +6,14 @@ import windows.GameWindow;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import windows.HomeWindow;
+import windows.LobbyWindow;
 
 public class Main extends Application {
 
     public static void main(String[] args) {
+        launch();
+        //Client.getInstance();
 
 //        new Thread(() -> {
 //            ServerSettings serverSettings = new ServerSettings(2, 10, 10, "English", "localhost", 10000);
@@ -24,7 +28,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
         primaryStage.setTitle("Pictionary");
         GameWindow gw = new GameWindow(primaryStage);
         Scene scene = gw.getGameWindowScene();
