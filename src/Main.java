@@ -16,7 +16,7 @@ public class Main extends Application {
 
         GameWindow gw = new GameWindow(primaryStage);
 
-        Client.getInstance().setUser(new User("Arne",false));
+        Client.getInstance().setUser(new User("Arne", false));
         Client.getInstance().connectToServer("localhost", 10000);
 
         primaryStage.setTitle("Pictionary");
@@ -32,7 +32,8 @@ public class Main extends Application {
 
     @Override
     public void stop() throws Exception {
-        Client.getInstance().disconnectFromServer();
         super.stop();
+        Client.getInstance().disconnectFromServer();
+        System.exit(0);
     }
 }
