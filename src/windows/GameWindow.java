@@ -56,8 +56,8 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         VBox drawSideSetup = new VBox();
 
         HBox ButtonsBox = new HBox();
-        ButtonsBox.getChildren().addAll(setupColourButtons(), getSizeButtons());
-
+        ButtonsBox.getChildren().addAll(setupColourButtons(), getSizeButtons(),getClearCanvasButton());
+ButtonsBox.setSpacing(20);
         setupCanvas();
 
         drawSideSetup.getChildren().addAll(canvas, ButtonsBox);
@@ -83,7 +83,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         Point2D position = new Point2D.Double(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
         graphics.fillOval((int) mouseEvent.getSceneX() - radius, (int) mouseEvent.getSceneY() - radius, radius * 2, radius * 2);
-        DrawUpdate drawUpdate = new DrawUpdate(radius, graphics.getColor(), position);
+        DrawUpdate drawUpdate = new DrawUpdate(radius, graphics.getColor(), position, false);
         Client.getInstance().sendObject(drawUpdate);
     }
 
@@ -137,6 +137,15 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         return hBox;
     }
 
+    public Button getClearCanvasButton(){
+        Button button = new Button("Clear canvas");
+        button.setOnAction(event -> {
+            DrawUpdate drawUpdate= new DrawUpdate(0,Color.white,null,true);
+
+            Client.getInstance().sendObject(drawUpdate);});
+        return button;
+    }
+
     private void draw(FXGraphics2D graphics) {
         graphics.setTransform(new AffineTransform());
         graphics.setBackground(java.awt.Color.white);
@@ -148,9 +157,10 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
 
         Label roleLabel = new Label("Guessing");
         Label currentWord = new Label("D_N__Y");
+        Label scoreplaceholder = new Label("Scoreboard placeholder");
         Label chatLogLabel = new Label("Chat");
 
-        infoVBox.getChildren().addAll(roleLabel, currentWord, chatLogLabel, getChat(), getInput());
+        infoVBox.getChildren().addAll(roleLabel, currentWord, scoreplaceholder, chatLogLabel, getChat(), getInput());
 
         return infoVBox;
     }
@@ -218,13 +228,17 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
     @Override
     public void onDrawUpdate(DrawUpdate drawUpdate) {
         Platform.runLater(() -> {
+            if (drawUpdate.isShouldClearCanvas()) {
+                graphics.clearRect(0,0,(int)canvas.getWidth(),(int)canvas.getHeight());
+            }
+            else{
+                int brushSize = drawUpdate.getBrushSize();
+                graphics.setColor(drawUpdate.getColor());
 
-            int brushSize = drawUpdate.getBrushSize();
-            graphics.setColor(drawUpdate.getColor());
+                Point2D point = drawUpdate.getPosition();
 
-            Point2D point = drawUpdate.getPosition();
-
-            graphics.fillOval((int) point.getX() - brushSize, (int) point.getY() - brushSize, brushSize * 2, brushSize * 2);
+                graphics.fillOval((int) point.getX() - brushSize, (int) point.getY() - brushSize, brushSize * 2, brushSize * 2);
+            }
         });
     }
 
