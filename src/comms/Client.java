@@ -127,8 +127,8 @@ public class Client {
     }
 
     public User getUser() {
-        if (this.user == null)
-            throw new NullPointerException("User has not yet been defined! Remember to call setUser() before trying to connect to a server!");
+//        if (this.user == null)
+//            throw new NullPointerException("User has not yet been defined! Remember to call setUser() before trying to connect to a server!");
 
         return user;
     }

@@ -45,12 +45,14 @@ public class LobbyWindow {
         Label maxAmountPlayersLabel = new Label("Max. amount of players:");
         ComboBox maxAmountPlayersComboBox = getComboBox(2, 20, 1, 0);
 
+        Label lobbyCodeLabel = new Label("Lobby Code");
+
         Button startGameButton = new Button("Start game");
         startGameButton.setOnAction(event -> {
             // TODO: 27/05/2020 Launch the GameWindow (if settings are valid)
         });
 
-        gameSettingsBox.getChildren().addAll(amountOfRoundsLabel,roundsComboBox,languageLabel,languageComboBox,timePerRoundLabel,timePerRoundComboBox,maxAmountPlayersLabel,maxAmountPlayersComboBox, startGameButton);
+        gameSettingsBox.getChildren().addAll(amountOfRoundsLabel,roundsComboBox,languageLabel,languageComboBox,timePerRoundLabel,timePerRoundComboBox,maxAmountPlayersLabel,maxAmountPlayersComboBox, lobbyCodeLabel, startGameButton);
         return gameSettingsBox;
     }
 
