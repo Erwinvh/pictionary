@@ -57,7 +57,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
 
         HBox ButtonsBox = new HBox();
         ButtonsBox.getChildren().addAll(setupColourButtons(), getSizeButtons(),getClearCanvasButton());
-
+ButtonsBox.setSpacing(20);
         setupCanvas();
 
         drawSideSetup.getChildren().addAll(canvas, ButtonsBox);
@@ -83,7 +83,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         Point2D position = new Point2D.Double(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
         graphics.fillOval((int) mouseEvent.getSceneX() - radius, (int) mouseEvent.getSceneY() - radius, radius * 2, radius * 2);
-        DrawUpdate drawUpdate = new DrawUpdate(radius, graphics.getColor(), position);
+        DrawUpdate drawUpdate = new DrawUpdate(radius, graphics.getColor(), position, false);
         Client.getInstance().sendObject(drawUpdate);
     }
 
@@ -157,9 +157,10 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
 
         Label roleLabel = new Label("Guessing");
         Label currentWord = new Label("D_N__Y");
+        Label scoreplaceholder = new Label("Scoreboard placeholder");
         Label chatLogLabel = new Label("Chat");
 
-        infoVBox.getChildren().addAll(roleLabel, currentWord, chatLogLabel, getChat(), getInput());
+        infoVBox.getChildren().addAll(roleLabel, currentWord, scoreplaceholder, chatLogLabel, getChat(), getInput());
 
         return infoVBox;
     }
