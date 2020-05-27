@@ -274,15 +274,14 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
     public void onDrawUpdate(DrawUpdate drawUpdate) {
         // TODO: 27/05/2020 Update canvas using the DrawUpdate
         System.out.println("drawupdate");
-        if (Client.getInstance().getUser().isDrawing()) {
-            return;
-        }
+//        if (Client.getInstance().getUser().isDrawing()) {
+//            return;
+//        }
         int brushsize = drawUpdate.getBrushSize();
         graphics.setColor(drawUpdate.getColor());
         for (Point2D point : drawUpdate.getPositions()) {
             graphics.fillOval((int) point.getX() - brushsize, (int) point.getY() - brushsize, brushsize * 2, brushsize * 2);
         }
-
     }
 
     @Override

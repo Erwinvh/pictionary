@@ -67,14 +67,17 @@ public class Client {
     }
 
     private void handleIncomingData() {
+        System.out.println("Client.handleIncomingData");
         try {
             Object objectIn = this.objectInputStream.readObject();
-            System.out.println(objectIn);
+            System.out.println("client received objectIn: " + objectIn.toString());
             if (this.chatUpdateListener == null)
-                throw new NullPointerException("ChatUpdateListener was null! Fix your shit");
+                return;
+                //throw new NullPointerException("ChatUpdateListener was null! Fix your shit");
 
             if (this.drawUpdateListener == null)
-                throw new NullPointerException("DrawUpdateListener was null! Fix your shit");
+                return;
+//                throw new NullPointerException("DrawUpdateListener was null! Fix your shit");
 
             if (objectIn instanceof Message) {
                 chatUpdateListener.onChatUpdate((Message) objectIn);

@@ -84,7 +84,7 @@ public class Server {
                 Object objectIn = objectInputStream.readObject();
 
                 if (objectIn instanceof Message || objectIn instanceof DrawUpdate) {
-                    System.out.println(objectIn.toString());
+//                    System.out.println(objectIn.toString());
                     // Notify all connected clients a new message or DrawUpdate has been received
                     sendToAllClients(objectIn);
                 }
