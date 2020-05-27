@@ -21,6 +21,6 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-        return getUsername()+": \n"+getMessage() ;
+        return getUsername() + ": " + getMessage();
     }
 }

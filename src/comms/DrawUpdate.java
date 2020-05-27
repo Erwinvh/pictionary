@@ -3,18 +3,17 @@ package comms;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
-import java.util.List;
 
 public class DrawUpdate implements Serializable {
     private int brushSize;
     private Color color;
 
-    private List<Point2D> positions;
+    private Point2D position;
 
-    public DrawUpdate(int brushSize, Color color, List<Point2D> positions) {
+    public DrawUpdate(int brushSize, Color color, Point2D position) {
         this.brushSize = brushSize;
         this.color = color;
-        this.positions = positions;
+        this.position = position;
     }
 
     public int getBrushSize() {
@@ -25,7 +24,16 @@ public class DrawUpdate implements Serializable {
         return color;
     }
 
-    public List<Point2D> getPositions() {
-        return positions;
+    public Point2D getPosition() {
+        return position;
+    }
+
+    @Override
+    public String toString() {
+        return "DrawUpdate{" +
+                "brushSize=" + brushSize +
+                ", color=" + color +
+                ", position=" + position +
+                '}';
     }
 }

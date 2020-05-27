@@ -56,7 +56,9 @@ public class Client {
             this.objectOutputStream.writeObject(this.getUser());
 
             new Thread(this::handleIncomingData).start();
-//            new Thread(this::handleOutgoingData).start();
+
+            System.out.println("Client " + user.getName() + " successfully connected!");
+
             return true;
 
         } catch (IOException e) {
@@ -70,50 +72,28 @@ public class Client {
         while (true) {
             try {
                 Object objectIn = this.objectInputStream.readObject();
-                System.out.println(objectIn.toString());
+
                 if (this.chatUpdateListener == null)
-                continue;
-                //throw new NullPointerException("ChatUpdateListener was null! Fix your shit");
+                    throw new NullPointerException("ChatUpdateListener was null! Fix your shit");
 
                 if (this.drawUpdateListener == null)
-                continue;
-//                throw new NullPointerException("DrawUpdateListener was null! Fix your shit");
+                    throw new NullPointerException("DrawUpdateListener was null! Fix your shit");
 
                 if (objectIn instanceof Message) {
                     chatUpdateListener.onChatUpdate((Message) objectIn);
                 } else if (objectIn instanceof DrawUpdate) {
-                    System.out.println("received drawupdate");
                     drawUpdateListener.onDrawUpdate((DrawUpdate) objectIn);
                 }
+
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
     }
-//    private void handleOutgoingData() {
-//        try {
-//            Scanner scanner = new Scanner(System.in);
-//            while (this.connected) {
-//                System.out.print("Type your message here: ");
-//    //
-//                String messageText = scanner.nextLine();
-//                Message message = new Message(user.getName(), messageText);
-//                this.objectOutputStream.writeObject(message);
-//
-//                Object objectIn = this.objectInputStream.readObject();
-//                if (objectIn instanceof Message) {
-//                    Message incomingMessage = (Message) this.objectInputStream.readObject();
-//                    System.out.println(incomingMessage.toString());
-//                    // TODO: 23/05/2020 Show this incoming message in GUI
-//                } // TODO: 23/05/2020 else if (objectIn instanceof Drawing)
-//            }
-//        } catch (IOException | ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     public void disconnectFromServer() {
         try {
+            System.out.println(this.user.getName() + " is willingly disconnecting from server...");
             this.clientSocket.close();
             this.connected = false;
         } catch (IOException e) {
@@ -138,8 +118,8 @@ public class Client {
     }
 
     public User getUser() {
-//        if (this.user == null)
-//            throw new NullPointerException("User has not yet been defined! Remember to call setUser() before trying to connect to a server!");
+        if (this.user == null)
+            throw new NullPointerException("User has not yet been defined! Remember to call setUser() before trying to connect to a server!");
 
         return user;
     }

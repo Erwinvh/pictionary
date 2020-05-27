@@ -16,9 +16,6 @@ public class Server {
     private ServerSocket serverSocket;
     private boolean running;
 
-//    private List<Client> connectedClients;
-//    private List<User> connectedUsers;
-
     private HashMap<Socket, User> connectedSockets;
     private List<ObjectOutputStream> objectOutputStreams;
 
@@ -84,7 +81,6 @@ public class Server {
                 Object objectIn = objectInputStream.readObject();
 
                 if (objectIn instanceof Message || objectIn instanceof DrawUpdate) {
-//                    System.out.println(objectIn.toString());
                     // Notify all connected clients a new message or DrawUpdate has been received
                     sendToAllClients(objectIn);
                 }
@@ -114,14 +110,11 @@ public class Server {
             try {
                 objectOutputStream.writeObject(obj);
             } catch (IOException e) {
+                System.out.println("Something went wrong whilst trying to send " + obj.toString() + " to " + objectOutputStream.toString());
                 e.printStackTrace();
             }
         }
     }
-
-//    private void sendDrawUpdateToAllClients(DrawUpdate drawUpdate){
-//        sendToAllClients(drawUpdate);
-//    }
 
     public boolean getRunning() {
         return running;

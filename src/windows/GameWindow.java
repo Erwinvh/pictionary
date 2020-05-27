@@ -1,6 +1,7 @@
 package windows;
 
 import comms.*;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
@@ -25,7 +26,6 @@ import java.util.List;
 public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
 
     private Scene gameWindowScene;
-    private WritableImage imageToDraw;
     private List<Message> chatArrayList = new ArrayList<>();
     private GridPane chatMessagesBox;
     private Canvas canvas = new Canvas();
@@ -33,7 +33,6 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
     private FXGraphics2D graphics;
     private Color brushColor;
 
-    private List<Point2D> positions;
 
     public GameWindow(Stage primaryStage) {
         primaryStage.setTitle("Pictionary - Game");
@@ -46,8 +45,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         this.gameWindowScene = new Scene(base);
 
         graphics = new FXGraphics2D(canvas.getGraphicsContext2D());
-        brushColor = Color.black;
-        positions = new ArrayList<>();
+        brushColor = Color.BLACK;
 
         this.chatArrayList.add(new Message("tester1", "test this"));
         this.chatArrayList.add(new Message("tester 2", "test that"));
@@ -60,7 +58,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         VBox drawSideSetup = new VBox();
 
         HBox ButtonsBox = new HBox();
-        ButtonsBox.getChildren().addAll(setupColourButtons(), sizeButtons());
+        ButtonsBox.getChildren().addAll(setupColourButtons(), getSizeButtons());
 
         setupCanvas();
 
@@ -72,42 +70,23 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         canvas.setWidth(600);
         canvas.setHeight(600);
 
-        canvas.setOnMouseClicked(this::onMouseClicked);
-        canvas.setOnMouseDragged(this::onMouseDragged);
-        canvas.setOnMouseDragReleased(this::onMouseDragReleased);
-
+        canvas.setOnMouseClicked(this::onMouse);
+        canvas.setOnMouseDragged(this::onMouse);
         draw(new FXGraphics2D(canvas.getGraphicsContext2D()));
     }
 
-    private void onMouseClicked(MouseEvent mouseEvent) {
-        this.positions.clear();
-        this.positions.add(new Point2D.Double(mouseEvent.getX(), mouseEvent.getY()));
-        if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) graphics.setColor(brushColor);
-        else{graphics.setColor(Color.white);
-        }
-        graphics.fillOval((int) mouseEvent.getSceneX() - radius, (int) mouseEvent.getSceneY() - radius, radius * 2, radius * 2);
-        DrawUpdate drawUpdate = new DrawUpdate(radius, graphics.getColor(), this.positions);
-        Client.getInstance().sendObject(drawUpdate);
-    }
-
-    private void onMouseDragReleased(MouseEvent mouseEvent) {
-        DrawUpdate drawUpdate = new DrawUpdate(radius, graphics.getColor(), this.positions);
-        Client.getInstance().sendObject(drawUpdate);
-        positions.clear();
-    }
-
-    private void onMouseDragged(MouseEvent mouseEvent) {
-        if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+    private void onMouse(MouseEvent mouseEvent) {
+        if (mouseEvent.getButton().equals(MouseButton.PRIMARY))
             graphics.setColor(brushColor);
-            graphics.fillOval((int) mouseEvent.getSceneX() - radius, (int) mouseEvent.getSceneY() - radius, radius * 2, radius * 2);
-            positions.add(new Point2D.Double(mouseEvent.getSceneX(), mouseEvent.getSceneY()));
-
-        } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
-            graphics.setColor(Color.white);
-            graphics.fillOval((int) mouseEvent.getSceneX() - radius, (int) mouseEvent.getSceneY() - radius, radius * 2, radius * 2);
-
-            positions.add(new Point2D.Double(mouseEvent.getSceneX(), mouseEvent.getSceneY()));
+        else {
+            graphics.setColor(Color.WHITE);
         }
+
+        Point2D position = new Point2D.Double(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+
+        graphics.fillOval((int) mouseEvent.getSceneX() - radius, (int) mouseEvent.getSceneY() - radius, radius * 2, radius * 2);
+        DrawUpdate drawUpdate = new DrawUpdate(radius, graphics.getColor(), position);
+        Client.getInstance().sendObject(drawUpdate);
     }
 
     private GridPane setupColourButtons() {
@@ -122,30 +101,14 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         Button purpleButton = new Button("purple");
         Button pinkButton = new Button("pink");
 
-        greenButton.setOnAction(event -> {
-            brushColor = Color.green;
-        });
-        redButton.setOnAction(event -> {
-            brushColor = Color.red;
-        });
-        blackButton.setOnAction(event -> {
-            brushColor = Color.black;
-        });
-        blueButton.setOnAction(event -> {
-            brushColor = Color.blue;
-        });
-        yellowButton.setOnAction(event -> {
-            brushColor = Color.yellow;
-        });
-        orangeButton.setOnAction(event -> {
-            brushColor = Color.orange;
-        });
-        purpleButton.setOnAction(event -> {
-            brushColor = Color.magenta;
-        });
-        pinkButton.setOnAction(event -> {
-            brushColor = Color.pink;
-        });
+        greenButton.setOnAction(event -> brushColor = Color.green);
+        redButton.setOnAction(event -> brushColor = Color.red);
+        blackButton.setOnAction(event -> brushColor = Color.black);
+        blueButton.setOnAction(event -> brushColor = Color.blue);
+        yellowButton.setOnAction(event -> brushColor = Color.yellow);
+        orangeButton.setOnAction(event -> brushColor = Color.orange);
+        purpleButton.setOnAction(event -> brushColor = Color.magenta);
+        pinkButton.setOnAction(event -> brushColor = Color.pink);
 
         gridpane.add(blackButton, 1, 1);
         gridpane.add(blueButton, 1, 2);
@@ -159,27 +122,24 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         return gridpane;
     }
 
-    public HBox sizeButtons() {
+    private HBox getSizeButtons() {
         HBox hBox = new HBox();
 
         Button smallButton = new Button("small");
-        smallButton.setOnAction(event -> {
-            radius = 10;
-        });
+        smallButton.setOnAction(event -> radius = 10);
+
         Button mediumButton = new Button("mid");
-        mediumButton.setOnAction(event -> {
-            radius = 20;
-        });
+        mediumButton.setOnAction(event -> radius = 20);
+
         Button largeButton = new Button("large");
-        largeButton.setOnAction(event -> {
-            radius = 30;
-        });
+        largeButton.setOnAction(event -> radius = 30);
+
         hBox.getChildren().addAll(smallButton, mediumButton, largeButton);
 
         return hBox;
     }
 
-    public void draw(FXGraphics2D graphics) {
+    private void draw(FXGraphics2D graphics) {
         graphics.setTransform(new AffineTransform());
         graphics.setBackground(java.awt.Color.white);
         graphics.clearRect(0, 0, (int) canvas.getWidth(), (int) canvas.getHeight());
@@ -212,6 +172,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         for (Message message : chatArrayList) {
             addNewMessage(message);
         }
+
         return chatMessagesBox;
     }
 
@@ -257,20 +218,14 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
 
     @Override
     public void onDrawUpdate(DrawUpdate drawUpdate) {
-        // TODO: 27/05/2020 Update canvas using the DrawUpdate
-    DrawerNotDrawing draw = new DrawerNotDrawing();
-    draw.run(drawUpdate);
-    }
-
-    class DrawerNotDrawing extends Thread{
-        public void run(DrawUpdate drawUpdate) {
-            int brushsize = drawUpdate.getBrushSize();
+        Platform.runLater(() -> {
+            int brushSize = drawUpdate.getBrushSize();
             graphics.setColor(drawUpdate.getColor());
-            for (Point2D point : drawUpdate.getPositions()) {
-                graphics.fillOval((int) point.getX() - brushsize, (int) point.getY() - brushsize, brushsize * 2, brushsize * 2);
-            }
 
-        }
+            Point2D point = drawUpdate.getPosition();
+
+            graphics.fillOval((int) point.getX() - brushSize, (int) point.getY() - brushSize, brushSize * 2, brushSize * 2);
+        });
     }
 
     @Override

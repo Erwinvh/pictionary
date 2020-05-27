@@ -8,25 +8,18 @@ import windows.GameWindow;
 public class Main extends Application {
 
     public static void main(String[] args) {
-        //Client.getInstance();
-
-//        new Thread(() -> {
-//            ServerSettings serverSettings = new ServerSettings(2, 10, 10, "English", "localhost", 10000);
-//            new Server(serverSettings);
-//        }).start();
-
-
-        //Client.getInstance();
-//        Client.getInstance().setUser(new User("Arne", null, false));
-        Client.getInstance().setUser(new User("Arne",false));
-        Client.getInstance().connectToServer("localhost", 10000);
         launch();
     }
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Pictionary");
+
         GameWindow gw = new GameWindow(primaryStage);
+
+        Client.getInstance().setUser(new User("Arne",false));
+        Client.getInstance().connectToServer("localhost", 10000);
+
+        primaryStage.setTitle("Pictionary");
         Scene scene = gw.getGameWindowScene();
 
         primaryStage.setScene(scene);
@@ -35,5 +28,11 @@ public class Main extends Application {
         primaryStage.setWidth(1280);
         primaryStage.setHeight(720);
         primaryStage.show();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        Client.getInstance().disconnectFromServer();
+        super.stop();
     }
 }
