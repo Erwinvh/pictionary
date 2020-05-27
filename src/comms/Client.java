@@ -67,29 +67,29 @@ public class Client {
     }
 
     private void handleIncomingData() {
-        System.out.println("Client.handleIncomingData");
-        try {
-            Object objectIn = this.objectInputStream.readObject();
-            System.out.println("client received objectIn: " + objectIn.toString());
-            if (this.chatUpdateListener == null)
-                return;
+        while (true) {
+            try {
+                Object objectIn = this.objectInputStream.readObject();
+                System.out.println(objectIn.toString());
+                if (this.chatUpdateListener == null)
+                continue;
                 //throw new NullPointerException("ChatUpdateListener was null! Fix your shit");
 
-            if (this.drawUpdateListener == null)
-                return;
+                if (this.drawUpdateListener == null)
+                continue;
 //                throw new NullPointerException("DrawUpdateListener was null! Fix your shit");
 
-            if (objectIn instanceof Message) {
-                chatUpdateListener.onChatUpdate((Message) objectIn);
-            } else if (objectIn instanceof DrawUpdate) {
-                System.out.println("received drawupdate");
-                drawUpdateListener.onDrawUpdate((DrawUpdate) objectIn);
+                if (objectIn instanceof Message) {
+                    chatUpdateListener.onChatUpdate((Message) objectIn);
+                } else if (objectIn instanceof DrawUpdate) {
+                    System.out.println("received drawupdate");
+                    drawUpdateListener.onDrawUpdate((DrawUpdate) objectIn);
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
             }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
         }
     }
-
 //    private void handleOutgoingData() {
 //        try {
 //            Scanner scanner = new Scanner(System.in);
@@ -122,6 +122,7 @@ public class Client {
     }
 
     public void sendObject(Object obj) {
+
         if (!this.connected)
             throw new IllegalStateException("Client is not connected and thus cannot send data.");
 
