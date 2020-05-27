@@ -111,12 +111,12 @@ public class Client {
         }
     }
 
-    public void sendMessage(Message message) {
+    public void sendObject(Object obj) {
         if (!this.connected)
-            throw new IllegalStateException("Client is not connected and thus cannot send a message.");
+            throw new IllegalStateException("Client is not connected and thus cannot send data.");
 
         try {
-            objectOutputStream.writeObject(message);
+            objectOutputStream.writeObject(obj);
         } catch (IOException e) {
             e.printStackTrace();
         }
