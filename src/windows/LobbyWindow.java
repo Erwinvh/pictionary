@@ -19,66 +19,56 @@ public class LobbyWindow {
     public LobbyWindow() {
         HBox base = new HBox();
         base.setSpacing(40);
-        base.getChildren().add(getGameSettingsBox());
+
         ScrollPane listscroller = new ScrollPane();
         listscroller.setContent(getLobbyListBox());
-        base.getChildren().add(listscroller);
+
+        base.getChildren().addAll(getGameSettingsBox(), listscroller);
         lobbyWindowScene = new Scene(base);
     }
 
-    public VBox getGameSettingsBox(){
+    private VBox getGameSettingsBox(){
         VBox gameSettingsBox = new VBox();
         gameSettingsBox.setSpacing(10);
 
         Label amountOfRoundsLabel = new Label("Amount of rounds:");
-        ComboBox roundsComboBox = getComboBox(50);
+        ComboBox roundsComboBox = getComboBox(1, 50, 1, 4);
 
         Label languageLabel = new Label("Language:");
-        ComboBox languageComboBox = new ComboBox();
-        languageComboBox.getItems().add("English");
-        languageComboBox.getItems().add("Dutch");
+        ComboBox<String> languageComboBox = new ComboBox<>();
+        languageComboBox.getItems().addAll("English", "Dutch");
         languageComboBox.getSelectionModel().selectFirst();
 
         Label timePerRoundLabel = new Label("Time per Round in seconds");
-        ComboBox timePerRoundComboBox = getTimeComboBox(120);
+        ComboBox timePerRoundComboBox = getComboBox(10, 120, 10, 5);
 
         Label maxAmountPlayersLabel = new Label("Max. amount of players:");
-        ComboBox maxAmountPlayersComboBox = getComboBox(20);
+        ComboBox maxAmountPlayersComboBox = getComboBox(2, 20, 1, 0);
 
         Button startGameButton = new Button("Start game");
         startGameButton.setOnAction(event -> {
-
+            // TODO: 27/05/2020 Launch the GameWindow (if settings are valid)
         });
 
         gameSettingsBox.getChildren().addAll(amountOfRoundsLabel,roundsComboBox,languageLabel,languageComboBox,timePerRoundLabel,timePerRoundComboBox,maxAmountPlayersLabel,maxAmountPlayersComboBox, startGameButton);
         return gameSettingsBox;
     }
 
-    public VBox getLobbyListBox(){
-        VBox lobbyListBox = new VBox();
-
-        return lobbyListBox;
-    }
-
-    public ComboBox getTimeComboBox(int limit){
-        ComboBox comboBox = new ComboBox();
-        for (int i = 10; i <= limit; i+=10) {
-            comboBox.getItems().add(i);
-        }
-        comboBox.getSelectionModel().select(2);
-        return comboBox;
+    private VBox getLobbyListBox(){
+        return new VBox();
     }
 
     public Scene getLobbyWindowScene() {
         return lobbyWindowScene;
     }
 
-    public ComboBox getComboBox (int limit){
-        ComboBox comboBox = new ComboBox();
-        for (int i = 2; i <= limit; i++) {
+    private ComboBox getComboBox(int min, int limit, int stepSize, int selectIndex){
+        ComboBox<Integer> comboBox = new ComboBox<>();
+        for (int i = min; i <= limit; i++) {
             comboBox.getItems().add(i);
         }
-        comboBox.getSelectionModel().selectFirst();
+
+        comboBox.getSelectionModel().select(selectIndex);
         return comboBox;
     }
 }

@@ -2,11 +2,13 @@ package windows;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
@@ -20,7 +22,7 @@ public class HomeWindow {
     private int pictureIndex = 0;
     private ArrayList<String> pictureList = new ArrayList<>();
     private ImageView profileImage = new ImageView();
-    private TextField username= new TextField();;
+    private TextField username = new TextField();
 
     public HomeWindow() {
         List<String> namesList = Arrays.asList("cat", "chicken", "chip", "dog", "donkey", "goldy", "owl", "pengiun", "pine", "raccoon", "robot", "rudolph", "sticktail", "union", "vampier");
@@ -31,8 +33,7 @@ public class HomeWindow {
         homeWindowScene = new Scene(base);
     }
 
-
-    public HBox getPlayerInformation() {
+    private HBox getPlayerInformation() {
         HBox playerInfo = new HBox();
 
         Button leftButton = new Button("<-");
@@ -44,6 +45,7 @@ public class HomeWindow {
             }
             setImageView();
         });
+
         File file = new File("resources/pictures/cat.jpg");
         profileImage.setImage(new Image(file.toURI().toString()));
         Button rightButton = new Button("->");
@@ -55,6 +57,7 @@ public class HomeWindow {
             }
             setImageView();
         });
+        
         profileImage.setFitHeight(120);
         profileImage.setFitWidth(120);
 
@@ -64,41 +67,34 @@ public class HomeWindow {
         return playerInfo;
     }
 
-    public void setImageView() {
+    private void setImageView() {
         String fileName = "resources/pictures/" + pictureList.get(pictureIndex) + ".jpg";
         File newFile = new File(fileName);
         profileImage.setImage(new Image(newFile.toURI().toString()));
     }
 
-    public GridPane getJoinHostButtons() {
+    private GridPane getJoinHostButtons() {
         GridPane joinHostButtons = new GridPane();
 
         TextField privateJoinCodeTextField = new TextField();
         Button publicJoinButton = new Button("Join public game");
-        publicJoinButton.setOnAction(event -> {
-nameCheck();
-        });
+        publicJoinButton.setOnAction(event -> nameCheck());
+
         Button privateJoinButton = new Button("Join private game");
         privateJoinButton.setOnAction(event -> {
-            if (!nameCheck()){
+            if (!nameCheck()) {
                 System.out.println("your name was null!");
-            }else if (privateJoinCodeTextField.getText().trim().isEmpty()){
+            } else if (privateJoinCodeTextField.getText().trim().isEmpty()) {
                 System.out.println("no game room code was given");
-            }
-            else{
+            } else {
                 System.out.println("the gameroom was full or failled to connect");
             }
-
         });
+
         Button privateHostButton = new Button("Host private game");
-        privateHostButton.setOnAction(event -> {
-            nameCheck();
-        });
+        privateHostButton.setOnAction(event -> nameCheck());
         Button publicHostButton = new Button("Host public game");
-        publicHostButton.setOnAction(event -> {
-            nameCheck();
-        });
-
+        publicHostButton.setOnAction(event -> nameCheck());
 
         joinHostButtons.add(publicJoinButton, 1, 2);
         joinHostButtons.add(publicHostButton, 1, 1);
@@ -114,11 +110,12 @@ nameCheck();
         return joinHostButtons;
     }
 
-    public boolean nameCheck (){
-        if (username.getText().trim().isEmpty()){
+    private boolean nameCheck() {
+        if (username.getText().trim().isEmpty()) {
             System.out.println("name was null");
             return false;
         }
+
         return true;
     }
 
