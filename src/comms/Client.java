@@ -69,7 +69,7 @@ public class Client {
     private void handleIncomingData() {
         try {
             Object objectIn = this.objectInputStream.readObject();
-
+            System.out.println(objectIn);
             if (this.chatUpdateListener == null)
                 throw new NullPointerException("ChatUpdateListener was null! Fix your shit");
 
@@ -79,6 +79,7 @@ public class Client {
             if (objectIn instanceof Message) {
                 chatUpdateListener.onChatUpdate((Message) objectIn);
             } else if (objectIn instanceof DrawUpdate) {
+                System.out.println("received drawupdate");
                 drawUpdateListener.onDrawUpdate((DrawUpdate) objectIn);
             }
         } catch (IOException | ClassNotFoundException e) {

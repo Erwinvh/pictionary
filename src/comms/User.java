@@ -17,6 +17,7 @@ public class User implements Serializable {
 //        this.profileImage = profileImage;
         this.score = 0;
         this.isHost = isHost;
+        isDrawing = false;
     }
 
     public String getName() {
@@ -34,6 +35,10 @@ public class User implements Serializable {
 //    public void setProfileImage(Image profileImage) {
 //        this.profileImage = profileImage;
 //    }
+
+    public boolean isDrawing(){
+        return isDrawing;
+    }
 
     public int getScore() {
         return score;

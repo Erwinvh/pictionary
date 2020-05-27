@@ -31,6 +31,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
     private Canvas canvas = new Canvas();
     private int radius = 30;
     private FXGraphics2D graphics;
+    private Color brushColor;
 
     private List<Point2D> positions;
 
@@ -130,10 +131,11 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         Button pinkButton = new Button("pink");
 
         greenButton.setOnAction(event -> {
-            graphics.setColor(Color.green);
+            brushColor = Color.green;
+
         });
         redButton.setOnAction(event -> {
-            graphics.setColor(Color.red);
+            brushColor = Color.red;
         });
         blackButton.setOnAction(event -> {
             graphics.setColor(Color.black);
@@ -271,6 +273,16 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
     @Override
     public void onDrawUpdate(DrawUpdate drawUpdate) {
         // TODO: 27/05/2020 Update canvas using the DrawUpdate
+        System.out.println("drawupdate");
+        if (Client.getInstance().getUser().isDrawing()) {
+            return;
+        }
+        int brushsize = drawUpdate.getBrushSize();
+        graphics.setColor(drawUpdate.getColor());
+        for (Point2D point : drawUpdate.getPositions()) {
+            graphics.fillOval((int) point.getX() - brushsize, (int) point.getY() - brushsize, brushsize * 2, brushsize * 2);
+        }
+
     }
 
     @Override
