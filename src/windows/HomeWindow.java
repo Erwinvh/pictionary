@@ -1,5 +1,9 @@
 package windows;
 
+import comms.Client;
+import comms.Server;
+import comms.ServerSettings;
+import comms.User;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -10,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,14 +28,18 @@ public class HomeWindow {
     private ArrayList<String> pictureList = new ArrayList<>();
     private ImageView profileImage = new ImageView();
     private TextField username = new TextField();
+    private Stage PrimaryStage;
 
-    public HomeWindow() {
+    public HomeWindow(Stage primaryStage) {
         List<String> namesList = Arrays.asList("cat", "chicken", "chip", "dog", "donkey", "goldy", "owl", "pengiun", "pine", "raccoon", "robot", "rudolph", "sticktail", "union", "vampier");
         pictureList.addAll(namesList);
         VBox base = new VBox();
         base.getChildren().addAll(new Label("Pictionary"), getPlayerInformation(), getJoinHostButtons());
         base.setAlignment(Pos.CENTER);
         homeWindowScene = new Scene(base);
+        PrimaryStage = primaryStage;
+        PrimaryStage.setScene(homeWindowScene);
+        PrimaryStage.show();
     }
 
     private HBox getPlayerInformation() {
@@ -76,32 +85,45 @@ public class HomeWindow {
     private GridPane getJoinHostButtons() {
         GridPane joinHostButtons = new GridPane();
 
-        TextField privateJoinCodeTextField = new TextField();
-        Button publicJoinButton = new Button("Join public game");
-        publicJoinButton.setOnAction(event -> nameCheck());
-
-        Button privateJoinButton = new Button("Join private game");
+        Button privateJoinButton = new Button("Join game");
         privateJoinButton.setOnAction(event -> {
             if (!nameCheck()) {
                 System.out.println("your name was null!");
-            } else if (privateJoinCodeTextField.getText().trim().isEmpty()) {
-                System.out.println("no game room code was given");
             } else {
-                System.out.println("the gameroom was full or failled to connect");
+                Client.getInstance().setUser(new User(username.getText(), false));
+                Client.getInstance().connectToServer("localhost", 10000);
+                LobbyWindow LB = new LobbyWindow(PrimaryStage);
             }
         });
+        TextField portTextField = new TextField();
+        Button privateHostButton = new Button("Host game");
+        privateHostButton.setOnAction(event -> {
+            if (nameCheck()) {
+                String portText = portTextField.getText();
+                portText.trim();
+                if (!portText.equals("")) {
+                    try {
+                        int portNumber = Integer.parseInt(portText);
+                        Client.getInstance().setUser(new User(username.getText(), true));
+                        Client.getInstance().connectToServer("localhost", 10000);
+                        Server host = new Server(new ServerSettings(portNumber));
+                        LobbyWindow LB = new LobbyWindow(PrimaryStage);
+                    } catch (Exception e) {
+                        System.out.println("bad player, bad port");
+                    }
 
-        Button privateHostButton = new Button("Host private game");
-        privateHostButton.setOnAction(event -> nameCheck());
-        Button publicHostButton = new Button("Host public game");
-        publicHostButton.setOnAction(event -> nameCheck());
+                } else {
+                    System.out.println("bad player, no port");
+                }
+            }else {
+                System.out.println("bad player, no name");
+            }
 
-        joinHostButtons.add(publicJoinButton, 1, 2);
-        joinHostButtons.add(publicHostButton, 1, 1);
+        });
 
-        joinHostButtons.add(privateHostButton, 2, 1);
-        joinHostButtons.add(privateJoinButton, 2, 2);
-        joinHostButtons.add(privateJoinCodeTextField, 2, 3);
+        joinHostButtons.add(privateHostButton, 1, 1);
+        joinHostButtons.add(privateJoinButton, 2, 1);
+        joinHostButtons.add(portTextField,1,2);
 
         joinHostButtons.setVgap(10);
         joinHostButtons.setHgap(10);

@@ -27,6 +27,7 @@ import java.util.List;
 public class GameWindow implements GameUpdateListener {
 
     private Scene gameWindowScene;
+    private Stage PrimaryStage;
 
     private Label roleLabel = new Label("Guessing");
     private Label currentWordLabel = new Label();
@@ -45,7 +46,8 @@ public class GameWindow implements GameUpdateListener {
     private Color brushColor;
 
     public GameWindow(Stage primaryStage) {
-        primaryStage.setTitle("Pictionary - Game");
+        PrimaryStage = primaryStage;
+        PrimaryStage.setTitle("Pictionary - Game");
 
         Client.getInstance().setGameUpdateListener(this);
 
@@ -59,6 +61,8 @@ public class GameWindow implements GameUpdateListener {
         chatArrayList = new ArrayList<>();
 
         base.getChildren().addAll(getDrawingArea(), getInfoVBox());
+        PrimaryStage.setScene(gameWindowScene);
+        PrimaryStage.show();
     }
 
     private void setupCanvas() {

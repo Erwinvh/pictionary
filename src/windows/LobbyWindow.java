@@ -8,6 +8,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
@@ -15,8 +16,9 @@ public class LobbyWindow {
 
     private ArrayList<User> lobbyArrayList;
     private Scene lobbyWindowScene;
+    private Stage PrimaryStage;
 
-    public LobbyWindow() {
+    public LobbyWindow(Stage primaryStage) {
         HBox base = new HBox();
         base.setSpacing(40);
 
@@ -25,6 +27,9 @@ public class LobbyWindow {
 
         base.getChildren().addAll(getGameSettingsBox(), listscroller);
         lobbyWindowScene = new Scene(base);
+        PrimaryStage = primaryStage;
+        PrimaryStage.setScene(lobbyWindowScene);
+        PrimaryStage.show();
     }
 
     private VBox getGameSettingsBox(){
@@ -50,6 +55,10 @@ public class LobbyWindow {
         Button startGameButton = new Button("Start game");
         startGameButton.setOnAction(event -> {
             // TODO: 27/05/2020 Launch the GameWindow (if settings are valid)
+
+
+
+            GameWindow gameWindow = new GameWindow(PrimaryStage);
         });
 
         gameSettingsBox.getChildren().addAll(amountOfRoundsLabel,roundsComboBox,languageLabel,languageComboBox,timePerRoundLabel,timePerRoundComboBox,maxAmountPlayersLabel,maxAmountPlayersComboBox, lobbyCodeLabel, startGameButton);
