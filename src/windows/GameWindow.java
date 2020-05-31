@@ -10,6 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -21,29 +23,33 @@ import org.jfree.fx.FXGraphics2D;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameWindow implements GameUpdateListener {
 
+    //Stage
     private Scene gameWindowScene;
     private Stage PrimaryStage;
-
-    private Label roleLabel = new Label("Guessing");
-    private Label currentWordLabel = new Label();
-    private Label timeLeftLabel = new Label("180");
-    private Label currentRoundLabel = new Label("");
 
     // Chat
     private List<ChatUpdate> chatArrayList;
     private GridPane chatMessagesBox;
 
-    private Canvas canvas;
+    //Game information
+    private Label roleLabel = new Label("Guessing");
+    private Label currentWordLabel = new Label();
+    private Label timeLeftLabel = new Label("180");
+    private Label currentRoundLabel = new Label("");
 
     // Drawing
     private int radius = 30;
     private FXGraphics2D graphics;
     private Color brushColor;
+    private Canvas canvas;
+
+
 
     public GameWindow(Stage primaryStage) {
         PrimaryStage = primaryStage;
@@ -51,21 +57,55 @@ public class GameWindow implements GameUpdateListener {
 
         Client.getInstance().setGameUpdateListener(this);
 
-        HBox base = new HBox();
-        this.gameWindowScene = new Scene(base);
 
-        setupCanvas();
+
 
         brushColor = Color.BLACK;
 
         chatArrayList = new ArrayList<>();
 
-        base.getChildren().addAll(getDrawingArea(), getInfoVBox());
         PrimaryStage.setResizable(false);
-        PrimaryStage.setWidth(1100);
-        PrimaryStage.setHeight(700);
+        PrimaryStage.setWidth(1000);
+        PrimaryStage.setHeight(730);
+        this.gameWindowScene = new Scene(setupFrame());
         PrimaryStage.setScene(gameWindowScene);
         PrimaryStage.show();
+    }
+
+    private VBox setupFrame(){
+       VBox base = new VBox();
+        HBox head = new HBox();
+        head.getChildren().addAll(timeLeftLabel,currentRoundLabel,roleLabel);
+
+        HBox body = new HBox();
+        setupCanvas();
+        body.getChildren().addAll(getScoreboard(),getDrawingArea(), getInfoVBox());
+        base.setSpacing(10);
+        base.getChildren().addAll(head,body);
+        return base;
+    }
+
+    public VBox getScoreboard(){
+        VBox ScoreBoard = new VBox();
+        ScoreBoard.getChildren().add(playerScoreMaker(Client.getInstance().getUser()));
+        return ScoreBoard;
+    }
+
+    public HBox playerScoreMaker(User user){
+        HBox playerScore = new HBox();
+        playerScore.setSpacing(10);
+
+        ImageView imageView = new ImageView();
+        File file = new File(user.getProfileImage());
+        imageView.setImage(new Image(file.toURI().toString()));
+        imageView.setFitWidth(40);
+        imageView.setFitHeight(40);
+        Label label = new Label(user.getName());
+        Label scoreLabel = new Label(user.getScore() + " Points");
+
+        playerScore.getChildren().addAll(imageView,label,scoreLabel);
+
+        return playerScore;
     }
 
     private void setupCanvas() {

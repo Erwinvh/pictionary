@@ -62,8 +62,8 @@ public class HomeWindow {
             setImageView();
         });
 
-        File file = new File("resources/pictures/cat.jpg");
         filelocation = "resources/pictures/cat.jpg";
+        File file = new File(filelocation);
         profileImage.setImage(new Image(file.toURI().toString()));
         Button rightButton = new Button("->");
         rightButton.setOnAction(event -> {
@@ -134,7 +134,7 @@ public class HomeWindow {
             return false;
         }
         Client.getInstance().setUser(new User(username.getText(), filelocation ,isHost));
-        Client.getInstance().connectToServer("localhost", 10000);
+        Client.getInstance().connectToServer("localhost", portNumber);
         return true;
     }
 }
