@@ -61,6 +61,9 @@ public class GameWindow implements GameUpdateListener {
         chatArrayList = new ArrayList<>();
 
         base.getChildren().addAll(getDrawingArea(), getInfoVBox());
+        PrimaryStage.setResizable(false);
+        PrimaryStage.setWidth(1100);
+        PrimaryStage.setHeight(700);
         PrimaryStage.setScene(gameWindowScene);
         PrimaryStage.show();
     }

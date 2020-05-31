@@ -29,6 +29,9 @@ public class HomeWindow {
     private ImageView profileImage = new ImageView();
     private TextField username = new TextField();
     private Stage PrimaryStage;
+    private TextField portTextField;
+    private int portNumber;
+    private String filelocation;
 
     public HomeWindow(Stage primaryStage) {
         List<String> namesList = Arrays.asList("cat", "chicken", "chip", "dog", "donkey", "goldy", "owl", "pengiun", "pine", "raccoon", "robot", "rudolph", "sticktail", "union", "vampier");
@@ -38,7 +41,11 @@ public class HomeWindow {
         base.setAlignment(Pos.CENTER);
         homeWindowScene = new Scene(base);
         PrimaryStage = primaryStage;
+        PrimaryStage.setTitle("Pictionary - Home");
+        PrimaryStage.setWidth(500);
+        PrimaryStage.setHeight(400);
         PrimaryStage.setScene(homeWindowScene);
+        PrimaryStage.setResizable(false);
         PrimaryStage.show();
     }
 
@@ -56,6 +63,7 @@ public class HomeWindow {
         });
 
         File file = new File("resources/pictures/cat.jpg");
+        filelocation = "resources/pictures/cat.jpg";
         profileImage.setImage(new Image(file.toURI().toString()));
         Button rightButton = new Button("->");
         rightButton.setOnAction(event -> {
@@ -77,53 +85,32 @@ public class HomeWindow {
     }
 
     private void setImageView() {
-        String fileName = "resources/pictures/" + pictureList.get(pictureIndex) + ".jpg";
-        File newFile = new File(fileName);
+        filelocation = "resources/pictures/" + pictureList.get(pictureIndex) + ".jpg";
+        File newFile = new File(filelocation);
         profileImage.setImage(new Image(newFile.toURI().toString()));
     }
 
     private GridPane getJoinHostButtons() {
         GridPane joinHostButtons = new GridPane();
-
+        portTextField = new TextField();
         Button privateJoinButton = new Button("Join game");
         privateJoinButton.setOnAction(event -> {
-            if (!nameCheck()) {
-                System.out.println("your name was null!");
-            } else {
-                Client.getInstance().setUser(new User(username.getText(), false));
-                Client.getInstance().connectToServer("localhost", 10000);
+            if (inputCheck(false)) {
                 LobbyWindow LB = new LobbyWindow(PrimaryStage);
             }
         });
-        TextField portTextField = new TextField();
+
         Button privateHostButton = new Button("Host game");
         privateHostButton.setOnAction(event -> {
-            if (nameCheck()) {
-                String portText = portTextField.getText();
-                portText.trim();
-                if (!portText.equals("")) {
-                    try {
-                        int portNumber = Integer.parseInt(portText);
-                        Client.getInstance().setUser(new User(username.getText(), true));
-                        Client.getInstance().connectToServer("localhost", 10000);
-                        Server host = new Server(new ServerSettings(portNumber));
-                        LobbyWindow LB = new LobbyWindow(PrimaryStage);
-                    } catch (Exception e) {
-                        System.out.println("bad player, bad port");
-                    }
-
-                } else {
-                    System.out.println("bad player, no port");
-                }
-            }else {
-                System.out.println("bad player, no name");
+            if (inputCheck(true)) {
+                Server host = new Server(new ServerSettings(portNumber));
+                LobbyWindow LB = new LobbyWindow(PrimaryStage);
             }
-
         });
-
+        joinHostButtons.add(portTextField, 0, 1);
         joinHostButtons.add(privateHostButton, 1, 1);
         joinHostButtons.add(privateJoinButton, 2, 1);
-        joinHostButtons.add(portTextField,1,2);
+
 
         joinHostButtons.setVgap(10);
         joinHostButtons.setHgap(10);
@@ -132,16 +119,22 @@ public class HomeWindow {
         return joinHostButtons;
     }
 
-    private boolean nameCheck() {
+    private boolean inputCheck(boolean isHost) {
         if (username.getText().trim().isEmpty()) {
             System.out.println("name was null");
             return false;
+        } else if (portTextField.getText().trim().isEmpty()) {
+            System.out.println("port was null");
+            return false;
         }
-
+        try {
+            portNumber = Integer.parseInt(portTextField.getText());
+        } catch (Exception e) {
+            System.out.println("not a port");
+            return false;
+        }
+        Client.getInstance().setUser(new User(username.getText(), filelocation ,isHost));
+        Client.getInstance().connectToServer("localhost", 10000);
         return true;
-    }
-
-    public Scene getHomeWindowScene() {
-        return homeWindowScene;
     }
 }

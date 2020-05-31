@@ -1,18 +1,20 @@
 package comms;
 
+import javafx.scene.image.Image;
+
 import java.io.Serializable;
 
 public class User implements Serializable {
 
     private String name;
-//    private Image profileImage;
+    private String profileImage;
     private int score;
     private boolean isHost;
     private boolean isDrawing;
 
-    public User(String name, /*Image profileImage, */boolean isHost) {
+    public User(String name, String imageLocation,boolean isHost) {
         this.name = name;
-//        this.profileImage = profileImage;
+this.profileImage = imageLocation;
         this.score = 0;
         this.isHost = isHost;
         isDrawing = false;
@@ -56,5 +58,9 @@ public class User implements Serializable {
 
     public boolean isHost() {
         return isHost;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
     }
 }

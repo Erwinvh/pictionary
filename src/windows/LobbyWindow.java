@@ -1,15 +1,22 @@
 package windows;
 
+import comms.Client;
 import comms.User;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.collections.*;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class LobbyWindow {
@@ -17,23 +24,30 @@ public class LobbyWindow {
     private ArrayList<User> lobbyArrayList;
     private Scene lobbyWindowScene;
     private Stage PrimaryStage;
+    private VBox LobbyList;
 
     public LobbyWindow(Stage primaryStage) {
         HBox base = new HBox();
         base.setSpacing(40);
 
         ScrollPane listscroller = new ScrollPane();
+        listscroller.setMaxWidth(1000);
         listscroller.setContent(getLobbyListBox());
 
         base.getChildren().addAll(getGameSettingsBox(), listscroller);
         lobbyWindowScene = new Scene(base);
         PrimaryStage = primaryStage;
         PrimaryStage.setScene(lobbyWindowScene);
+        PrimaryStage.setTitle("Pictionary - Lobby");
+        PrimaryStage.setHeight(600);
+        PrimaryStage.setWidth(500);
+        PrimaryStage.setResizable(false);
         PrimaryStage.show();
     }
 
-    private VBox getGameSettingsBox(){
+    private VBox getGameSettingsBox() {
         VBox gameSettingsBox = new VBox();
+        gameSettingsBox.setAlignment(Pos.CENTER_LEFT);
         gameSettingsBox.setSpacing(10);
 
         Label amountOfRoundsLabel = new Label("Amount of rounds:");
@@ -55,25 +69,43 @@ public class LobbyWindow {
         Button startGameButton = new Button("Start game");
         startGameButton.setOnAction(event -> {
             // TODO: 27/05/2020 Launch the GameWindow (if settings are valid)
-
-
-
-            GameWindow gameWindow = new GameWindow(PrimaryStage);
+            if (getLobbySize()<=(Integer) maxAmountPlayersComboBox.getSelectionModel().getSelectedItem()) {
+                GameWindow gameWindow = new GameWindow(PrimaryStage);
+            }else {
+                System.out.println("you have too many players");
+            }
         });
 
-        gameSettingsBox.getChildren().addAll(amountOfRoundsLabel,roundsComboBox,languageLabel,languageComboBox,timePerRoundLabel,timePerRoundComboBox,maxAmountPlayersLabel,maxAmountPlayersComboBox, lobbyCodeLabel, startGameButton);
+        gameSettingsBox.getChildren().addAll(amountOfRoundsLabel, roundsComboBox, languageLabel, languageComboBox, timePerRoundLabel, timePerRoundComboBox, maxAmountPlayersLabel, maxAmountPlayersComboBox, lobbyCodeLabel, startGameButton);
         return gameSettingsBox;
     }
 
-    private VBox getLobbyListBox(){
-        return new VBox();
+    private VBox getLobbyListBox() {
+        LobbyList = new VBox();
+        LobbyList.setFillWidth(true);
+        LobbyList.setAlignment(Pos.CENTER);
+
+//        for (User user: A list of users on the server){
+//            LobbyList.getChildren().add(playermaker(user));
+//        }
+        LobbyList.getChildren().addAll(playermaker(new User("tester1","resources/pictures/cat.jpg",false)),playermaker(new User("tester1","resources/pictures/cat.jpg",false)), playermaker(Client.getInstance().getUser()));
+        return LobbyList;
     }
 
-    public Scene getLobbyWindowScene() {
-        return lobbyWindowScene;
+    private HBox playermaker(User user) {
+        HBox hBox = new HBox();
+        ImageView imageView = new ImageView();
+        File file = new File(user.getProfileImage());
+        imageView.setImage(new Image(file.toURI().toString()));
+        imageView.setFitWidth(40);
+        imageView.setFitHeight(40);
+        Label label = new Label(user.getName());
+        hBox.getChildren().addAll(imageView, label);
+        hBox.setAlignment(Pos.CENTER);
+        return hBox;
     }
 
-    private ComboBox getComboBox(int min, int limit, int stepSize, int selectIndex){
+    private ComboBox getComboBox(int min, int limit, int stepSize, int selectIndex) {
         ComboBox<Integer> comboBox = new ComboBox<>();
         for (int i = min; i <= limit; i++) {
             comboBox.getItems().add(i);
@@ -82,4 +114,14 @@ public class LobbyWindow {
         comboBox.getSelectionModel().select(selectIndex);
         return comboBox;
     }
+
+    public int getLobbySize(){
+        ObservableList<Node> childrens = LobbyList.getChildren();
+        int size = 0;
+        for (Node node:childrens
+             ) {
+            size++;
+        }return size;
+    }
+
 }
