@@ -1,16 +1,18 @@
-package comms;
+package comms.GameUpdates;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 
-public class DrawUpdate implements Serializable {
+public class DrawUpdate extends GameUpdate implements Serializable {
     private int brushSize;
     private Color color;
-private boolean shouldClearCanvas;
+    private boolean shouldClearCanvas;
     private Point2D position;
 
     public DrawUpdate(int brushSize, Color color, Point2D position, boolean shouldClearCanvas) {
+        super.gameUpdateType = GameUpdateType.DRAW;
+
         this.brushSize = brushSize;
         this.color = color;
         this.position = position;

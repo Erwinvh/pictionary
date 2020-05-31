@@ -1,5 +1,8 @@
 package comms;
 
+import comms.GameUpdates.GameUpdate;
+import comms.GameUpdates.GameUpdateListener;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,8 +18,7 @@ public class Client {
 
     private User user;
 
-    private DrawUpdateListener drawUpdateListener;
-    private ChatUpdateListener chatUpdateListener;
+    private GameUpdateListener gameUpdateListener;
 
     private Thread incomingDataThread;
 
@@ -76,19 +78,15 @@ public class Client {
             try {
                 Object objectIn = this.objectInputStream.readObject();
 
-                if (this.chatUpdateListener == null)
-                    throw new NullPointerException("ChatUpdateListener was null! Fix your shit");
+                if (this.gameUpdateListener == null)
+                    throw new NullPointerException("GameUpdateListener was null! Fix your shit");
 
-                if (this.drawUpdateListener == null)
-                    throw new NullPointerException("DrawUpdateListener was null! Fix your shit");
-
-                if (objectIn instanceof Message) {
-                    chatUpdateListener.onChatUpdate((Message) objectIn);
-                } else if (objectIn instanceof DrawUpdate) {
-                    drawUpdateListener.onDrawUpdate((DrawUpdate) objectIn);
+                if (objectIn instanceof GameUpdate) {
+                    gameUpdateListener.onGameUpdate((GameUpdate) objectIn);
                 }
 
             } catch (IOException | ClassNotFoundException e) {
+                System.out.println("Something went wrong whilst handling incoming data!");
                 e.printStackTrace();
             }
         }
@@ -131,11 +129,7 @@ public class Client {
         return user;
     }
 
-    public void setDrawUpdateListener(DrawUpdateListener drawUpdateListener) {
-        this.drawUpdateListener = drawUpdateListener;
-    }
-
-    public void setChatUpdateListener(ChatUpdateListener chatUpdateListener) {
-        this.chatUpdateListener = chatUpdateListener;
+    public void setGameUpdateListener(GameUpdateListener gameUpdateListener) {
+        this.gameUpdateListener = gameUpdateListener;
     }
 }

@@ -1,12 +1,14 @@
-package comms;
+package comms.GameUpdates;
 
 import java.io.Serializable;
 
-public class Message implements Serializable {
+public class ChatUpdate extends GameUpdate implements Serializable {
     private String username;
     private String message;
 
-    public Message(String username, String message) {
+    public ChatUpdate(String username, String message) {
+        super.gameUpdateType = GameUpdateType.CHAT;
+
         this.username = username;
         this.message = message;
     }

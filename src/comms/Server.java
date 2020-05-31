@@ -1,5 +1,8 @@
 package comms;
 
+import comms.GameUpdates.ChatUpdate;
+import comms.GameUpdates.GameUpdate;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -60,6 +63,7 @@ public class Server {
 
     private void stop() throws IOException {
         System.out.println("Stopping server...");
+        this.running = false;
         serverSocket.close();
     }
 
@@ -75,7 +79,7 @@ public class Server {
             connectedSockets.put(socket, user);
             objectOutputStreams.add(objectOutputStream);
 
-            sendToAllClients(new Message(user.getName(), JOIN_MESSAGE));
+            sendToAllClients(new ChatUpdate(user.getName(), JOIN_MESSAGE));
 
             while (connected) {
                 Object objectIn = objectInputStream.readObject();
@@ -84,8 +88,8 @@ public class Server {
                     connected = (boolean) objectIn;
                 }
 
-                if (objectIn instanceof Message || objectIn instanceof DrawUpdate) {
-                    // Notify all connected clients a new message or DrawUpdate has been received
+                if (objectIn instanceof GameUpdate) {
+                    // Notify all connected clients a new GameUpdate has been received
                     sendToAllClients(objectIn);
                 }
             }
@@ -94,7 +98,7 @@ public class Server {
             objectOutputStreams.remove(objectOutputStream);
             socket.close();
 
-            sendToAllClients(new Message(user.getName(), LEAVE_MESSAGE));
+            sendToAllClients(new ChatUpdate(user.getName(), LEAVE_MESSAGE));
 
             if (connectedSockets.size() == 0) {
                 stop();

@@ -1,6 +1,10 @@
 package windows;
 
-import comms.*;
+import comms.Client;
+import comms.GameUpdates.ChatUpdate;
+import comms.GameUpdates.DrawUpdate;
+import comms.GameUpdates.GameUpdate;
+import comms.GameUpdates.GameUpdateListener;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -22,10 +26,10 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
+public class GameWindow implements GameUpdateListener {
 
     private Scene gameWindowScene;
-    private List<Message> chatArrayList = new ArrayList<>();
+    private List<ChatUpdate> chatArrayList = new ArrayList<>();
     private GridPane chatMessagesBox;
     private Canvas canvas = new Canvas();
     private int radius = 30;
@@ -35,8 +39,7 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
     public GameWindow(Stage primaryStage) {
         primaryStage.setTitle("Pictionary - Game");
 
-        Client.getInstance().setDrawUpdateListener(this);
-        Client.getInstance().setChatUpdateListener(this);
+        Client.getInstance().setGameUpdateListener(this);
 
         HBox base = new HBox();
 
@@ -45,9 +48,9 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         graphics = new FXGraphics2D(canvas.getGraphicsContext2D());
         brushColor = Color.BLACK;
 
-        this.chatArrayList.add(new Message("tester1", "test this"));
-        this.chatArrayList.add(new Message("tester 2", "test that"));
-        this.chatArrayList.add(new Message("tester", "test this"));
+        this.chatArrayList.add(new ChatUpdate("tester1", "test this"));
+        this.chatArrayList.add(new ChatUpdate("tester 2", "test that"));
+        this.chatArrayList.add(new ChatUpdate("tester", "test this"));
 
         base.getChildren().addAll(fullDrawSetup(), getInfoVBox());
     }
@@ -56,8 +59,8 @@ public class GameWindow implements DrawUpdateListener, ChatUpdateListener {
         VBox drawSideSetup = new VBox();
 
         HBox ButtonsBox = new HBox();
-        ButtonsBox.getChildren().addAll(setupColourButtons(), getSizeButtons(),getClearCanvasButton());
-ButtonsBox.setSpacing(20);
+        ButtonsBox.getChildren().addAll(setupColourButtons(), getSizeButtons(), getClearCanvasButton());
+        ButtonsBox.setSpacing(20);
         setupCanvas();
 
         drawSideSetup.getChildren().addAll(canvas, ButtonsBox);
@@ -137,12 +140,14 @@ ButtonsBox.setSpacing(20);
         return hBox;
     }
 
-    public Button getClearCanvasButton(){
+    private Button getClearCanvasButton() {
         Button button = new Button("Clear canvas");
         button.setOnAction(event -> {
-            DrawUpdate drawUpdate= new DrawUpdate(0,Color.white,null,true);
+            DrawUpdate drawUpdate = new DrawUpdate(0, Color.white, null, true);
 
-            Client.getInstance().sendObject(drawUpdate);});
+            Client.getInstance().sendObject(drawUpdate);
+        });
+
         return button;
     }
 
@@ -157,10 +162,10 @@ ButtonsBox.setSpacing(20);
 
         Label roleLabel = new Label("Guessing");
         Label currentWord = new Label("D_N__Y");
-        Label scoreplaceholder = new Label("Scoreboard placeholder");
+        Label scoreLabel = new Label("Scoreboard placeholder");
         Label chatLogLabel = new Label("Chat");
 
-        infoVBox.getChildren().addAll(roleLabel, currentWord, scoreplaceholder, chatLogLabel, getChat(), getInput());
+        infoVBox.getChildren().addAll(roleLabel, currentWord, scoreLabel, chatLogLabel, getChat(), getInput());
 
         return infoVBox;
     }
@@ -177,8 +182,8 @@ ButtonsBox.setSpacing(20);
 
         chatMessagesBox.setVgap(10);
 
-        for (Message message : chatArrayList) {
-            addNewMessage(message);
+        for (ChatUpdate chatUpdate : chatArrayList) {
+            addNewMessage(chatUpdate);
         }
 
         return chatMessagesBox;
@@ -191,11 +196,10 @@ ButtonsBox.setSpacing(20);
 
         sendButton.setOnAction(event -> {
             if (messageInput.getText() != null) {
-                Message newMessage = new Message(Client.getInstance().getUser().getName(), messageInput.getText());
+                ChatUpdate newChatUpdate = new ChatUpdate(Client.getInstance().getUser().getName(), messageInput.getText());
 
                 // Make the client send the message to the server
-                Client.getInstance().sendObject(newMessage);
-                //addNewMessage(newMessage);
+                Client.getInstance().sendObject(newChatUpdate);
                 messageInput.clear();
             }
         });
@@ -205,14 +209,13 @@ ButtonsBox.setSpacing(20);
         return inputBox;
     }
 
-    private void addNewMessage(Message newMessage) {
+    private void addNewMessage(ChatUpdate newChatUpdate) {
+        Label messageLabel = new Label(newChatUpdate.toString());
 
-        Label messageLabel = new Label(newMessage.toString());
+        if (!chatArrayList.contains(newChatUpdate))
+            chatArrayList.add(newChatUpdate);
 
-        if (!chatArrayList.contains(newMessage))
-            chatArrayList.add(newMessage);
-
-        int messageRow = chatArrayList.indexOf(newMessage);
+        int messageRow = chatArrayList.indexOf(newChatUpdate);
         int messageColumn = 1;
 
         HBox messageBox = new HBox();
@@ -226,12 +229,32 @@ ButtonsBox.setSpacing(20);
     }
 
     @Override
-    public void onDrawUpdate(DrawUpdate drawUpdate) {
+    public void onGameUpdate(GameUpdate gameUpdate) {
+        GameUpdate.GameUpdateType gameUpdateType = gameUpdate.getGameUpdateType();
+        switch (gameUpdateType) {
+            case CHAT:
+                onChatUpdate((ChatUpdate) gameUpdate);
+                break;
+
+            case DRAW:
+                onDrawUpdate((DrawUpdate) gameUpdate);
+                break;
+
+            case ROUND:
+
+                break;
+
+            case TIMER:
+
+                break;
+        }
+    }
+
+    private void onDrawUpdate(DrawUpdate drawUpdate) {
         Platform.runLater(() -> {
             if (drawUpdate.isShouldClearCanvas()) {
-                graphics.clearRect(0,0,(int)canvas.getWidth(),(int)canvas.getHeight());
-            }
-            else{
+                graphics.clearRect(0, 0, (int) canvas.getWidth(), (int) canvas.getHeight());
+            } else {
                 int brushSize = drawUpdate.getBrushSize();
                 graphics.setColor(drawUpdate.getColor());
 
@@ -242,8 +265,7 @@ ButtonsBox.setSpacing(20);
         });
     }
 
-    @Override
-    public void onChatUpdate(Message message) {
-        addNewMessage(message);
+    private void onChatUpdate(ChatUpdate chatUpdate) {
+        addNewMessage(chatUpdate);
     }
 }
