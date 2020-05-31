@@ -3,6 +3,7 @@ package comms;
 import comms.GameUpdates.ChatUpdate;
 import comms.GameUpdates.GameUpdate;
 import comms.GameUpdates.RoundUpdate;
+import comms.GameUpdates.UserUpdate;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -158,20 +159,30 @@ public class Server {
         }
     }
 
-    public void nextRound() {
+    private void nextRound() {
+        currentDrawerIndex = 0;
+        nextDrawer(true);
+
         currentRoundIndex++;
-        if (serverSettings.getRounds() == currentRoundIndex){
+        if (serverSettings.getRounds() == currentRoundIndex) {
             // TODO: 31/05/2020 End game
             return;
         }
 
-        Round nextRound = new Round(currentRoundIndex);
-        sendToAllClients(new RoundUpdate(nextRound));
+        sendToAllClients(new RoundUpdate(currentRoundIndex, this.serverSettings.getRounds()));
     }
 
-    private void nextDrawer() {
+    private void nextDrawer(boolean isFirst) {
         User[] users = (User[]) connectedSockets.values().toArray();
+
+        if (isFirst) {
+            users[currentDrawerIndex].setDrawing(true);
+            sendToAllClients(new UserUpdate(users[currentDrawerIndex], false));
+            return;
+        }
+
         users[currentDrawerIndex].setDrawing(false);
+        sendToAllClients(new UserUpdate(users[currentDrawerIndex], false));
 
         if (currentDrawerIndex == users.length) {
             nextRound();
@@ -181,6 +192,7 @@ public class Server {
         // Increase index of current drawer and then set the corresponding user to allow interaction with the canvas
         currentDrawerIndex++;
         users[currentDrawerIndex].setDrawing(true);
+        sendToAllClients(new UserUpdate(users[currentDrawerIndex], false));
     }
 
     public boolean getRunning() {

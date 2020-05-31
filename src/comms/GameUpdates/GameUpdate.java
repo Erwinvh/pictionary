@@ -1,12 +1,15 @@
 package comms.GameUpdates;
 
-public abstract class GameUpdate {
+import java.io.Serializable;
+
+public abstract class GameUpdate implements Serializable {
     public enum GameUpdateType {
         CHAT,
         DRAW,
         ROUND,
         TIMER,
-        HINT, USER
+        HINT,
+        USER
     }
 
     GameUpdateType gameUpdateType;
