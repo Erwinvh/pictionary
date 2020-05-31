@@ -1,17 +1,21 @@
 package comms.GameUpdates;
 
-import comms.Round;
-
 public class RoundUpdate extends GameUpdate {
-    private Round round;
+    private int roundNum;
+    private int maxRounds;
 
-    public RoundUpdate(Round newRound) {
+    public RoundUpdate(int roundNum, int maxRounds) {
         this.gameUpdateType = GameUpdateType.ROUND;
 
-        this.round = newRound;
+        this.roundNum = roundNum;
+        this.maxRounds = maxRounds;
     }
 
-    public Round getRound() {
-        return round;
+    public int getRoundNum() {
+        return roundNum;
+    }
+
+    public int getMaxRounds() {
+        return maxRounds;
     }
 }

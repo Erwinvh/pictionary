@@ -28,6 +28,11 @@ public class GameWindow implements GameUpdateListener {
 
     private Scene gameWindowScene;
 
+    private Label roleLabel = new Label("Guessing");
+    private Label currentWordLabel = new Label();
+    private Label timeLeftLabel = new Label("180");
+    private Label currentRoundLabel = new Label("");
+
     // Chat
     private List<ChatUpdate> chatArrayList;
     private GridPane chatMessagesBox;
@@ -68,7 +73,7 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private void setupGraphics() {
-        this.graphics = new FXGraphics2D(canvas.getGraphicsContext2D());
+        this.graphics = new FXGraphics2D(this.canvas.getGraphicsContext2D());
         this.graphics.setTransform(new AffineTransform());
         this.graphics.setBackground(java.awt.Color.white);
         this.graphics.clearRect(0, 0, (int) canvas.getWidth(), (int) canvas.getHeight());
@@ -149,27 +154,22 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private void onRoundUpdate(RoundUpdate roundUpdate) {
-        Platform.runLater(() -> {
-            // TODO: 31/05/2020 update round text
-            // TODO: 31/05/2020 update rest of the gui depending on user isDrawing
-        });
+        Platform.runLater(() -> this.currentRoundLabel.setText(String.format("Round %s of %s rounds", roundUpdate.getRoundNum(), roundUpdate.getMaxRounds())));
     }
 
     private void onTimerUpdate(TimerUpdate timerUpdate) {
-        Platform.runLater(() -> {
-
-        });
+        Platform.runLater(() -> this.timeLeftLabel.setText(String.valueOf(timerUpdate.getTimeLeft())));
     }
 
     private void onUserUpdate(UserUpdate userUpdate) {
-        if (userUpdate.hasLeft()){
+        if (userUpdate.hasLeft()) {
             // TODO: 31/05/2020 Remove this user from the display board
             return;
         }
 
         // If the user update is this user itself
-        if (userUpdate.getUser().equals(Client.getInstance().getUser())){
-            if (userUpdate.getUser().isDrawing()){
+        if (userUpdate.getUser().equals(Client.getInstance().getUser())) {
+            if (userUpdate.getUser().isDrawing()) {
                 // TODO: 31/05/2020 I am drawing this round! Show the controls and the words to choose from
             }
         }
@@ -177,7 +177,7 @@ public class GameWindow implements GameUpdateListener {
         updateScoreboard(userUpdate.getUser());
     }
 
-    private void updateScoreboard(User user){
+    private void updateScoreboard(User user) {
 
     }
 
@@ -256,12 +256,9 @@ public class GameWindow implements GameUpdateListener {
     private VBox getInfoVBox() {
         VBox infoVBox = new VBox();
 
-        Label roleLabel = new Label("Guessing");
-        Label currentWord = new Label("D_N__Y");
-        Label scoreLabel = new Label("Scoreboard placeholder");
         Label chatLogLabel = new Label("Chat");
 
-        infoVBox.getChildren().addAll(roleLabel, currentWord, scoreLabel, chatLogLabel, getChat(), getInput());
+        infoVBox.getChildren().addAll(this.roleLabel, this.currentWordLabel, chatLogLabel, getChat(), getInput());
 
         return infoVBox;
     }

@@ -8,4 +8,8 @@ public class TimerUpdate extends GameUpdate {
 
         this.timeLeft = newTimeLeft;
     }
+
+    public int getTimeLeft() {
+        return timeLeft;
+    }
 }
