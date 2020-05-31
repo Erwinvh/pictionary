@@ -2,18 +2,20 @@ package comms;
 
 import comms.GameUpdates.ChatUpdate;
 import comms.GameUpdates.GameUpdate;
+import comms.GameUpdates.RoundUpdate;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Server {
 
+    // Network
     private ServerSettings serverSettings;
 
     private ServerSocket serverSocket;
@@ -25,13 +27,23 @@ public class Server {
     private final String JOIN_MESSAGE = "has joined the room!";
     private final String LEAVE_MESSAGE = "has left the room!";
 
+    // Game
+    private static final String wordFileName = "words.json";
+    private Queue<String> englishWordList = new LinkedList<>();
+
+    private int currentDrawerIndex = 0;
+    private int currentRoundIndex = 0;
+    private String currentWord;
+
     public Server(ServerSettings serverSettings) {
         this.serverSettings = serverSettings;
         this.serverSocket = null;
         this.running = false;
 
-        this.connectedSockets = new HashMap<>();
+        this.connectedSockets = new LinkedHashMap<>();
         this.objectOutputStreams = new ArrayList<>();
+
+        setupWordList();
 
         try {
             start();
@@ -109,14 +121,6 @@ public class Server {
         }
     }
 
-    public void nextRound() {
-
-    }
-
-    private void nextDrawer() {
-
-    }
-
     private void sendToAllClients(Object obj) {
         System.out.println("Sending \"" + obj.toString() + "\" to " + connectedSockets.size() + " clients...");
 
@@ -128,6 +132,55 @@ public class Server {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void setupWordList() {
+        try {
+            File file = new File(getClass().getResource(wordFileName).getFile());
+            if (!file.exists()) {
+                throw new FileNotFoundException("The " + wordFileName + "was not found");
+            } else {
+                try (Reader reader = new FileReader(wordFileName)) {
+                    JsonReader jsonReader = Json.createReader(reader);
+                    JsonArray wordsJsonArray = jsonReader.readArray();
+
+                    for (int i = 0; i < wordsJsonArray.size(); i++) {
+                        JsonObject wordObject = wordsJsonArray.getJsonObject(i);
+                        String word = wordObject.getString("english");
+                        englishWordList.add(word);
+                    }
+
+                    jsonReader.close();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void nextRound() {
+        currentRoundIndex++;
+        if (serverSettings.getRounds() == currentRoundIndex){
+            // TODO: 31/05/2020 End game
+            return;
+        }
+
+        Round nextRound = new Round(currentRoundIndex);
+        sendToAllClients(new RoundUpdate(nextRound));
+    }
+
+    private void nextDrawer() {
+        User[] users = (User[]) connectedSockets.values().toArray();
+        users[currentDrawerIndex].setDrawing(false);
+
+        if (currentDrawerIndex == users.length) {
+            nextRound();
+            return;
+        }
+
+        // Increase index of current drawer and then set the corresponding user to allow interaction with the canvas
+        currentDrawerIndex++;
+        users[currentDrawerIndex].setDrawing(true);
     }
 
     public boolean getRunning() {
