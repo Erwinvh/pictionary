@@ -1,19 +1,14 @@
 package comms;
 
 public class ServerSettings {
-    private int rounds;
-    private int timeInSeconds;
-    private int maxPlayers;
-    private String language;
-    private String serverAddress;
+    private int rounds = 3;
+    private int timeInSeconds = 180;
+    private int maxPlayers = 8;
+    private String language = "English";
+    private String serverAddress = "localhost";
     private int port;
 
-    public ServerSettings(int rounds, int timeInSeconds, int maxPlayers, String language, String serverAddress, int port) {
-        this.rounds = rounds;
-        this.timeInSeconds = timeInSeconds;
-        this.maxPlayers = maxPlayers;
-        this.language = language;
-        this.serverAddress = serverAddress;
+    public ServerSettings(int port) {
         this.port = port;
     }
 
@@ -45,6 +40,9 @@ public class ServerSettings {
         return language;
     }
 
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 
     public String getServerAddress() {
         return serverAddress;
@@ -53,5 +51,4 @@ public class ServerSettings {
     public int getPort() {
         return port;
     }
-
 }
