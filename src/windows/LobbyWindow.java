@@ -22,7 +22,6 @@ import java.util.ArrayList;
 public class LobbyWindow {
 
     private ArrayList<User> lobbyArrayList;
-    private Scene lobbyWindowScene;
     private Stage PrimaryStage;
     private VBox LobbyList;
 
@@ -35,9 +34,8 @@ public class LobbyWindow {
         listscroller.setContent(getLobbyListBox());
 
         base.getChildren().addAll(getGameSettingsBox(), listscroller);
-        lobbyWindowScene = new Scene(base);
         PrimaryStage = primaryStage;
-        PrimaryStage.setScene(lobbyWindowScene);
+        PrimaryStage.setScene(new Scene(base));
         PrimaryStage.setTitle("Pictionary - Lobby");
         PrimaryStage.setHeight(600);
         PrimaryStage.setWidth(500);

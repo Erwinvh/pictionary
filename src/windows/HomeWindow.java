@@ -23,15 +23,20 @@ import java.util.List;
 
 public class HomeWindow {
 
-    private Scene homeWindowScene;
+    //Stage
+    private Stage PrimaryStage;
+
+    //Picture
     private int pictureIndex = 0;
     private ArrayList<String> pictureList = new ArrayList<>();
     private ImageView profileImage = new ImageView();
+    private String filelocation;
+
+    //User information
     private TextField username = new TextField();
-    private Stage PrimaryStage;
     private TextField portTextField;
     private int portNumber;
-    private String filelocation;
+
 
     public HomeWindow(Stage primaryStage) {
         List<String> namesList = Arrays.asList("cat", "chicken", "chip", "dog", "donkey", "goldy", "owl", "pengiun", "pine", "raccoon", "robot", "rudolph", "sticktail", "union", "vampier");
@@ -39,12 +44,11 @@ public class HomeWindow {
         VBox base = new VBox();
         base.getChildren().addAll(new Label("Pictionary"), getPlayerInformation(), getJoinHostButtons());
         base.setAlignment(Pos.CENTER);
-        homeWindowScene = new Scene(base);
         PrimaryStage = primaryStage;
         PrimaryStage.setTitle("Pictionary - Home");
         PrimaryStage.setWidth(500);
         PrimaryStage.setHeight(400);
-        PrimaryStage.setScene(homeWindowScene);
+        PrimaryStage.setScene(new Scene(base));
         PrimaryStage.setResizable(false);
         PrimaryStage.show();
     }

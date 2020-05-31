@@ -30,7 +30,6 @@ import java.util.List;
 public class GameWindow implements GameUpdateListener {
 
     //Stage
-    private Scene gameWindowScene;
     private Stage PrimaryStage;
 
     // Chat
@@ -49,16 +48,11 @@ public class GameWindow implements GameUpdateListener {
     private Color brushColor;
     private Canvas canvas;
 
-
-
     public GameWindow(Stage primaryStage) {
         PrimaryStage = primaryStage;
         PrimaryStage.setTitle("Pictionary - Game");
 
         Client.getInstance().setGameUpdateListener(this);
-
-
-
 
         brushColor = Color.BLACK;
 
@@ -67,8 +61,7 @@ public class GameWindow implements GameUpdateListener {
         PrimaryStage.setResizable(false);
         PrimaryStage.setWidth(1000);
         PrimaryStage.setHeight(730);
-        this.gameWindowScene = new Scene(setupFrame());
-        PrimaryStage.setScene(gameWindowScene);
+        PrimaryStage.setScene(new Scene(setupFrame()));
         PrimaryStage.show();
     }
 
@@ -343,9 +336,5 @@ public class GameWindow implements GameUpdateListener {
         inputBox.getChildren().addAll(messageInput, sendButton);
 
         return inputBox;
-    }
-
-    public Scene getGameWindowScene() {
-        return this.gameWindowScene;
     }
 }
