@@ -1,10 +1,8 @@
 package windows;
 
 import comms.Client;
-import comms.GameUpdates.ChatUpdate;
-import comms.GameUpdates.DrawUpdate;
-import comms.GameUpdates.GameUpdate;
-import comms.GameUpdates.GameUpdateListener;
+import comms.GameUpdates.*;
+import comms.User;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -29,9 +27,14 @@ import java.util.List;
 public class GameWindow implements GameUpdateListener {
 
     private Scene gameWindowScene;
-    private List<ChatUpdate> chatArrayList = new ArrayList<>();
+
+    // Chat
+    private List<ChatUpdate> chatArrayList;
     private GridPane chatMessagesBox;
-    private Canvas canvas = new Canvas();
+
+    private Canvas canvas;
+
+    // Drawing
     private int radius = 30;
     private FXGraphics2D graphics;
     private Color brushColor;
@@ -42,38 +45,33 @@ public class GameWindow implements GameUpdateListener {
         Client.getInstance().setGameUpdateListener(this);
 
         HBox base = new HBox();
-
         this.gameWindowScene = new Scene(base);
 
-        graphics = new FXGraphics2D(canvas.getGraphicsContext2D());
-        brushColor = Color.BLACK;
-
-        this.chatArrayList.add(new ChatUpdate("tester1", "test this"));
-        this.chatArrayList.add(new ChatUpdate("tester 2", "test that"));
-        this.chatArrayList.add(new ChatUpdate("tester", "test this"));
-
-        base.getChildren().addAll(fullDrawSetup(), getInfoVBox());
-    }
-
-    private VBox fullDrawSetup() {
-        VBox drawSideSetup = new VBox();
-
-        HBox ButtonsBox = new HBox();
-        ButtonsBox.getChildren().addAll(setupColourButtons(), getSizeButtons(), getClearCanvasButton());
-        ButtonsBox.setSpacing(20);
         setupCanvas();
 
-        drawSideSetup.getChildren().addAll(canvas, ButtonsBox);
-        return drawSideSetup;
+        brushColor = Color.BLACK;
+
+        chatArrayList = new ArrayList<>();
+
+        base.getChildren().addAll(getDrawingArea(), getInfoVBox());
     }
 
     private void setupCanvas() {
-        canvas.setWidth(600);
-        canvas.setHeight(600);
+        this.canvas = new Canvas();
+        this.canvas.setWidth(600);
+        this.canvas.setHeight(600);
 
-        canvas.setOnMouseClicked(this::onMouse);
-        canvas.setOnMouseDragged(this::onMouse);
-        draw(new FXGraphics2D(canvas.getGraphicsContext2D()));
+        this.canvas.setOnMouseClicked(this::onMouse);
+        this.canvas.setOnMouseDragged(this::onMouse);
+
+        setupGraphics();
+    }
+
+    private void setupGraphics() {
+        this.graphics = new FXGraphics2D(canvas.getGraphicsContext2D());
+        this.graphics.setTransform(new AffineTransform());
+        this.graphics.setBackground(java.awt.Color.white);
+        this.graphics.clearRect(0, 0, (int) canvas.getWidth(), (int) canvas.getHeight());
     }
 
     private void onMouse(MouseEvent mouseEvent) {
@@ -90,7 +88,111 @@ public class GameWindow implements GameUpdateListener {
         Client.getInstance().sendObject(drawUpdate);
     }
 
-    private GridPane setupColourButtons() {
+    private void addNewMessage(ChatUpdate newChatUpdate) {
+        Label messageLabel = new Label(newChatUpdate.toString());
+
+        if (!chatArrayList.contains(newChatUpdate))
+            chatArrayList.add(newChatUpdate);
+
+        int messageRow = chatArrayList.indexOf(newChatUpdate);
+        int messageColumn = 1;
+
+        HBox messageBox = new HBox();
+        messageBox.getChildren().add(messageLabel);
+
+        Platform.runLater(() -> this.chatMessagesBox.add(messageBox, messageColumn, messageRow));
+    }
+
+    @Override
+    public void onGameUpdate(GameUpdate gameUpdate) {
+        GameUpdate.GameUpdateType gameUpdateType = gameUpdate.getGameUpdateType();
+        switch (gameUpdateType) {
+            case CHAT:
+                onChatUpdate((ChatUpdate) gameUpdate);
+                break;
+
+            case DRAW:
+                onDrawUpdate((DrawUpdate) gameUpdate);
+                break;
+
+            case ROUND:
+                onRoundUpdate((RoundUpdate) gameUpdate);
+                break;
+
+            case TIMER:
+                onTimerUpdate((TimerUpdate) gameUpdate);
+                break;
+
+            case USER:
+                onUserUpdate((UserUpdate) gameUpdate);
+                break;
+        }
+    }
+
+    private void onDrawUpdate(DrawUpdate drawUpdate) {
+        Platform.runLater(() -> {
+            if (drawUpdate.isShouldClearCanvas()) {
+                graphics.clearRect(0, 0, (int) canvas.getWidth(), (int) canvas.getHeight());
+            } else {
+                int brushSize = drawUpdate.getBrushSize();
+                graphics.setColor(drawUpdate.getColor());
+
+                Point2D point = drawUpdate.getPosition();
+
+                graphics.fillOval((int) point.getX() - brushSize, (int) point.getY() - brushSize, brushSize * 2, brushSize * 2);
+            }
+        });
+    }
+
+    private void onChatUpdate(ChatUpdate chatUpdate) {
+        addNewMessage(chatUpdate);
+    }
+
+    private void onRoundUpdate(RoundUpdate roundUpdate) {
+        Platform.runLater(() -> {
+            // TODO: 31/05/2020 update round text
+            // TODO: 31/05/2020 update rest of the gui depending on user isDrawing
+        });
+    }
+
+    private void onTimerUpdate(TimerUpdate timerUpdate) {
+        Platform.runLater(() -> {
+
+        });
+    }
+
+    private void onUserUpdate(UserUpdate userUpdate) {
+        if (userUpdate.hasLeft()){
+            // TODO: 31/05/2020 Remove this user from the display board
+            return;
+        }
+
+        // If the user update is this user itself
+        if (userUpdate.getUser().equals(Client.getInstance().getUser())){
+            if (userUpdate.getUser().isDrawing()){
+                // TODO: 31/05/2020 I am drawing this round! Show the controls and the words to choose from
+            }
+        }
+
+        updateScoreboard(userUpdate.getUser());
+    }
+
+    private void updateScoreboard(User user){
+
+    }
+
+    private VBox getDrawingArea() {
+        VBox drawSideSetup = new VBox();
+
+        HBox buttonsBox = new HBox();
+        buttonsBox.getChildren().addAll(getColourButtons(), getSizeButtons(), getClearCanvasButton());
+        buttonsBox.setSpacing(20);
+
+        drawSideSetup.getChildren().addAll(canvas, buttonsBox);
+        return drawSideSetup;
+    }
+
+    private GridPane getColourButtons() {
         GridPane gridpane = new GridPane();
 
         Button greenButton = new Button("green");
@@ -151,12 +253,6 @@ public class GameWindow implements GameUpdateListener {
         return button;
     }
 
-    private void draw(FXGraphics2D graphics) {
-        graphics.setTransform(new AffineTransform());
-        graphics.setBackground(java.awt.Color.white);
-        graphics.clearRect(0, 0, (int) canvas.getWidth(), (int) canvas.getHeight());
-    }
-
     private VBox getInfoVBox() {
         VBox infoVBox = new VBox();
 
@@ -172,21 +268,17 @@ public class GameWindow implements GameUpdateListener {
 
     private ScrollPane getChat() {
         ScrollPane chatScrollPane = new ScrollPane();
-        chatScrollPane.setContent(getChatMessagesBox());
 
-        return chatScrollPane;
-    }
-
-    private GridPane getChatMessagesBox() {
         chatMessagesBox = new GridPane();
-
         chatMessagesBox.setVgap(10);
 
         for (ChatUpdate chatUpdate : chatArrayList) {
             addNewMessage(chatUpdate);
         }
 
-        return chatMessagesBox;
+        chatScrollPane.setContent(chatMessagesBox);
+
+        return chatScrollPane;
     }
 
     private HBox getInput() {
@@ -209,63 +301,7 @@ public class GameWindow implements GameUpdateListener {
         return inputBox;
     }
 
-    private void addNewMessage(ChatUpdate newChatUpdate) {
-        Label messageLabel = new Label(newChatUpdate.toString());
-
-        if (!chatArrayList.contains(newChatUpdate))
-            chatArrayList.add(newChatUpdate);
-
-        int messageRow = chatArrayList.indexOf(newChatUpdate);
-        int messageColumn = 1;
-
-        HBox messageBox = new HBox();
-        messageBox.getChildren().add(messageLabel);
-
-        Platform.runLater(() -> this.chatMessagesBox.add(messageBox, messageColumn, messageRow));
-    }
-
     public Scene getGameWindowScene() {
         return this.gameWindowScene;
-    }
-
-    @Override
-    public void onGameUpdate(GameUpdate gameUpdate) {
-        GameUpdate.GameUpdateType gameUpdateType = gameUpdate.getGameUpdateType();
-        switch (gameUpdateType) {
-            case CHAT:
-                onChatUpdate((ChatUpdate) gameUpdate);
-                break;
-
-            case DRAW:
-                onDrawUpdate((DrawUpdate) gameUpdate);
-                break;
-
-            case ROUND:
-
-                break;
-
-            case TIMER:
-
-                break;
-        }
-    }
-
-    private void onDrawUpdate(DrawUpdate drawUpdate) {
-        Platform.runLater(() -> {
-            if (drawUpdate.isShouldClearCanvas()) {
-                graphics.clearRect(0, 0, (int) canvas.getWidth(), (int) canvas.getHeight());
-            } else {
-                int brushSize = drawUpdate.getBrushSize();
-                graphics.setColor(drawUpdate.getColor());
-
-                Point2D point = drawUpdate.getPosition();
-
-                graphics.fillOval((int) point.getX() - brushSize, (int) point.getY() - brushSize, brushSize * 2, brushSize * 2);
-            }
-        });
-    }
-
-    private void onChatUpdate(ChatUpdate chatUpdate) {
-        addNewMessage(chatUpdate);
     }
 }
