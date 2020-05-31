@@ -10,4 +10,8 @@ public class RoundUpdate extends GameUpdate {
 
         this.round = newRound;
     }
+
+    public Round getRound() {
+        return round;
+    }
 }

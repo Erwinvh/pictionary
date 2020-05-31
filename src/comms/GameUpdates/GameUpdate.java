@@ -5,13 +5,14 @@ public abstract class GameUpdate {
         CHAT,
         DRAW,
         ROUND,
-        TIMER
+        TIMER,
+        HINT, USER
     }
 
     GameUpdateType gameUpdateType;
 
     public GameUpdateType getGameUpdateType() {
-        if (gameUpdateType == null){
+        if (gameUpdateType == null) {
             throw new NullPointerException("GameUpdateType was null! Don't forget to set the type in the constructor");
         }
 
