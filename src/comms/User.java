@@ -1,7 +1,5 @@
 package comms;
 
-import javafx.scene.image.Image;
-
 import java.io.Serializable;
 
 public class User implements Serializable {
@@ -38,6 +36,10 @@ public class User implements Serializable {
 
     public boolean isDrawing(){
         return isDrawing;
+    }
+
+    public void setDrawing(boolean drawing) {
+        isDrawing = drawing;
     }
 
     public int getScore() {
