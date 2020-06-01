@@ -137,11 +137,14 @@ public class Server {
 
     private void setupWordList() {
         try {
+
+            System.out.println(getClass().getResource(wordFileName).getFile());
             File file = new File(getClass().getResource(wordFileName).getFile());
+//            File file = new File(getClass().getResource(wordFileName).getFile());
             if (!file.exists()) {
                 throw new FileNotFoundException("The " + wordFileName + "was not found");
             } else {
-                try (Reader reader = new FileReader(wordFileName)) {
+                try (Reader reader = new FileReader(file)) {
                     JsonReader jsonReader = Json.createReader(reader);
                     JsonArray wordsJsonArray = jsonReader.readArray();
 
