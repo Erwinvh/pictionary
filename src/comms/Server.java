@@ -59,8 +59,6 @@ public class Server {
         this.serverSocket = new ServerSocket(this.serverSettings.getPort());
         this.running = true;
 
-        // TODO: 23/05/2020 Add client that is hosting the serverSocket to the list as well?
-
         while (this.running) {
             System.out.println("Waiting for client to connect...");
             final Socket client = this.serverSocket.accept();

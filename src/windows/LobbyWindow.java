@@ -72,10 +72,9 @@ public class LobbyWindow implements GameUpdateListener {
         Button startGameButton = new Button("Start game");
         startGameButton.setOnAction(event -> {
             if (getLobbySize() <= maxAmountPlayersComboBox.getSelectionModel().getSelectedItem()) {
+                // Send user instance so the server can check whether I am host or not,
+                // since only the host can start a game
                 Client.getInstance().sendObject(Client.getInstance().getUser());
-                // TODO: 01/06/2020 handle launching gamewindow differently (via GameUpdateListener to ensure the server has started the game)
-                //  so other clients can also launch their gamewindow!
-//                new GameWindow(primaryStage);
             } else {
                 System.out.println("You have too many players");
             }
@@ -89,10 +88,6 @@ public class LobbyWindow implements GameUpdateListener {
         lobbyList.setFillWidth(true);
         lobbyList.setAlignment(Pos.CENTER);
 
-//        for (User user: A list of users on the server){
-//            lobbyList.getChildren().add(playerMaker(user));
-//        }
-        // lobbyList.getChildren().addAll(playerMaker(new User("tester1", "resources/pictures/cat.jpg", false)), playerMaker(new User("tester1", "resources/pictures/cat.jpg", false)), playerMaker(Client.getInstance().getUser()));
         return lobbyList;
     }
 
