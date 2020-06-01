@@ -15,12 +15,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Client.getInstance().setUser(new User("Arne","resources/pictures/cat.jpg", false));
-        Client.getInstance().connectToServer("localhost", 10000);
-        GameWindow Application = new GameWindow(primaryStage);
-
-
-
+        HomeWindow homeWindow = new HomeWindow(primaryStage);
+//        Client.getInstance().setUser(new User("Arne","resources/pictures/cat.jpg", false));
+//        Client.getInstance().connectToServer("localhost", 10000);
+        primaryStage.show();
     }
 
     @Override
