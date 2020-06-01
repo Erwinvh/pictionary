@@ -23,34 +23,37 @@ import java.util.List;
 
 public class HomeWindow {
 
-    //Stage
-    private Stage PrimaryStage;
+    // Stage
+    private Stage primaryStage;
 
-    //Picture
+    // Picture
     private int pictureIndex = 0;
     private ArrayList<String> pictureList = new ArrayList<>();
     private ImageView profileImage = new ImageView();
-    private String filelocation;
+    private String fileLocation;
 
-    //User information
+    // User information
     private TextField username = new TextField();
     private TextField portTextField;
-    private int portNumber;
 
+    // Launch settings
+    private int portNumber;
 
     public HomeWindow(Stage primaryStage) {
         List<String> namesList = Arrays.asList("cat", "chicken", "chip", "dog", "donkey", "goldy", "owl", "pengiun", "pine", "raccoon", "robot", "rudolph", "sticktail", "union", "vampier");
         pictureList.addAll(namesList);
+
         VBox base = new VBox();
         base.getChildren().addAll(new Label("Pictionary"), getPlayerInformation(), getJoinHostButtons());
         base.setAlignment(Pos.CENTER);
-        PrimaryStage = primaryStage;
-        PrimaryStage.setTitle("Pictionary - Home");
-        PrimaryStage.setWidth(500);
-        PrimaryStage.setHeight(400);
-        PrimaryStage.setScene(new Scene(base));
-        PrimaryStage.setResizable(false);
-        PrimaryStage.show();
+
+        this.primaryStage = primaryStage;
+        this.primaryStage.setTitle("Pictionary - Home");
+        this.primaryStage.setWidth(500);
+        this.primaryStage.setHeight(400);
+        this.primaryStage.setScene(new Scene(base));
+        this.primaryStage.setResizable(false);
+        this.primaryStage.show();
     }
 
     private HBox getPlayerInformation() {
@@ -63,12 +66,14 @@ public class HomeWindow {
             } else {
                 pictureIndex = 14;
             }
+
             setImageView();
         });
 
-        filelocation = "resources/pictures/cat.jpg";
-        File file = new File(filelocation);
+        fileLocation = "resources/pictures/cat.jpg";
+        File file = new File(fileLocation);
         profileImage.setImage(new Image(file.toURI().toString()));
+
         Button rightButton = new Button("->");
         rightButton.setOnAction(event -> {
             if (pictureIndex <= 13) {
@@ -76,6 +81,7 @@ public class HomeWindow {
             } else {
                 pictureIndex = 0;
             }
+
             setImageView();
         });
 
@@ -89,8 +95,8 @@ public class HomeWindow {
     }
 
     private void setImageView() {
-        filelocation = "resources/pictures/" + pictureList.get(pictureIndex) + ".jpg";
-        File newFile = new File(filelocation);
+        fileLocation = "resources/pictures/" + pictureList.get(pictureIndex) + ".jpg";
+        File newFile = new File(fileLocation);
         profileImage.setImage(new Image(newFile.toURI().toString()));
     }
 
@@ -100,7 +106,7 @@ public class HomeWindow {
         Button privateJoinButton = new Button("Join game");
         privateJoinButton.setOnAction(event -> {
             if (inputCheck(false)) {
-                LobbyWindow LB = new LobbyWindow(PrimaryStage);
+                LobbyWindow lobbyWindow = new LobbyWindow(primaryStage);
             }
         });
 
@@ -108,13 +114,13 @@ public class HomeWindow {
         privateHostButton.setOnAction(event -> {
             if (inputCheck(true)) {
                 Server host = new Server(new ServerSettings(portNumber));
-                LobbyWindow LB = new LobbyWindow(PrimaryStage);
+                LobbyWindow lobbyWindow = new LobbyWindow(primaryStage);
             }
         });
+
         joinHostButtons.add(portTextField, 0, 1);
         joinHostButtons.add(privateHostButton, 1, 1);
         joinHostButtons.add(privateJoinButton, 2, 1);
-
 
         joinHostButtons.setVgap(10);
         joinHostButtons.setHgap(10);
@@ -125,20 +131,23 @@ public class HomeWindow {
 
     private boolean inputCheck(boolean isHost) {
         if (username.getText().trim().isEmpty()) {
-            System.out.println("name was null");
+            System.out.println("Name was null");
             return false;
         } else if (portTextField.getText().trim().isEmpty()) {
-            System.out.println("port was null");
+            System.out.println("Port was null");
             return false;
         }
+
         try {
             portNumber = Integer.parseInt(portTextField.getText());
         } catch (Exception e) {
-            System.out.println("not a port");
+            System.out.println("Not a port");
             return false;
         }
-        Client.getInstance().setUser(new User(username.getText(), filelocation ,isHost));
+
+        Client.getInstance().setUser(new User(username.getText(), fileLocation, isHost));
         Client.getInstance().connectToServer("localhost", portNumber);
+
         return true;
     }
 }

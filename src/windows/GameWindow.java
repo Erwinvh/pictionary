@@ -30,7 +30,7 @@ import java.util.List;
 public class GameWindow implements GameUpdateListener {
 
     //Stage
-    private Stage PrimaryStage;
+    private Stage primaryStage;
 
     // Chat
     private List<ChatUpdate> chatArrayList;
@@ -49,8 +49,8 @@ public class GameWindow implements GameUpdateListener {
     private Canvas canvas;
 
     public GameWindow(Stage primaryStage) {
-        PrimaryStage = primaryStage;
-        PrimaryStage.setTitle("Pictionary - Game");
+        this.primaryStage = primaryStage;
+        this.primaryStage.setTitle("Pictionary - Game");
 
         Client.getInstance().setGameUpdateListener(this);
 
@@ -58,11 +58,11 @@ public class GameWindow implements GameUpdateListener {
 
         chatArrayList = new ArrayList<>();
 
-        PrimaryStage.setResizable(false);
-        PrimaryStage.setWidth(1000);
-        PrimaryStage.setHeight(730);
-        PrimaryStage.setScene(new Scene(setupFrame()));
-        PrimaryStage.show();
+        this.primaryStage.setResizable(false);
+        this.primaryStage.setWidth(1000);
+        this.primaryStage.setHeight(730);
+        this.primaryStage.setScene(new Scene(setupFrame()));
+        this.primaryStage.show();
     }
 
     private VBox setupFrame(){
@@ -78,13 +78,13 @@ public class GameWindow implements GameUpdateListener {
         return base;
     }
 
-    public VBox getScoreboard(){
-        VBox ScoreBoard = new VBox();
-        ScoreBoard.getChildren().add(playerScoreMaker(Client.getInstance().getUser()));
-        return ScoreBoard;
+    private VBox getScoreboard(){
+        VBox scoreBoard = new VBox();
+        scoreBoard.getChildren().add(playerScoreMaker(Client.getInstance().getUser()));
+        return scoreBoard;
     }
 
-    public HBox playerScoreMaker(User user){
+    private HBox playerScoreMaker(User user){
         HBox playerScore = new HBox();
         playerScore.setSpacing(10);
 
