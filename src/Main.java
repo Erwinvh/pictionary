@@ -15,9 +15,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        HomeWindow homeWindow = new HomeWindow(primaryStage);
-//        Client.getInstance().setUser(new User("Arne","resources/pictures/cat.jpg", false));
-//        Client.getInstance().connectToServer("localhost", 10000);
+        new HomeWindow(primaryStage);
         primaryStage.show();
     }
 
@@ -25,7 +23,5 @@ public class Main extends Application {
     public void stop() throws Exception {
         super.stop();
         Client.getInstance().disconnectFromServer();
-//        System.exit(0);
-//        Runtime.getRuntime().exit(0);
     }
 }

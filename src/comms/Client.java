@@ -85,7 +85,6 @@ public class Client {
                 }
 
                 if (objectIn instanceof GameUpdate) {
-                    System.out.println("handleIncomingData GameUpdate calledo n this client!");
                     gameUpdateListener.onGameUpdate((GameUpdate) objectIn);
                 }
 
