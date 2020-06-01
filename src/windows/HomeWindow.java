@@ -91,6 +91,7 @@ public class HomeWindow {
         playerInfo.getChildren().addAll(username, leftButton, profileImage, rightButton);
         playerInfo.setSpacing(10);
         playerInfo.setAlignment(Pos.CENTER);
+
         return playerInfo;
     }
 
@@ -102,25 +103,30 @@ public class HomeWindow {
 
     private GridPane getJoinHostButtons() {
         GridPane joinHostButtons = new GridPane();
+
         portTextField = new TextField();
-        Button privateJoinButton = new Button("Join game");
-        privateJoinButton.setOnAction(event -> {
-            if (inputCheck(false)) {
-                LobbyWindow lobbyWindow = new LobbyWindow(primaryStage);
+        portTextField.setText("10000");
+
+        Button joinButton = new Button("Join game");
+        joinButton.setOnAction(event -> {
+            if (inputCheck()) {
+                setupClient(false);
+                new LobbyWindow(primaryStage);
             }
         });
 
-        Button privateHostButton = new Button("Host game");
-        privateHostButton.setOnAction(event -> {
-            if (inputCheck(true)) {
-                Server host = new Server(new ServerSettings(portNumber));
-                LobbyWindow lobbyWindow = new LobbyWindow(primaryStage);
+        Button hostButton = new Button("Host game");
+        hostButton.setOnAction(event -> {
+            if (inputCheck()) {
+                new Thread(() -> new Server(new ServerSettings(portNumber))).start();
+                setupClient(true);
+                new LobbyWindow(primaryStage);
             }
         });
 
         joinHostButtons.add(portTextField, 0, 1);
-        joinHostButtons.add(privateHostButton, 1, 1);
-        joinHostButtons.add(privateJoinButton, 2, 1);
+        joinHostButtons.add(hostButton, 1, 1);
+        joinHostButtons.add(joinButton, 2, 1);
 
         joinHostButtons.setVgap(10);
         joinHostButtons.setHgap(10);
@@ -129,7 +135,12 @@ public class HomeWindow {
         return joinHostButtons;
     }
 
-    private boolean inputCheck(boolean isHost) {
+    private void setupClient(boolean isHost) {
+        Client.getInstance().setUser(new User(username.getText(), fileLocation, isHost));
+        Client.getInstance().connectToServer("localhost", portNumber);
+    }
+
+    private boolean inputCheck() {
         if (username.getText().trim().isEmpty()) {
             System.out.println("Name was null");
             return false;
@@ -144,9 +155,6 @@ public class HomeWindow {
             System.out.println("Not a port");
             return false;
         }
-
-        Client.getInstance().setUser(new User(username.getText(), fileLocation, isHost));
-        Client.getInstance().connectToServer("localhost", portNumber);
 
         return true;
     }
