@@ -64,9 +64,9 @@ public class LobbyWindow {
 
         Button startGameButton = new Button("Start game");
         startGameButton.setOnAction(event -> {
-            // TODO: 27/05/2020 Launch the GameWindow (if settings are valid)
             if (getLobbySize() <= maxAmountPlayersComboBox.getSelectionModel().getSelectedItem()) {
-                GameWindow gameWindow = new GameWindow(primaryStage);
+                Client.getInstance().sendObject(Client.getInstance().getUser());
+                new GameWindow(primaryStage);
             } else {
                 System.out.println("You have too many players");
             }

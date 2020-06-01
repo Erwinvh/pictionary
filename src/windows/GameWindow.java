@@ -48,7 +48,7 @@ public class GameWindow implements GameUpdateListener {
     private Color brushColor;
     private Canvas canvas;
 
-    public GameWindow(Stage primaryStage) {
+    GameWindow(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Pictionary - Game");
 
