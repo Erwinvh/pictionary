@@ -85,18 +85,12 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private HBox playerScoreMaker(User user){
-        HBox playerScore = new HBox();
+        HBox playerScore = LobbyWindow.playerMaker(user);
         playerScore.setSpacing(10);
 
-        ImageView imageView = new ImageView();
-        File file = new File(user.getProfileImage());
-        imageView.setImage(new Image(file.toURI().toString()));
-        imageView.setFitWidth(40);
-        imageView.setFitHeight(40);
-        Label label = new Label(user.getName());
         Label scoreLabel = new Label(user.getScore() + " Points");
 
-        playerScore.getChildren().addAll(imageView,label,scoreLabel);
+        playerScore.getChildren().addAll(scoreLabel);
 
         return playerScore;
     }

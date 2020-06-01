@@ -1,6 +1,7 @@
 package windows;
 
 import comms.Client;
+import comms.GameUpdates.UserUpdate;
 import comms.Server;
 import comms.ServerSettings;
 import comms.User;
@@ -138,6 +139,7 @@ public class HomeWindow {
     private void setupClient(boolean isHost) {
         Client.getInstance().setUser(new User(username.getText(), fileLocation, isHost));
         Client.getInstance().connectToServer("localhost", portNumber);
+        Client.getInstance().sendObject(new UserUpdate(Client.getInstance().getUser(), false));
     }
 
     private boolean inputCheck() {

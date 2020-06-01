@@ -84,7 +84,6 @@ public class Client {
 //                    throw new NullPointerException("GameUpdateListener was null! Fix your shit");
                 }
 
-
                 if (objectIn instanceof GameUpdate) {
                     gameUpdateListener.onGameUpdate((GameUpdate) objectIn);
                 }
@@ -98,7 +97,7 @@ public class Client {
 
     public void disconnectFromServer() {
         try {
-            //sendObject(Boolean.FALSE);
+            sendObject(Boolean.FALSE);
             this.connected = false;
             System.out.println(this.user.getName() + " is willingly disconnecting from server...");
 

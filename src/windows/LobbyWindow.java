@@ -5,6 +5,7 @@ import comms.GameUpdates.GameUpdate;
 import comms.GameUpdates.GameUpdateListener;
 import comms.GameUpdates.UserUpdate;
 import comms.User;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -24,7 +25,7 @@ public class LobbyWindow implements GameUpdateListener {
 
     private ArrayList<User> lobbyArrayList;
     private Stage primaryStage;
-    private VBox lobbyList;
+    private VBox lobbyList = new VBox();
 
     LobbyWindow(Stage primaryStage) {
         Client.getInstance().setGameUpdateListener(this);
@@ -85,7 +86,6 @@ public class LobbyWindow implements GameUpdateListener {
     }
 
     private VBox getLobbyListBox() {
-        lobbyList = new VBox();
         lobbyList.setFillWidth(true);
         lobbyList.setAlignment(Pos.CENTER);
 
@@ -96,8 +96,10 @@ public class LobbyWindow implements GameUpdateListener {
         return lobbyList;
     }
 
-    private HBox playerMaker(User user) {
+    static HBox playerMaker(User user) {
         HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER);
+
         ImageView imageView = new ImageView();
         File file = new File(user.getProfileImage());
         imageView.setImage(new Image(file.toURI().toString()));
@@ -107,7 +109,6 @@ public class LobbyWindow implements GameUpdateListener {
         Label label = new Label(user.getName());
 
         hBox.getChildren().addAll(imageView, label);
-        hBox.setAlignment(Pos.CENTER);
 
         return hBox;
     }

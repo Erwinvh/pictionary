@@ -106,13 +106,15 @@ public class Server {
                 }
             }
 
-            connectedSockets.remove(socket);
-            objectOutputStreams.remove(objectOutputStream);
+            this.connectedSockets.remove(socket);
+            this.objectOutputStreams.remove(objectOutputStream);
             socket.close();
 
             sendToAllClients(new ChatUpdate(user.getName(), LEAVE_MESSAGE));
+            sendToAllClients(new UserUpdate(user, true));
 
-            if (connectedSockets.size() == 0) {
+            // Stop the entire server when all clients have left
+            if (this.connectedSockets.size() == 0) {
                 stop();
             }
 
@@ -136,10 +138,7 @@ public class Server {
 
     private void setupWordList() {
         try {
-
-            System.out.println(getClass().getResource(wordFileName).getFile());
             File file = new File(getClass().getResource(wordFileName).getFile());
-//            File file = new File(getClass().getResource(wordFileName).getFile());
             if (!file.exists()) {
                 throw new FileNotFoundException("The " + wordFileName + "was not found");
             } else {
