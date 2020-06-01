@@ -120,9 +120,9 @@ public class GameWindow implements GameUpdateListener {
             graphics.setColor(Color.WHITE);
         }
 
-        Point2D position = new Point2D.Double(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+        Point2D position = new Point2D.Double(mouseEvent.getX(), mouseEvent.getY());
 
-        graphics.fillOval((int) mouseEvent.getSceneX() - radius, (int) mouseEvent.getSceneY() - radius, radius * 2, radius * 2);
+        graphics.fillOval((int) mouseEvent.getX() - radius, (int) mouseEvent.getY() - radius, radius * 2, radius * 2);
         DrawUpdate drawUpdate = new DrawUpdate(radius, graphics.getColor(), position, false);
         Client.getInstance().sendObject(drawUpdate);
     }
