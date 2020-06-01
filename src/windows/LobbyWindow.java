@@ -43,6 +43,7 @@ public class LobbyWindow {
 
     private VBox getGameSettingsBox() {
         VBox gameSettingsBox = new VBox();
+        gameSettingsBox.setDisable(!Client.getInstance().getUser().isHost());
         gameSettingsBox.setAlignment(Pos.CENTER_LEFT);
         gameSettingsBox.setSpacing(10);
 
