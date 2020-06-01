@@ -1,9 +1,6 @@
 package comms;
 
-import comms.GameUpdates.ChatUpdate;
-import comms.GameUpdates.GameUpdate;
-import comms.GameUpdates.RoundUpdate;
-import comms.GameUpdates.UserUpdate;
+import comms.GameUpdates.*;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -29,7 +26,7 @@ public class Server {
     private final String LEAVE_MESSAGE = "has left the room!";
 
     // Game
-    private static final String wordFileName = "words.json";
+    private static final String wordFileName = "/words.json";
     private Queue<String> englishWordList = new LinkedList<>();
 
     private int currentDrawerIndex = 0;
@@ -99,11 +96,13 @@ public class Server {
 
                 if (objectIn instanceof Boolean) {
                     connected = (boolean) objectIn;
-                }
-
-                if (objectIn instanceof GameUpdate) {
+                } else if (objectIn instanceof GameUpdate) {
                     // Notify all connected clients a new GameUpdate has been received
                     sendToAllClients(objectIn);
+                } else if (objectIn instanceof User) {
+                    if (((User) objectIn).isHost()) {
+                        startGame();
+                    }
                 }
             }
 
@@ -162,6 +161,13 @@ public class Server {
         }
     }
 
+    public void startGame() {
+        // startTimer();
+        // Perhaps nextRound(isFirst = true)? or just sendToAllClients(RoundUpdate of first round)? :D
+        // TODO: 01/06/2020 other setup for the beginning of the game
+
+    }
+
     private void nextRound() {
         currentDrawerIndex = 0;
         nextDrawer(true);
@@ -173,14 +179,31 @@ public class Server {
         }
 
         sendToAllClients(new RoundUpdate(currentRoundIndex, this.serverSettings.getRounds()));
+        // TODO: 01/06/2020 maybe first wait to let the drawer select the word before starting the timer
+        startTimer();
+    }
+
+    private void startTimer() {
+        new Thread(() -> {
+            int roundTime = serverSettings.getTimeInSeconds();
+            while (roundTime >= 0) {
+                try {
+                    Thread.sleep(1000);
+                    roundTime--;
+                    sendToAllClients(new TimerUpdate(roundTime));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     private void nextDrawer(boolean isFirst) {
         User[] users = (User[]) connectedSockets.values().toArray();
 
         if (isFirst) {
-            users[currentDrawerIndex].setDrawing(true);
-            sendToAllClients(new UserUpdate(users[currentDrawerIndex], false));
+            users[0].setDrawing(true);
+            sendToAllClients(new UserUpdate(users[0], false));
             return;
         }
 
