@@ -1,6 +1,9 @@
 package windows;
 
 import comms.Client;
+import comms.GameUpdates.GameUpdate;
+import comms.GameUpdates.GameUpdateListener;
+import comms.GameUpdates.UserUpdate;
 import comms.User;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -17,13 +20,15 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.ArrayList;
 
-public class LobbyWindow {
+public class LobbyWindow implements GameUpdateListener {
 
     private ArrayList<User> lobbyArrayList;
     private Stage primaryStage;
     private VBox lobbyList;
 
     LobbyWindow(Stage primaryStage) {
+        Client.getInstance().setGameUpdateListener(this);
+
         HBox base = new HBox();
         base.setSpacing(40);
 
@@ -67,6 +72,8 @@ public class LobbyWindow {
         startGameButton.setOnAction(event -> {
             if (getLobbySize() <= maxAmountPlayersComboBox.getSelectionModel().getSelectedItem()) {
                 Client.getInstance().sendObject(Client.getInstance().getUser());
+                // TODO: 01/06/2020 handle launching gamewindow differently (via GameUpdateListener to ensure the server has started the game)
+                //  so other clients can also launch their gamewindow!
                 new GameWindow(primaryStage);
             } else {
                 System.out.println("You have too many players");
@@ -85,7 +92,7 @@ public class LobbyWindow {
 //        for (User user: A list of users on the server){
 //            lobbyList.getChildren().add(playerMaker(user));
 //        }
-        lobbyList.getChildren().addAll(playerMaker(new User("tester1", "resources/pictures/cat.jpg", false)), playerMaker(new User("tester1", "resources/pictures/cat.jpg", false)), playerMaker(Client.getInstance().getUser()));
+        // lobbyList.getChildren().addAll(playerMaker(new User("tester1", "resources/pictures/cat.jpg", false)), playerMaker(new User("tester1", "resources/pictures/cat.jpg", false)), playerMaker(Client.getInstance().getUser()));
         return lobbyList;
     }
 
@@ -117,5 +124,27 @@ public class LobbyWindow {
 
     private int getLobbySize() {
         return lobbyList.getChildren().size();
+    }
+
+    @Override
+    public void onGameUpdate(GameUpdate gameUpdate) {
+        GameUpdate.GameUpdateType gameUpdateType = gameUpdate.getGameUpdateType();
+        switch (gameUpdateType) {
+//            case ROUND:
+//                onRoundUpdate((RoundUpdate) gameUpdate);
+//                break;
+
+            case USER:
+                onUserUpdate((UserUpdate) gameUpdate);
+                break;
+        }
+    }
+
+    private void onUserUpdate(UserUpdate userUpdate) {
+        Platform.runLater(() -> {
+            if (!userUpdate.hasLeft())
+                this.lobbyList.getChildren().add(playerMaker(userUpdate.getUser()));
+            else this.lobbyList.getChildren().remove(playerMaker(userUpdate.getUser()));
+        });
     }
 }
