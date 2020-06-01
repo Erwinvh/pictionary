@@ -85,6 +85,7 @@ public class Client {
                 }
 
                 if (objectIn instanceof GameUpdate) {
+                    System.out.println("handleIncomingData GameUpdate calledo n this client!");
                     gameUpdateListener.onGameUpdate((GameUpdate) objectIn);
                 }
 
@@ -97,8 +98,8 @@ public class Client {
 
     public void disconnectFromServer() {
         try {
-            sendObject(Boolean.FALSE);
             this.connected = false;
+            sendObject(Boolean.FALSE);
             System.out.println(this.user.getName() + " is willingly disconnecting from server...");
 
             incomingDataThread.join();
@@ -110,9 +111,9 @@ public class Client {
     }
 
     public void sendObject(Object obj) {
-
-        if (!this.connected)
-            throw new IllegalStateException("Client is not connected and thus cannot send data.");
+//
+//        if (!this.connected)
+//            throw new IllegalStateException("Client is not connected and thus cannot send data.");
 
         try {
             objectOutputStream.writeObject(obj);

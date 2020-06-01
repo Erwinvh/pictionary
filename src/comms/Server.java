@@ -89,6 +89,14 @@ public class Server {
             connectedSockets.put(socket, user);
             objectOutputStreams.add(objectOutputStream);
 
+            connectedSockets.values().forEach(userInstance -> {
+                try {
+                    objectOutputStream.writeObject(new UserUpdate(userInstance, false));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+
             sendToAllClients(new ChatUpdate(user.getName(), JOIN_MESSAGE));
 
             while (connected) {
@@ -160,7 +168,8 @@ public class Server {
         }
     }
 
-    public void startGame() {
+    private void startGame() {
+        sendToAllClients(new RoundUpdate(currentRoundIndex, serverSettings.getRounds()));
         // startTimer();
         // Perhaps nextRound(isFirst = true)? or just sendToAllClients(RoundUpdate of first round)? :D
         // TODO: 01/06/2020 other setup for the beginning of the game

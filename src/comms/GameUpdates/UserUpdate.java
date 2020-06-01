@@ -20,4 +20,12 @@ public class UserUpdate extends GameUpdate {
     public boolean hasLeft() {
         return hasLeft;
     }
+
+    @Override
+    public String toString() {
+        return "UserUpdate{" +
+                "user=" + user.toString() +
+                ", hasLeft=" + hasLeft +
+                '}';
+    }
 }

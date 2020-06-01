@@ -112,7 +112,6 @@ public class HomeWindow {
         joinButton.setOnAction(event -> {
             if (inputCheck()) {
                 setupClient(false);
-                new LobbyWindow(primaryStage);
             }
         });
 
@@ -121,7 +120,6 @@ public class HomeWindow {
             if (inputCheck()) {
                 new Thread(() -> new Server(new ServerSettings(portNumber))).start();
                 setupClient(true);
-                new LobbyWindow(primaryStage);
             }
         });
 
@@ -138,8 +136,9 @@ public class HomeWindow {
 
     private void setupClient(boolean isHost) {
         Client.getInstance().setUser(new User(username.getText(), fileLocation, isHost));
+        new LobbyWindow(primaryStage);
         Client.getInstance().connectToServer("localhost", portNumber);
-        Client.getInstance().sendObject(new UserUpdate(Client.getInstance().getUser(), false));
+//        Client.getInstance().sendObject(new UserUpdate(Client.getInstance().getUser(), false));
     }
 
     private boolean inputCheck() {

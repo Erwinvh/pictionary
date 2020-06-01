@@ -3,6 +3,7 @@ package windows;
 import comms.Client;
 import comms.GameUpdates.GameUpdate;
 import comms.GameUpdates.GameUpdateListener;
+import comms.GameUpdates.RoundUpdate;
 import comms.GameUpdates.UserUpdate;
 import comms.User;
 import javafx.application.Platform;
@@ -23,7 +24,6 @@ import java.util.ArrayList;
 
 public class LobbyWindow implements GameUpdateListener {
 
-    private ArrayList<User> lobbyArrayList;
     private Stage primaryStage;
     private VBox lobbyList = new VBox();
 
@@ -75,7 +75,7 @@ public class LobbyWindow implements GameUpdateListener {
                 Client.getInstance().sendObject(Client.getInstance().getUser());
                 // TODO: 01/06/2020 handle launching gamewindow differently (via GameUpdateListener to ensure the server has started the game)
                 //  so other clients can also launch their gamewindow!
-                new GameWindow(primaryStage);
+//                new GameWindow(primaryStage);
             } else {
                 System.out.println("You have too many players");
             }
@@ -131,9 +131,9 @@ public class LobbyWindow implements GameUpdateListener {
     public void onGameUpdate(GameUpdate gameUpdate) {
         GameUpdate.GameUpdateType gameUpdateType = gameUpdate.getGameUpdateType();
         switch (gameUpdateType) {
-//            case ROUND:
-//                onRoundUpdate((RoundUpdate) gameUpdate);
-//                break;
+            case ROUND:
+                onRoundUpdate((RoundUpdate) gameUpdate);
+                break;
 
             case USER:
                 onUserUpdate((UserUpdate) gameUpdate);
@@ -141,7 +141,15 @@ public class LobbyWindow implements GameUpdateListener {
         }
     }
 
+    private void onRoundUpdate(RoundUpdate roundUpdate) {
+        if (roundUpdate.getRoundNum() == 0){
+            Platform.runLater(() -> new GameWindow(this.primaryStage));
+        }
+    }
+
     private void onUserUpdate(UserUpdate userUpdate) {
+        System.out.println("User update called on this client!");
+        System.out.println(userUpdate);
         Platform.runLater(() -> {
             if (!userUpdate.hasLeft())
                 this.lobbyList.getChildren().add(playerMaker(userUpdate.getUser()));
