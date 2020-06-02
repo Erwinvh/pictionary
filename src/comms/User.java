@@ -58,6 +58,15 @@ public class User implements Serializable {
         return isHost;
     }
 
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (obj instanceof User) {
+//            return name.equals(((User) obj).getName());
+//        }
+//
+//        return false;
+//    }
+
     public String getProfileImage() {
         return profileImage;
     }

@@ -47,6 +47,8 @@ public class GameWindow implements GameUpdateListener {
     private FXGraphics2D graphics;
     private Color brushColor;
     private Canvas canvas;
+    private HBox drawingButtonsBox;
+    private boolean isDrawing;
 
     GameWindow(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -65,26 +67,26 @@ public class GameWindow implements GameUpdateListener {
         this.primaryStage.show();
     }
 
-    private VBox setupFrame(){
-       VBox base = new VBox();
+    private VBox setupFrame() {
+        VBox base = new VBox();
         HBox head = new HBox();
-        head.getChildren().addAll(timeLeftLabel,currentRoundLabel,roleLabel);
+        head.getChildren().addAll(timeLeftLabel, currentRoundLabel, roleLabel);
 
         HBox body = new HBox();
         setupCanvas();
-        body.getChildren().addAll(getScoreboard(),getDrawingArea(), getInfoVBox());
+        body.getChildren().addAll(getScoreboard(), getDrawingArea(), getInfoVBox());
         base.setSpacing(10);
-        base.getChildren().addAll(head,body);
+        base.getChildren().addAll(head, body);
         return base;
     }
 
-    private VBox getScoreboard(){
+    private VBox getScoreboard() {
         VBox scoreBoard = new VBox();
         scoreBoard.getChildren().add(playerScoreMaker(Client.getInstance().getUser()));
         return scoreBoard;
     }
 
-    private HBox playerScoreMaker(User user){
+    private HBox playerScoreMaker(User user) {
         HBox playerScore = LobbyWindow.playerMaker(user);
         playerScore.setSpacing(10);
 
@@ -114,6 +116,9 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private void onMouse(MouseEvent mouseEvent) {
+        if (!isDrawing) {
+            return;
+        }
         if (mouseEvent.getButton().equals(MouseButton.PRIMARY))
             graphics.setColor(brushColor);
         else {
@@ -203,8 +208,17 @@ public class GameWindow implements GameUpdateListener {
 
         // If the user update is this user itself
         if (userUpdate.getUser().equals(Client.getInstance().getUser())) {
-            if (userUpdate.getUser().isDrawing()) {
+            this.isDrawing = userUpdate.getUser().isDrawing();
+            if (this.isDrawing) {
+                this.currentWordLabel.setText("the word");
+                this.drawingButtonsBox.setDisable(false);
+                this.roleLabel.setText("Drawing");
                 // TODO: 31/05/2020 I am drawing this round! Show the controls and the words to choose from
+
+            } else {
+                this.currentWordLabel.setText(" _ ");
+                this.drawingButtonsBox.setDisable(true);
+                this.roleLabel.setText("Guessing");
             }
         }
 
@@ -218,11 +232,11 @@ public class GameWindow implements GameUpdateListener {
     private VBox getDrawingArea() {
         VBox drawSideSetup = new VBox();
 
-        HBox buttonsBox = new HBox();
-        buttonsBox.getChildren().addAll(getColourButtons(), getSizeButtons(), getClearCanvasButton());
-        buttonsBox.setSpacing(20);
+        drawingButtonsBox = new HBox();
+        drawingButtonsBox.getChildren().addAll(getColourButtons(), getSizeButtons(), getClearCanvasButton());
+        drawingButtonsBox.setSpacing(20);
 
-        drawSideSetup.getChildren().addAll(canvas, buttonsBox);
+        drawSideSetup.getChildren().addAll(canvas, drawingButtonsBox);
         return drawSideSetup;
     }
 
