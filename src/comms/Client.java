@@ -85,12 +85,11 @@ public class Client {
                 }
 
                 if (objectIn instanceof User) {
-                    if (((User) objectIn).getId().equals(this.getUser().getId())) {
+                    if (((User) objectIn).getId() == this.getUser().getId()) {
                         System.out.println("Updated user");
                         this.user = (User) objectIn;
                     }
                 } else if (objectIn instanceof GameUpdate) {
-                    System.out.println("GameUpdateListener send gameupdatehost");
                     gameUpdateListener.onGameUpdate((GameUpdate) objectIn);
                 }
 
