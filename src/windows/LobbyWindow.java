@@ -21,10 +21,13 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class LobbyWindow implements GameUpdateListener {
 
     private Stage primaryStage;
+
+    private List<User> userList;
     private VBox lobbyList = new VBox();
 
     LobbyWindow(Stage primaryStage) {
@@ -32,6 +35,8 @@ public class LobbyWindow implements GameUpdateListener {
 
         HBox base = new HBox();
         base.setSpacing(40);
+
+        this.userList = new ArrayList<>();
 
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setMaxWidth(1000);
@@ -88,6 +93,10 @@ public class LobbyWindow implements GameUpdateListener {
         lobbyList.setFillWidth(true);
         lobbyList.setAlignment(Pos.CENTER);
 
+        for (User user : this.userList) {
+            lobbyList.getChildren().add(playerMaker(user));
+        }
+
         return lobbyList;
     }
 
@@ -137,18 +146,21 @@ public class LobbyWindow implements GameUpdateListener {
     }
 
     private void onRoundUpdate(RoundUpdate roundUpdate) {
-        if (roundUpdate.getRoundNum() == 0){
+        if (roundUpdate.getRoundNum() == 0) {
             Platform.runLater(() -> new GameWindow(this.primaryStage));
         }
     }
 
     private void onUserUpdate(UserUpdate userUpdate) {
-        System.out.println("User update called on this client!");
-        System.out.println(userUpdate);
         Platform.runLater(() -> {
-            if (!userUpdate.hasLeft())
-                this.lobbyList.getChildren().add(playerMaker(userUpdate.getUser()));
-            else this.lobbyList.getChildren().remove(playerMaker(userUpdate.getUser()));
+            if (userUpdate.hasLeft()){
+                int indexToRemove = userList.indexOf(userUpdate.getUser());
+                lobbyList.getChildren().remove(indexToRemove);
+                userList.remove(userUpdate.getUser());
+            } else {
+                userList.add(userUpdate.getUser());
+                lobbyList.getChildren().add(playerMaker(userUpdate.getUser()));
+            }
         });
     }
 }
