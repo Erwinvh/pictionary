@@ -170,6 +170,9 @@ public class GameWindow implements GameUpdateListener {
             case USER:
                 onUserUpdate((UserUpdate) gameUpdate);
                 break;
+            case TURN:
+                onTurnUpdate((TurnUpdate) gameUpdate);
+                break;
         }
     }
 
@@ -223,6 +226,23 @@ public class GameWindow implements GameUpdateListener {
         }
 
         updateScoreboard(userUpdate.getUser());
+    }
+
+    private void onTurnUpdate(TurnUpdate turnUpdate) {
+        if (turnUpdate.getDrawer().equals(Client.getInstance().getUser())) {
+            isDrawing = true;
+        } else {
+            isDrawing = false;
+        }
+        if (isDrawing) {
+            currentWordLabel.setText(turnUpdate.getWord());
+        } else {
+            String guessWord = "";
+            for (int i = 0; i < turnUpdate.getWord().length(); i++) {
+                guessWord = guessWord + "_ ";
+            }
+            currentWordLabel.setText(guessWord);
+        }
     }
 
     private void updateScoreboard(User user) {
