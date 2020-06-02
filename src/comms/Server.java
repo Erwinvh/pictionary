@@ -106,6 +106,11 @@ public class Server {
                 } else if (objectIn instanceof GameUpdate) {
                     // Notify all connected clients a new GameUpdate has been received
                     sendToAllClients(objectIn);
+
+                    if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.CHAT)) {
+                        checkWord((ChatUpdate) objectIn);
+                    }
+
                 } else if (objectIn instanceof User) {
                     if (((User) objectIn).isHost()) {
                         startGame();
@@ -127,6 +132,29 @@ public class Server {
 
         } catch (IOException | ClassNotFoundException e) {
             connectedSockets.remove(socket);
+        }
+    }
+
+    private void checkWord(ChatUpdate chatUpdate) {
+        String message = chatUpdate.getMessage();
+        if (message.trim().equalsIgnoreCase(currentWord)) {
+            //GUESSED CORRECTLY!
+            return;
+        }
+
+        int matchedCharacters = 0;
+        for (int i = 0; i < message.length(); i++) {
+            if (i > this.currentWord.length())
+                return;
+
+            if (message.charAt(i) == this.currentWord.charAt(i)) {
+                matchedCharacters++;
+            }
+        }
+
+        if (matchedCharacters >= this.currentWord.length() - 1) {
+            // ALMOST CORRECT!
+//             sendToUser(chatUpdate.getUser());
         }
     }
 
