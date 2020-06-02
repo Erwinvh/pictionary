@@ -10,8 +10,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -23,7 +21,6 @@ import org.jfree.fx.FXGraphics2D;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,7 +113,7 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private void onMouse(MouseEvent mouseEvent) {
-        if (!isDrawing) {
+        if (!this.isDrawing) {
             return;
         }
         if (mouseEvent.getButton().equals(MouseButton.PRIMARY))
@@ -149,6 +146,7 @@ public class GameWindow implements GameUpdateListener {
 
     @Override
     public void onGameUpdate(GameUpdate gameUpdate) {
+        System.out.println(gameUpdate.toString());
         GameUpdate.GameUpdateType gameUpdateType = gameUpdate.getGameUpdateType();
         switch (gameUpdateType) {
             case CHAT:
@@ -170,6 +168,7 @@ public class GameWindow implements GameUpdateListener {
             case USER:
                 onUserUpdate((UserUpdate) gameUpdate);
                 break;
+
             case TURN:
                 onTurnUpdate((TurnUpdate) gameUpdate);
                 break;
@@ -204,49 +203,32 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private void onUserUpdate(UserUpdate userUpdate) {
+        // TODO: 02/06/2020 Update scoreboard
         if (userUpdate.hasLeft()) {
             // TODO: 31/05/2020 Remove this user from the display board
             return;
         }
-
-        // If the user update is this user itself
-        if (userUpdate.getUser().getId() == Client.getInstance().getUser().getId()) {
-            this.isDrawing = userUpdate.getUser().isDrawing();
-            if (this.isDrawing) {
-                this.currentWordLabel.setText("the word");
-                this.drawingButtonsBox.setDisable(false);
-                this.roleLabel.setText("Drawing");
-                // TODO: 31/05/2020 I am drawing this round! Show the controls and the words to choose from
-
-            }
-        }else {
-            this.currentWordLabel.setText(" _ ");
-            this.drawingButtonsBox.setDisable(true);
-            this.roleLabel.setText("Guessing");
-        }
-
-        updateScoreboard(userUpdate.getUser());
     }
 
     private void onTurnUpdate(TurnUpdate turnUpdate) {
-        if (turnUpdate.getDrawer().equals(Client.getInstance().getUser())) {
-            isDrawing = true;
-        } else {
-            isDrawing = false;
-        }
-        if (isDrawing) {
-            currentWordLabel.setText(turnUpdate.getWord());
-        } else {
-            String guessWord = "";
-            for (int i = 0; i < turnUpdate.getWord().length(); i++) {
-                guessWord = guessWord + "_ ";
+        System.out.println("onTurnUpdate " + isDrawing);
+        this.isDrawing = turnUpdate.getDrawer().getId() == Client.getInstance().getUser().getId();
+        Platform.runLater(() -> {
+            this.drawingButtonsBox.setDisable(!this.isDrawing);
+
+            if (this.isDrawing) {
+                this.roleLabel.setText("Drawing");
+                this.currentWordLabel.setText(turnUpdate.getWord());
+            } else {
+                this.roleLabel.setText("Guessing");
+                StringBuilder guessWord = new StringBuilder();
+                for (int i = 0; i < turnUpdate.getWord().length(); i++) {
+                    guessWord.append("_ ");
+                }
+
+                currentWordLabel.setText(guessWord.toString());
             }
-            currentWordLabel.setText(guessWord);
-        }
-    }
-
-    private void updateScoreboard(User user) {
-
+        });
     }
 
     private VBox getDrawingArea() {

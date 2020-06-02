@@ -2,19 +2,19 @@ package comms.GameUpdates;
 
 import comms.User;
 
-import java.io.Serializable;
-
-public class TurnUpdate extends GameUpdate implements Serializable {
-    private String Word;
+public class TurnUpdate extends GameUpdate {
+    private String word;
     private User drawer;
 
-    public TurnUpdate( User drawer, String word) {
-        Word = word;
+    public TurnUpdate(User drawer, String word) {
+        super.gameUpdateType = GameUpdateType.TURN;
+
+        this.word = word;
         this.drawer = drawer;
     }
 
     public String getWord() {
-        return Word;
+        return word;
     }
 
     public User getDrawer() {
