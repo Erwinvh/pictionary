@@ -1,7 +1,6 @@
 package comms;
 
 import comms.GameUpdates.*;
-import jdk.internal.org.objectweb.asm.tree.analysis.Value;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -262,6 +261,7 @@ public class Server {
         // Increase index of current drawer and then set the corresponding user to allow interaction with the canvas
         currentDrawerIndex++;
         users.get(currentDrawerIndex).setDrawing(true);
+        sendToAllClients(new TurnUpdate(users.get(currentDrawerIndex), currentWord));
         sendToAllClients(new UserUpdate(users.get(currentDrawerIndex), false));
     }
 

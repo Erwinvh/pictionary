@@ -8,7 +8,7 @@ public class TurnUpdate extends GameUpdate implements Serializable {
     private String Word;
     private User drawer;
 
-    public TurnUpdate(String word, User drawer) {
+    public TurnUpdate( User drawer, String word) {
         Word = word;
         this.drawer = drawer;
     }
