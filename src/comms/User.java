@@ -12,9 +12,9 @@ public class User implements Serializable {
     private boolean isHost;
     private boolean isDrawing;
 
-    public User(String name, String imageLocation,boolean isHost) {
+    public User(String name, String imageLocation, boolean isHost) {
         this.name = name;
-this.profileImage = imageLocation;
+        this.profileImage = imageLocation;
         this.score = 0;
         this.isHost = isHost;
         isDrawing = false;
@@ -36,7 +36,7 @@ this.profileImage = imageLocation;
 //        this.profileImage = profileImage;
 //    }
 
-    public boolean isDrawing(){
+    public boolean isDrawing() {
         return isDrawing;
     }
 
@@ -52,13 +52,22 @@ this.profileImage = imageLocation;
         this.score = score;
     }
 
-    public void addscore(int addedPoints){
-        this.score+=addedPoints;
+    public void addscore(int addedPoints) {
+        this.score += addedPoints;
     }
 
     public boolean isHost() {
         return isHost;
     }
+
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (obj instanceof User) {
+//            return name.equals(((User) obj).getName());
+//        }
+//
+//        return false;
+//    }
 
     public String getProfileImage() {
         return profileImage;
