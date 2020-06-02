@@ -19,7 +19,7 @@ public class Server {
     private ServerSocket serverSocket;
     private boolean running;
 
-    private HashMap<Socket, User> connectedSockets;
+    private HashMap<User, Socket> connectedUsers;
     private List<ObjectOutputStream> objectOutputStreams;
 
     private final String JOIN_MESSAGE = "has joined the room!";
@@ -38,7 +38,7 @@ public class Server {
         this.serverSocket = null;
         this.running = false;
 
-        this.connectedSockets = new LinkedHashMap<>();
+        this.connectedUsers = new LinkedHashMap<>();
         this.objectOutputStreams = new ArrayList<>();
 
         setupWordList();
@@ -77,18 +77,19 @@ public class Server {
 
     private void handleClientConnectionObject(Socket socket) {
         System.out.println("A new client has connected (" + socket.toString() + "), handling connection.");
+        User user = null;
 
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream())) {
             boolean connected = true;
 
             // The client will send itself when connected
-            User user = (User) objectInputStream.readObject();
-            connectedSockets.put(socket, user);
+            user = (User) objectInputStream.readObject();
+            connectedUsers.put(user, socket);
             sendToAllClients(new UserUpdate(user, false));
             objectOutputStreams.add(objectOutputStream);
 
-            connectedSockets.values().forEach(userInstance -> {
+            connectedUsers.keySet().forEach(userInstance -> {
                 try {
                     objectOutputStream.writeObject(new UserUpdate(userInstance, false));
                 } catch (IOException e) {
@@ -118,7 +119,7 @@ public class Server {
                 }
             }
 
-            this.connectedSockets.remove(socket);
+            this.connectedUsers.remove(user);
             this.objectOutputStreams.remove(objectOutputStream);
             socket.close();
 
@@ -126,19 +127,22 @@ public class Server {
             sendToAllClients(new UserUpdate(user, true));
 
             // Stop the entire server when all clients have left
-            if (this.connectedSockets.size() == 0 || user.isHost()) {
+            if (this.connectedUsers.size() == 0 || user.isHost()) {
                 stop();
             }
 
         } catch (IOException | ClassNotFoundException e) {
-            connectedSockets.remove(socket);
+            connectedUsers.remove(user);
         }
     }
 
     private void checkWord(ChatUpdate chatUpdate) {
-        String message = chatUpdate.getMessage();
-        if (message.trim().equalsIgnoreCase(currentWord)) {
-            //GUESSED CORRECTLY!
+        String message = chatUpdate.getMessage().trim().toLowerCase();
+        String currentWord = this.currentWord.trim().toLowerCase();
+
+        if (message.equalsIgnoreCase(currentWord)) {
+            sendToAllClients(new ChatUpdate(null, chatUpdate.getUser() + " has guessed the word!", true));
+            // TODO: 02/06/2020 Add points
             return;
         }
 
@@ -147,19 +151,20 @@ public class Server {
             if (i > this.currentWord.length())
                 return;
 
-            if (message.charAt(i) == this.currentWord.charAt(i)) {
+            if (message.charAt(i) == currentWord.charAt(i)) {
                 matchedCharacters++;
             }
         }
 
-        if (matchedCharacters >= this.currentWord.length() - 1) {
+        if (matchedCharacters >= currentWord.length() - 2) {
             // ALMOST CORRECT!
-//             sendToUser(chatUpdate.getUser());
+            sendToSpecificClient(new ChatUpdate(null, "You are very close!", true), chatUpdate.getUser());
         }
     }
 
     private void sendToAllClients(Object obj) {
-        System.out.println("Sending \"" + obj.toString() + "\" to " + connectedSockets.size() + " clients...");
+        if (!(obj instanceof TimerUpdate))
+        System.out.println("Sending \"" + obj.toString() + "\" to " + connectedUsers.size() + " clients...");
 
         for (ObjectOutputStream objectOutputStream : objectOutputStreams) {
             try {
@@ -206,7 +211,6 @@ public class Server {
 
     private void nextRound(boolean isFirst) {
         currentDrawerIndex = 0;
-        nextDrawer(true);
 
         if (!isFirst)
             currentRoundIndex++;
@@ -217,6 +221,7 @@ public class Server {
         }
 
         sendToAllClients(new RoundUpdate(currentRoundIndex, this.serverSettings.getRounds()));
+        nextDrawer(true);
         // TODO: 01/06/2020 maybe first wait to let the drawer select the word before starting the timer
         startTimer();
     }
@@ -233,24 +238,20 @@ public class Server {
                     e.printStackTrace();
                 }
             }
+
+            // TODO: 02/06/2020 Next round since the timer has ended!
         }).start();
     }
 
     private void nextDrawer(boolean isFirst) {
-        List<User> users = new ArrayList<>(connectedSockets.values());
+        List<User> users = new ArrayList<>(connectedUsers.keySet());
         User currentDrawer = users.get(currentDrawerIndex);
         pickNextWord();
 
         if (isFirst) {
-            currentDrawer.setDrawing(true);
-            sendToAllClients(new UserUpdate(currentDrawer, false));
-
+            sendToAllClients(new TurnUpdate(currentDrawer, currentWord));
             return;
         }
-
-        // Disable drawing for current drawer
-        currentDrawer.setDrawing(false);
-        sendToAllClients(new UserUpdate(currentDrawer, false));
 
         // Check if the current drawer is the last drawer of this round
         if (currentDrawerIndex == users.size()) {
@@ -260,40 +261,24 @@ public class Server {
 
         // Increase index of current drawer and then set the corresponding user to allow interaction with the canvas
         currentDrawerIndex++;
-        users.get(currentDrawerIndex).setDrawing(true);
         sendToAllClients(new TurnUpdate(users.get(currentDrawerIndex), currentWord));
-        sendToAllClients(new UserUpdate(users.get(currentDrawerIndex), false));
     }
 
-    private void pickNextWord(){
-        currentWord = englishWordList.poll();
+    private void pickNextWord() {
+        this.currentWord = this.englishWordList.poll();
     }
 
     public boolean getRunning() {
         return running;
     }
 
-    public void sendToSpecificClient(Object object, User user){
-        for (Map.Entry entry: connectedSockets.entrySet()) {
-            if (user.equals(entry.getValue())){
-                List keys = new ArrayList(connectedSockets.keySet());
-                for (int i = 0; i < keys.size(); i++) {
-                    if (keys.get(i).equals(entry.getKey())){
-                        try {
-                            ObjectOutputStream oos = objectOutputStreams.get(i);
-                            oos.writeObject(object);
-                        }catch (Exception e){
-                            System.out.println("something went wrong while sending to specific person");
-                            e.printStackTrace();
-                        }
-                        return;
-
-                    }
-                }
-
-            }
+    private void sendToSpecificClient(Object object, User user) {
+        List<User> users = new ArrayList<>(connectedUsers.keySet());
+        int index = users.indexOf(user);
+        try {
+            objectOutputStreams.get(index).writeObject(object);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
     }
-
 }
