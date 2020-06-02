@@ -80,6 +80,7 @@ public class LobbyWindow implements GameUpdateListener {
                 // Send user instance so the server can check whether I am host or not,
                 // since only the host can start a game
                 Client.getInstance().sendObject(Client.getInstance().getUser());
+//                new GameWindow(this.primaryStage);
             } else {
                 System.out.println("You have too many players");
             }
@@ -142,6 +143,9 @@ public class LobbyWindow implements GameUpdateListener {
             case USER:
                 onUserUpdate((UserUpdate) gameUpdate);
                 break;
+
+            case TURN:
+                System.out.println("LobbyWindow received TURN gameUpdateType");
         }
     }
 

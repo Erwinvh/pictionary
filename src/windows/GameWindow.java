@@ -146,7 +146,6 @@ public class GameWindow implements GameUpdateListener {
 
     @Override
     public void onGameUpdate(GameUpdate gameUpdate) {
-        System.out.println(gameUpdate.toString());
         GameUpdate.GameUpdateType gameUpdateType = gameUpdate.getGameUpdateType();
         switch (gameUpdateType) {
             case CHAT:
@@ -211,8 +210,8 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private void onTurnUpdate(TurnUpdate turnUpdate) {
+        this.isDrawing = turnUpdate.getDrawer().equals(Client.getInstance().getUser());
         System.out.println("onTurnUpdate " + isDrawing);
-        this.isDrawing = turnUpdate.getDrawer().getId() == Client.getInstance().getUser().getId();
         Platform.runLater(() -> {
             this.drawingButtonsBox.setDisable(!this.isDrawing);
 

@@ -36,6 +36,8 @@ public class Client {
         this.clientSocket = null;
         this.connected = false;
 
+        this.user = null;
+
         this.objectInputStream = null;
         this.objectOutputStream = null;
     }
@@ -85,7 +87,7 @@ public class Client {
                 }
 
                 if (objectIn instanceof User) {
-                    if (((User) objectIn).getId() == this.getUser().getId()) {
+                    if (objectIn.equals(this.getUser())) {
                         System.out.println("Updated user");
                         this.user = (User) objectIn;
                     }
@@ -115,7 +117,6 @@ public class Client {
     }
 
     public void sendObject(Object obj) {
-//
 //        if (!this.connected)
 //            throw new IllegalStateException("Client is not connected and thus cannot send data.");
 

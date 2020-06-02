@@ -46,7 +46,7 @@ public class User implements Serializable {
         this.score = score;
     }
 
-    public void addscore(int addedPoints) {
+    public void addScore(int addedPoints) {
         this.score += addedPoints;
     }
 
