@@ -1,6 +1,7 @@
 package comms;
 
 import comms.GameUpdates.*;
+import jdk.internal.org.objectweb.asm.tree.analysis.Value;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -239,10 +240,12 @@ public class Server {
     private void nextDrawer(boolean isFirst) {
         List<User> users = new ArrayList<>(connectedSockets.values());
         User currentDrawer = users.get(currentDrawerIndex);
+        pickNextWord();
 
         if (isFirst) {
             currentDrawer.setDrawing(true);
             sendToAllClients(new UserUpdate(currentDrawer, false));
+
             return;
         }
 
@@ -262,7 +265,35 @@ public class Server {
         sendToAllClients(new UserUpdate(users.get(currentDrawerIndex), false));
     }
 
+    private void pickNextWord(){
+        currentWord = englishWordList.poll();
+    }
+
     public boolean getRunning() {
         return running;
     }
+
+    public void sendToSpecificClient(Object object, User user){
+        for (Map.Entry entry: connectedSockets.entrySet()) {
+            if (user.equals(entry.getValue())){
+                List keys = new ArrayList(connectedSockets.keySet());
+                for (int i = 0; i < keys.size(); i++) {
+                    if (keys.get(i).equals(entry.getKey())){
+                        try {
+                            ObjectOutputStream oos = objectOutputStreams.get(i);
+                            oos.writeObject(object);
+                        }catch (Exception e){
+                            System.out.println("something went wrong while sending to specific person");
+                            e.printStackTrace();
+                        }
+                        return;
+
+                    }
+                }
+
+            }
+        }
+
+    }
+
 }

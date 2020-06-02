@@ -9,7 +9,8 @@ public abstract class GameUpdate implements Serializable {
         ROUND,
         TIMER,
         HINT,
-        USER
+        USER,
+        TURN
     }
 
     GameUpdateType gameUpdateType;
