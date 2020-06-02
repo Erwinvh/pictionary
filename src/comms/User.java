@@ -1,7 +1,5 @@
 package comms;
 
-import javafx.scene.image.Image;
-
 import java.io.Serializable;
 
 public class User implements Serializable {
@@ -12,9 +10,9 @@ public class User implements Serializable {
     private boolean isHost;
     private boolean isDrawing;
 
-    public User(String name, String imageLocation,boolean isHost) {
+    public User(String name, String imageLocation, boolean isHost) {
         this.name = name;
-this.profileImage = imageLocation;
+        this.profileImage = imageLocation;
         this.score = 0;
         this.isHost = isHost;
         isDrawing = false;
@@ -36,7 +34,7 @@ this.profileImage = imageLocation;
 //        this.profileImage = profileImage;
 //    }
 
-    public boolean isDrawing(){
+    public boolean isDrawing() {
         return isDrawing;
     }
 
@@ -52,8 +50,8 @@ this.profileImage = imageLocation;
         this.score = score;
     }
 
-    public void addscore(int addedPoints){
-        this.score+=addedPoints;
+    public void addscore(int addedPoints) {
+        this.score += addedPoints;
     }
 
     public boolean isHost() {
