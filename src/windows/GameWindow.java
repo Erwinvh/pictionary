@@ -47,7 +47,7 @@ public class GameWindow implements GameUpdateListener {
     private HBox drawingButtonsBox;
     private boolean isDrawing;
 
-    GameWindow(Stage primaryStage) {
+    GameWindow(Stage primaryStage, List<User> userList) {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Pictionary - Game");
 
@@ -345,5 +345,10 @@ public class GameWindow implements GameUpdateListener {
         inputBox.getChildren().addAll(messageInput, sendButton);
 
         return inputBox;
+    }
+
+    public void endGame(){
+        //Show endscores inpopUP?
+        // move back to lobby or home?
     }
 }

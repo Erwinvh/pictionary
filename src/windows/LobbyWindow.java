@@ -79,6 +79,7 @@ public class LobbyWindow implements GameUpdateListener {
             if (getLobbySize() <= maxAmountPlayersComboBox.getSelectionModel().getSelectedItem()) {
                 // Send user instance so the server can check whether I am host or not,
                 // since only the host can start a game
+                //TODO: set the serversettings
                 Client.getInstance().sendObject(Client.getInstance().getUser());
 //                new GameWindow(this.primaryStage);
             } else {
@@ -151,7 +152,7 @@ public class LobbyWindow implements GameUpdateListener {
 
     private void onRoundUpdate(RoundUpdate roundUpdate) {
         if (roundUpdate.getRoundNum() == 0) {
-            Platform.runLater(() -> new GameWindow(this.primaryStage));
+            Platform.runLater(() -> new GameWindow(this.primaryStage,userList));
         }
     }
 

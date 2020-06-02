@@ -32,6 +32,9 @@ public class Server {
     private int currentDrawerIndex = 0;
     private int currentRoundIndex = 0;
     private String currentWord;
+    private ArrayList<User> correctlyGuesses;
+    private int recordTime = 0;
+    private int roundTime;
 
     public Server(ServerSettings serverSettings) {
         this.serverSettings = serverSettings;
@@ -40,7 +43,7 @@ public class Server {
 
         this.connectedUsers = new LinkedHashMap<>();
         this.objectOutputStreams = new ArrayList<>();
-
+        this.correctlyGuesses = new ArrayList<>();
         setupWordList();
 
         try {
@@ -107,7 +110,7 @@ public class Server {
                 } else if (objectIn instanceof GameUpdate) {
                     // Notify all connected clients a new GameUpdate has been received
                     sendToAllClients(objectIn);
-
+                    //TODO: stop the correct answer from going to the chat
                     if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.CHAT)) {
                         checkWord((ChatUpdate) objectIn);
                     }
@@ -142,7 +145,18 @@ public class Server {
 
         if (message.equalsIgnoreCase(currentWord)) {
             sendToAllClients(new ChatUpdate(null, chatUpdate.getUser().getName() + " has guessed the word!", true));
-            // TODO: 02/06/2020 Add points
+
+            if (correctlyGuesses.isEmpty()) {
+                chatUpdate.getUser().addScore(300);
+                correctlyGuesses.add(chatUpdate.getUser());
+//                System.out.println("first winner:"+chatUpdate.getUser().getName());
+                recordTime = serverSettings.getTimeInSeconds()-roundTime;
+            } else {
+                int points = 300 - (25 / connectedUsers.size()) * correctlyGuesses.size();
+                correctlyGuesses.add(chatUpdate.getUser());
+                chatUpdate.getUser().addScore(points);
+//                System.out.println("not first winner: "+ chatUpdate.getUser().getName()+ ": "+ points);
+            }
             return;
         }
 
@@ -235,7 +249,7 @@ public class Server {
 
     private void startTimer() {
         new Thread(() -> {
-            int roundTime = serverSettings.getTimeInSeconds();
+            roundTime = serverSettings.getTimeInSeconds();
             while (roundTime >= 0) {
                 try {
                     Thread.sleep(1000);
@@ -255,6 +269,19 @@ public class Server {
         List<User> users = new ArrayList<>(connectedUsers.keySet());
         User currentDrawer = users.get(currentDrawerIndex);
         pickNextWord();
+
+        //adds points to the pervious drawer
+        if (currentRoundIndex!=1&&currentDrawerIndex!=0&&correctlyGuesses.size()>0){
+            int points = (correctlyGuesses.size()/(connectedUsers.size()-1)/recordTime)*500;
+            if ((currentDrawerIndex-1)==-1){
+                users.get(users.size()-1).addScore(points);
+                }else{
+
+            users.get(currentDrawerIndex-1).addScore(points);
+            }
+            System.out.println("Previous drawer:"+points);
+        }
+        correctlyGuesses.clear();
 
         if (isFirst) {
             sendToAllClients(new TurnUpdate(currentDrawer, currentWord));
@@ -288,5 +315,9 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public ServerSettings getServerSettings() {
+        return serverSettings;
     }
 }
