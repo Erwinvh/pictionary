@@ -141,7 +141,7 @@ public class Server {
         String currentWord = this.currentWord.trim().toLowerCase();
 
         if (message.equalsIgnoreCase(currentWord)) {
-            sendToAllClients(new ChatUpdate(null, chatUpdate.getUser() + " has guessed the word!", true));
+            sendToAllClients(new ChatUpdate(null, chatUpdate.getUser().getName() + " has guessed the word!", true));
             // TODO: 02/06/2020 Add points
             return;
         }
@@ -164,7 +164,7 @@ public class Server {
 
     private void sendToAllClients(Object obj) {
         if (!(obj instanceof TimerUpdate))
-        System.out.println("Sending \"" + obj.toString() + "\" to " + connectedUsers.size() + " clients...");
+            System.out.println("Sending \"" + obj.toString() + "\" to " + connectedUsers.size() + " clients...");
 
         for (ObjectOutputStream objectOutputStream : objectOutputStreams) {
             try {
@@ -202,11 +202,6 @@ public class Server {
 
     private void startGame() {
         nextRound(true);
-
-        // startTimer();
-        // Perhaps nextRound(isFirst = true)? or just sendToAllClients(RoundUpdate of first round)? :D
-        // TODO: 01/06/2020 other setup for the beginning of the game
-
     }
 
     private void nextRound(boolean isFirst) {
@@ -221,7 +216,19 @@ public class Server {
         }
 
         sendToAllClients(new RoundUpdate(currentRoundIndex, this.serverSettings.getRounds()));
-        nextDrawer(true);
+
+        if (isFirst) {
+            new Thread(() -> {
+                try {
+                    Thread.sleep(100);
+                    nextDrawer(true);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }).start();
+        } else nextDrawer(true);
+
         // TODO: 01/06/2020 maybe first wait to let the drawer select the word before starting the timer
         startTimer();
     }
@@ -239,7 +246,8 @@ public class Server {
                 }
             }
 
-            // TODO: 02/06/2020 Next round since the timer has ended!
+            // TODO: 02/06/2020 Update points for clients who have guessed
+            nextRound(false);
         }).start();
     }
 
