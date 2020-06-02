@@ -1,7 +1,6 @@
 package windows;
 
 import comms.Client;
-import comms.GameUpdates.UserUpdate;
 import comms.Server;
 import comms.ServerSettings;
 import comms.User;

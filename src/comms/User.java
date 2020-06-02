@@ -1,6 +1,7 @@
 package comms;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 public class User implements Serializable {
 
@@ -10,12 +11,15 @@ public class User implements Serializable {
     private boolean isHost;
     private boolean isDrawing;
 
+    private UUID id;
+
     public User(String name, String imageLocation, boolean isHost) {
         this.name = name;
         this.profileImage = imageLocation;
         this.score = 0;
         this.isHost = isHost;
-        isDrawing = false;
+        this.isDrawing = false;
+        this.id = UUID.randomUUID();
     }
 
     public String getName() {
@@ -25,14 +29,6 @@ public class User implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-//
-//    public Image getProfileImage() {
-//        return profileImage;
-//    }
-//
-//    public void setProfileImage(Image profileImage) {
-//        this.profileImage = profileImage;
-//    }
 
     public boolean isDrawing() {
         return isDrawing;
@@ -58,14 +54,18 @@ public class User implements Serializable {
         return isHost;
     }
 
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (obj instanceof User) {
-//            return name.equals(((User) obj).getName());
-//        }
-//
-//        return false;
-//    }
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof User) {
+            return id.equals(((User) obj).getId());
+        }
+
+        return false;
+    }
+
+    public UUID getId() {
+        return id;
+    }
 
     public String getProfileImage() {
         return profileImage;

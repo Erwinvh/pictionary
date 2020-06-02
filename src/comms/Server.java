@@ -96,7 +96,7 @@ public class Server {
                 }
             });
 
-            sendToAllClients(new ChatUpdate(user.getName(), JOIN_MESSAGE));
+            sendToAllClients(new ChatUpdate(user, JOIN_MESSAGE));
 
             while (connected) {
                 Object objectIn = objectInputStream.readObject();
@@ -122,7 +122,7 @@ public class Server {
             this.objectOutputStreams.remove(objectOutputStream);
             socket.close();
 
-            sendToAllClients(new ChatUpdate(user.getName(), LEAVE_MESSAGE));
+            sendToAllClients(new ChatUpdate(user, LEAVE_MESSAGE));
             sendToAllClients(new UserUpdate(user, true));
 
             // Stop the entire server when all clients have left

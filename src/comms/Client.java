@@ -79,12 +79,18 @@ public class Client {
                 Object objectIn = this.objectInputStream.readObject();
 
                 if (this.gameUpdateListener == null) {
-//                    System.out.println("GameUpdateListener was null! Not a big problem, just notifying!");
+                    System.out.println("GameUpdateListener was null! Not a big problem, just notifying!");
                     continue;
 //                    throw new NullPointerException("GameUpdateListener was null! Fix your shit");
                 }
 
-                if (objectIn instanceof GameUpdate) {
+                if (objectIn instanceof User) {
+                    if (((User) objectIn).getId().equals(this.getUser().getId())) {
+                        System.out.println("Updated user");
+                        this.user = (User) objectIn;
+                    }
+                } else if (objectIn instanceof GameUpdate) {
+                    System.out.println("GameUpdateListener send gameupdatehost");
                     gameUpdateListener.onGameUpdate((GameUpdate) objectIn);
                 }
 

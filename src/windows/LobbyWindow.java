@@ -153,7 +153,7 @@ public class LobbyWindow implements GameUpdateListener {
 
     private void onUserUpdate(UserUpdate userUpdate) {
         Platform.runLater(() -> {
-            if (userUpdate.hasLeft()){
+            if (userUpdate.hasLeft()) {
                 int indexToRemove = userList.indexOf(userUpdate.getUser());
                 lobbyList.getChildren().remove(indexToRemove);
                 userList.remove(userUpdate.getUser());

@@ -207,7 +207,7 @@ public class GameWindow implements GameUpdateListener {
         }
 
         // If the user update is this user itself
-        if (userUpdate.getUser().equals(Client.getInstance().getUser())) {
+        if (userUpdate.getUser().getId() == Client.getInstance().getUser().getId()) {
             this.isDrawing = userUpdate.getUser().isDrawing();
             if (this.isDrawing) {
                 this.currentWordLabel.setText("the word");
@@ -215,11 +215,11 @@ public class GameWindow implements GameUpdateListener {
                 this.roleLabel.setText("Drawing");
                 // TODO: 31/05/2020 I am drawing this round! Show the controls and the words to choose from
 
-            } else {
-                this.currentWordLabel.setText(" _ ");
-                this.drawingButtonsBox.setDisable(true);
-                this.roleLabel.setText("Guessing");
             }
+        }else {
+            this.currentWordLabel.setText(" _ ");
+            this.drawingButtonsBox.setDisable(true);
+            this.roleLabel.setText("Guessing");
         }
 
         updateScoreboard(userUpdate.getUser());
@@ -333,7 +333,7 @@ public class GameWindow implements GameUpdateListener {
 
         sendButton.setOnAction(event -> {
             if (messageInput.getText() != null) {
-                ChatUpdate newChatUpdate = new ChatUpdate(Client.getInstance().getUser().getName(), messageInput.getText());
+                ChatUpdate newChatUpdate = new ChatUpdate(Client.getInstance().getUser(), messageInput.getText());
 
                 // Make the client send the message to the server
                 Client.getInstance().sendObject(newChatUpdate);
