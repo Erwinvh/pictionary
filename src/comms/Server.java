@@ -85,6 +85,7 @@ public class Server {
             // The client will send itself when connected
             User user = (User) objectInputStream.readObject();
             connectedSockets.put(socket, user);
+            sendToAllClients(new UserUpdate(user, false));
             objectOutputStreams.add(objectOutputStream);
 
             connectedSockets.values().forEach(userInstance -> {
@@ -120,7 +121,7 @@ public class Server {
             sendToAllClients(new UserUpdate(user, true));
 
             // Stop the entire server when all clients have left
-            if (this.connectedSockets.size() == 0) {
+            if (this.connectedSockets.size() == 0 || user.isHost()) {
                 stop();
             }
 
@@ -167,18 +168,21 @@ public class Server {
     }
 
     private void startGame() {
-        sendToAllClients(new RoundUpdate(currentRoundIndex, serverSettings.getRounds()));
+        nextRound(true);
+
         // startTimer();
         // Perhaps nextRound(isFirst = true)? or just sendToAllClients(RoundUpdate of first round)? :D
         // TODO: 01/06/2020 other setup for the beginning of the game
 
     }
 
-    private void nextRound() {
+    private void nextRound(boolean isFirst) {
         currentDrawerIndex = 0;
         nextDrawer(true);
 
-        currentRoundIndex++;
+        if (!isFirst)
+            currentRoundIndex++;
+
         if (serverSettings.getRounds() == currentRoundIndex) {
             // TODO: 31/05/2020 End game
             return;
@@ -205,26 +209,29 @@ public class Server {
     }
 
     private void nextDrawer(boolean isFirst) {
-        User[] users = (User[]) connectedSockets.values().toArray();
+        List<User> users = new ArrayList<>(connectedSockets.values());
+        User currentDrawer = users.get(currentDrawerIndex);
 
         if (isFirst) {
-            users[0].setDrawing(true);
-            sendToAllClients(new UserUpdate(users[0], false));
+            currentDrawer.setDrawing(true);
+            sendToAllClients(new UserUpdate(currentDrawer, false));
             return;
         }
 
-        users[currentDrawerIndex].setDrawing(false);
-        sendToAllClients(new UserUpdate(users[currentDrawerIndex], false));
+        // Disable drawing for current drawer
+        currentDrawer.setDrawing(false);
+        sendToAllClients(new UserUpdate(currentDrawer, false));
 
-        if (currentDrawerIndex == users.length) {
-            nextRound();
+        // Check if the current drawer is the last drawer of this round
+        if (currentDrawerIndex == users.size()) {
+            nextRound(false);
             return;
         }
 
         // Increase index of current drawer and then set the corresponding user to allow interaction with the canvas
         currentDrawerIndex++;
-        users[currentDrawerIndex].setDrawing(true);
-        sendToAllClients(new UserUpdate(users[currentDrawerIndex], false));
+        users.get(currentDrawerIndex).setDrawing(true);
+        sendToAllClients(new UserUpdate(users.get(currentDrawerIndex), false));
     }
 
     public boolean getRunning() {
