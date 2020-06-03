@@ -31,12 +31,16 @@ public class LobbyWindow implements GameUpdateListener {
     private VBox lobbyList = new VBox();
 
     LobbyWindow(Stage primaryStage) {
+        this(primaryStage, new ArrayList<>());
+    }
+
+    LobbyWindow(Stage primaryStage, List<User> userList){
         Client.getInstance().setGameUpdateListener(this);
 
         HBox base = new HBox();
         base.setSpacing(40);
 
-        this.userList = new ArrayList<>();
+        this.userList = userList;
 
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setMaxWidth(1000);
@@ -152,7 +156,7 @@ public class LobbyWindow implements GameUpdateListener {
 
     private void onRoundUpdate(RoundUpdate roundUpdate) {
         if (roundUpdate.getRoundNum() == 0) {
-            Platform.runLater(() -> new GameWindow(this.primaryStage,userList));
+            Platform.runLater(() -> new GameWindow(this.primaryStage, userList));
         }
     }
 

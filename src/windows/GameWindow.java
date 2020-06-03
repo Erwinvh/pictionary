@@ -39,6 +39,7 @@ public class GameWindow implements GameUpdateListener {
     private Label timeLeftLabel = new Label("180");
     private Label currentRoundLabel = new Label("");
 
+    private List<User> userList;
     // Drawing
     private int radius = 30;
     private FXGraphics2D graphics;
@@ -51,6 +52,7 @@ public class GameWindow implements GameUpdateListener {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Pictionary - Game");
 
+        this.userList = userList;
         Client.getInstance().setGameUpdateListener(this);
 
         brushColor = Color.BLACK;
@@ -347,8 +349,9 @@ public class GameWindow implements GameUpdateListener {
         return inputBox;
     }
 
-    public void endGame(){
+    public void endGame() {
         //Show endscores inpopUP?
         // move back to lobby or home?
+        new LobbyWindow(this.primaryStage, this.userList);
     }
 }
