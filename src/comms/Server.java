@@ -193,6 +193,7 @@ public class Server {
         for (ObjectOutputStream objectOutputStream : objectOutputStreams) {
             try {
                 objectOutputStream.writeObject(obj);
+                objectOutputStream.reset();
             } catch (IOException e) {
                 System.out.println("Something went wrong whilst trying to send " + obj.toString() + " to " + objectOutputStream.toString());
                 e.printStackTrace();

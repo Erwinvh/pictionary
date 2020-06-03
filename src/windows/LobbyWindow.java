@@ -147,7 +147,7 @@ public class LobbyWindow implements GameUpdateListener {
                 break;
 
             case TURN:
-                System.out.println("LobbyWindow received TURN gameUpdateType");
+                System.out.println("LobbyWindow received TURN GameUpdateType");
         }
     }
 

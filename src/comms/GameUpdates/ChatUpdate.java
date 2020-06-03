@@ -32,10 +32,6 @@ public class ChatUpdate extends GameUpdate {
         return message;
     }
 
-    public boolean isSystemMessage() {
-        return isSystemMessage;
-    }
-
     @Override
     public String toString() {
         if (isSystemMessage) {

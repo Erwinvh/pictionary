@@ -39,7 +39,10 @@ public class GameWindow implements GameUpdateListener {
     private Label timeLeftLabel = new Label("180");
     private Label currentRoundLabel = new Label("");
 
+    private VBox scoreBoard;
+
     private List<User> userList;
+
     // Drawing
     private int radius = 30;
     private FXGraphics2D graphics;
@@ -53,6 +56,7 @@ public class GameWindow implements GameUpdateListener {
         this.primaryStage.setTitle("Pictionary - Game");
 
         this.userList = userList;
+
         Client.getInstance().setGameUpdateListener(this);
 
         brushColor = Color.BLACK;
@@ -80,9 +84,13 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private VBox getScoreboard() {
-        VBox scoreBoard = new VBox();
-        scoreBoard.getChildren().add(playerScoreMaker(Client.getInstance().getUser()));
-        return scoreBoard;
+        this.scoreBoard = new VBox();
+
+        for (User user : this.userList) {
+            this.scoreBoard.getChildren().add(playerScoreMaker(user));
+        }
+
+        return this.scoreBoard;
     }
 
     private HBox playerScoreMaker(User user) {
@@ -118,11 +126,10 @@ public class GameWindow implements GameUpdateListener {
         if (!this.isDrawing) {
             return;
         }
+
         if (mouseEvent.getButton().equals(MouseButton.PRIMARY))
             graphics.setColor(brushColor);
-        else {
-            graphics.setColor(Color.WHITE);
-        }
+        else graphics.setColor(Color.WHITE);
 
         Point2D position = new Point2D.Double(mouseEvent.getX(), mouseEvent.getY());
 
@@ -204,11 +211,27 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private void onUserUpdate(UserUpdate userUpdate) {
-        // TODO: 02/06/2020 Update scoreboard
-        if (userUpdate.hasLeft()) {
-            // TODO: 31/05/2020 Remove this user from the display board
-            return;
-        }
+        int matchingIndex = userList.indexOf(userUpdate.getUser());
+        System.out.println("GameWindow.onUserUpdate: " + userUpdate.getUser().toString());
+        Platform.runLater(() -> {
+            // If the user has left, try to remove it from the list,
+            // if this is successful then also remove it from the scoreboard
+            if (userUpdate.hasLeft() && this.userList.remove(userUpdate.getUser())) {
+                scoreBoard.getChildren().remove(matchingIndex);
+            }
+
+            // Otherwise if the user was already added to our list we can find the index and update that user
+            else if (this.userList.contains(userUpdate.getUser())) {
+                this.scoreBoard.getChildren().set(matchingIndex, playerScoreMaker(userUpdate.getUser()));
+                this.userList.set(matchingIndex, userUpdate.getUser());
+            }
+
+            // Otherwise the user has just joined and we should add it to our list
+            else {
+                this.scoreBoard.getChildren().add(playerScoreMaker(userUpdate.getUser()));
+                this.userList.add(userUpdate.getUser());
+            }
+        });
     }
 
     private void onTurnUpdate(TurnUpdate turnUpdate) {
