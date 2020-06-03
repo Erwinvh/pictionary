@@ -156,17 +156,17 @@ public class Server {
         if (message.equalsIgnoreCase(currentWord)) {
             sendToAllClients(new ChatUpdate(null, chatUpdate.getUser().getName() + " has guessed the word!", true));
 
-            if (correctlyGuesses.isEmpty()) {
+            if (this.correctlyGuesses.isEmpty()) {
                 chatUpdate.getUser().addScore(300);
-                correctlyGuesses.add(chatUpdate.getUser());
-//                System.out.println("first winner:"+chatUpdate.getUser().getName());
-                recordTime = serverSettings.getTimeInSeconds()-roundTime;
+                this.correctlyGuesses.add(chatUpdate.getUser());
+                this.recordTime = serverSettings.getTimeInSeconds() - this.roundTime;
+
             } else {
                 int points = 300 - (25 / connectedUsers.size()) * correctlyGuesses.size();
                 correctlyGuesses.add(chatUpdate.getUser());
                 chatUpdate.getUser().addScore(points);
-//                System.out.println("not first winner: "+ chatUpdate.getUser().getName()+ ": "+ points);
             }
+
             return;
         }
 
@@ -253,18 +253,17 @@ public class Server {
             }).start();
         } else nextDrawer(true);
 
-        // TODO: 01/06/2020 maybe first wait to let the drawer select the word before starting the timer
         startTimer();
     }
 
     private void startTimer() {
         new Thread(() -> {
-            roundTime = serverSettings.getTimeInSeconds();
-            while (roundTime >= 0) {
+            this.roundTime = serverSettings.getTimeInSeconds();
+            while (this.roundTime > 0) {
                 try {
                     Thread.sleep(1000);
-                    roundTime--;
-                    sendToAllClients(new TimerUpdate(roundTime));
+                    this.roundTime--;
+                    sendToAllClients(new TimerUpdate(this.roundTime));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -277,21 +276,11 @@ public class Server {
 
     private void nextDrawer(boolean isFirst) {
         List<User> users = new ArrayList<>(connectedUsers.keySet());
-        User currentDrawer = users.get(currentDrawerIndex);
-        pickNextWord();
+        User currentDrawer = users.get(this.currentDrawerIndex);
 
-        //adds points to the pervious drawer
-        if (currentRoundIndex!=0&&!isFirst&&correctlyGuesses.size()>0){
-            int points = (correctlyGuesses.size()/(connectedUsers.size()-1)/recordTime)*500;
-            if ((currentDrawerIndex-1)==-1){
-                users.get(users.size()-1).addScore(points);
-                }else{
+        pickNextWord(0);
 
-            users.get(currentDrawerIndex-1).addScore(points);
-            }
-            System.out.println("Previous drawer:"+points);
-        }
-        correctlyGuesses.clear();
+        addPointsToDrawer(currentDrawer);
 
         if (isFirst) {
             sendToAllClients(new TurnUpdate(currentDrawer, currentWord));
@@ -306,11 +295,35 @@ public class Server {
 
         // Increase index of current drawer and then set the corresponding user to allow interaction with the canvas
         currentDrawerIndex++;
+
+        applyAllPoints();
+
         sendToAllClients(new TurnUpdate(users.get(currentDrawerIndex), currentWord));
     }
 
-    private void pickNextWord() {
+    private void applyAllPoints() {
+        for (User user : connectedUsers.keySet()) {
+            sendToAllClients(new UserUpdate(user, false));
+        }
+    }
+
+    private void addPointsToDrawer(User currentDrawer) {
+        if (currentRoundIndex != 0 && currentDrawerIndex != 0 && correctlyGuesses.size() > 0){
+            int pointsToAdd = (correctlyGuesses.size() / (connectedUsers.size() - 1) / recordTime) * 500;
+            currentDrawer.addScore(pointsToAdd);
+            correctlyGuesses.clear();
+        }
+    }
+
+    private void pickNextWord(int i) {
+        if (i > 100) return;
+
         this.currentWord = this.englishWordList.poll();
+        if (this.currentWord == null){
+            // REACHED END OF THE LIST
+            setupWordList();
+            pickNextWord(++i);
+        }
     }
 
     public boolean getRunning() {
