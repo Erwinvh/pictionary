@@ -6,7 +6,9 @@ public class TimerUpdate extends GameUpdate {
     public TimerUpdate(int newTimeLeft) {
         super.gameUpdateType = GameUpdateType.TIMER;
 
-        this.timeLeft = newTimeLeft;
+        if (newTimeLeft >= 0) {
+            this.timeLeft = newTimeLeft;
+        } else this.timeLeft = 0;
     }
 
     public int getTimeLeft() {
