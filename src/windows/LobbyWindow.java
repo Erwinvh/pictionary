@@ -1,10 +1,8 @@
 package windows;
 
 import comms.Client;
-import comms.GameUpdates.GameUpdate;
-import comms.GameUpdates.GameUpdateListener;
-import comms.GameUpdates.RoundUpdate;
-import comms.GameUpdates.UserUpdate;
+import comms.GameUpdates.*;
+import comms.ServerSettings;
 import comms.User;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -29,6 +27,9 @@ public class LobbyWindow implements GameUpdateListener {
 
     private List<User> userList;
     private VBox lobbyList = new VBox();
+    private ComboBox<Integer> roundsComboBox;
+    private ComboBox<String> languageComboBox;
+    private ComboBox<Integer> timePerRoundComboBox;
 
     LobbyWindow(Stage primaryStage) {
         this(primaryStage, new ArrayList<>());
@@ -63,35 +64,27 @@ public class LobbyWindow implements GameUpdateListener {
         gameSettingsBox.setSpacing(10);
 
         Label amountOfRoundsLabel = new Label("Amount of rounds:");
-        ComboBox<Integer> roundsComboBox = getComboBox(1, 50, 1, 4);
+        roundsComboBox = getComboBox(1, 50, 1, 4);
 
         Label languageLabel = new Label("Language:");
-        ComboBox<String> languageComboBox = new ComboBox<>();
+        languageComboBox = new ComboBox<>();
         languageComboBox.getItems().addAll("English", "Dutch");
         languageComboBox.getSelectionModel().selectFirst();
 
         Label timePerRoundLabel = new Label("Time per Round in seconds");
-        ComboBox<Integer> timePerRoundComboBox = getComboBox(10, 120, 10, 5);
-
-        Label maxAmountPlayersLabel = new Label("Max. amount of players:");
-        ComboBox<Integer> maxAmountPlayersComboBox = getComboBox(2, 20, 1, 0);
+        timePerRoundComboBox = getComboBox(10, 120, 10, 5);
 
         Label lobbyCodeLabel = new Label("Lobby Code");
 
         Button startGameButton = new Button("Start game");
         startGameButton.setOnAction(event -> {
-            if (getLobbySize() <= maxAmountPlayersComboBox.getSelectionModel().getSelectedItem()) {
                 // Send user instance so the server can check whether I am host or not,
                 // since only the host can start a game
-                //TODO: set the serversettings
+                adjustServerSettings();
                 Client.getInstance().sendObject(Client.getInstance().getUser());
-//                new GameWindow(this.primaryStage);
-            } else {
-                System.out.println("You have too many players");
-            }
         });
 
-        gameSettingsBox.getChildren().addAll(amountOfRoundsLabel, roundsComboBox, languageLabel, languageComboBox, timePerRoundLabel, timePerRoundComboBox, maxAmountPlayersLabel, maxAmountPlayersComboBox, lobbyCodeLabel, startGameButton);
+        gameSettingsBox.getChildren().addAll(amountOfRoundsLabel, roundsComboBox, languageLabel, languageComboBox, timePerRoundLabel, timePerRoundComboBox, lobbyCodeLabel, startGameButton);
         return gameSettingsBox;
     }
 
@@ -133,8 +126,12 @@ public class LobbyWindow implements GameUpdateListener {
         return comboBox;
     }
 
-    private int getLobbySize() {
-        return lobbyList.getChildren().size();
+    private void adjustServerSettings(){
+        ServerSettings adjustedServerSettings = new ServerSettings(0);
+        adjustedServerSettings.setTimeInSeconds(timePerRoundComboBox.getSelectionModel().getSelectedItem());
+        adjustedServerSettings.setRounds(roundsComboBox.getSelectionModel().getSelectedItem());
+        adjustedServerSettings.setLanguage(languageComboBox.getSelectionModel().getSelectedItem());
+        Client.getInstance().sendObject(new SettingsUpdate(adjustedServerSettings));
     }
 
     @Override

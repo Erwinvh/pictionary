@@ -114,6 +114,9 @@ public class Server {
                     if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.CHAT)) {
                         checkWord((ChatUpdate) objectIn);
                     }
+                    else if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.SETTINGS)) {
+                        adjustServerSettings((SettingsUpdate) objectIn);
+                    }
 
                 } else if (objectIn instanceof User) {
                     if (((User) objectIn).isHost()) {
@@ -137,6 +140,13 @@ public class Server {
         } catch (IOException | ClassNotFoundException e) {
             connectedUsers.remove(user);
         }
+    }
+
+    private void adjustServerSettings (SettingsUpdate settingsUpdate){
+        ServerSettings adjustedSettings = settingsUpdate.getServerSettings();
+        this.serverSettings.setTimeInSeconds(adjustedSettings.getTimeInSeconds());
+        this.serverSettings.setRounds(adjustedSettings.getRounds());
+        this.serverSettings.setLanguage(adjustedSettings.getLanguage());
     }
 
     private void checkWord(ChatUpdate chatUpdate) {
@@ -271,7 +281,7 @@ public class Server {
         pickNextWord();
 
         //adds points to the pervious drawer
-        if (currentRoundIndex!=1&&currentDrawerIndex!=0&&correctlyGuesses.size()>0){
+        if (currentRoundIndex!=0&&!isFirst&&correctlyGuesses.size()>0){
             int points = (correctlyGuesses.size()/(connectedUsers.size()-1)/recordTime)*500;
             if ((currentDrawerIndex-1)==-1){
                 users.get(users.size()-1).addScore(points);
