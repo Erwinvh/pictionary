@@ -36,8 +36,8 @@ public class GameWindow implements GameUpdateListener {
     //Game information
     private Label roleLabel = new Label("Guessing");
     private Label currentWordLabel = new Label();
-    private Label timeLeftLabel = new Label("180");
-    private Label currentRoundLabel = new Label("");
+    private Label timeLeftLabel = new Label();
+    private Label currentRoundLabel = new Label();
 
     private VBox scoreBoard;
 

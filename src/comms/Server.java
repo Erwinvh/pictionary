@@ -13,20 +13,16 @@ import java.util.*;
 
 public class Server {
 
-    // Network
-    private ServerSettings serverSettings;
-
-    private ServerSocket serverSocket;
-    private boolean running;
-
-    private HashMap<User, Socket> connectedUsers;
-    private List<ObjectOutputStream> objectOutputStreams;
-
-    private final String JOIN_MESSAGE = "has joined the room!";
-    private final String LEAVE_MESSAGE = "has left the room!";
-
     // Game
     private static final String wordFileName = "/words.json";
+    private final String JOIN_MESSAGE = "has joined the room!";
+    private final String LEAVE_MESSAGE = "has left the room!";
+    // Network
+    private ServerSettings serverSettings;
+    private ServerSocket serverSocket;
+    private boolean running;
+    private HashMap<User, Socket> connectedUsers;
+    private List<ObjectOutputStream> objectOutputStreams;
     private Queue<String> englishWordList = new LinkedList<>();
 
     private int currentDrawerIndex = 0;
@@ -108,15 +104,14 @@ public class Server {
                 if (objectIn instanceof Boolean) {
                     connected = (boolean) objectIn;
                 } else if (objectIn instanceof GameUpdate) {
-                    // Notify all connected clients a new GameUpdate has been received
-                    sendToAllClients(objectIn);
-                    //TODO: stop the correct answer from going to the chat
                     if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.CHAT)) {
-                        checkWord((ChatUpdate) objectIn);
-                    }
-                    else if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.SETTINGS)) {
+                        if (checkWord((ChatUpdate) objectIn)) continue;
+                    } else if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.SETTINGS)) {
                         adjustServerSettings((SettingsUpdate) objectIn);
                     }
+
+                    // Notify all connected clients a new GameUpdate has been received
+                    sendToAllClients(objectIn);
 
                 } else if (objectIn instanceof User) {
                     if (((User) objectIn).isHost()) {
@@ -136,24 +131,23 @@ public class Server {
             if (this.connectedUsers.size() == 0 || user.isHost()) {
                 stop();
             }
-
         } catch (IOException | ClassNotFoundException e) {
             connectedUsers.remove(user);
         }
     }
 
-    private void adjustServerSettings (SettingsUpdate settingsUpdate){
+    private void adjustServerSettings(SettingsUpdate settingsUpdate) {
         ServerSettings adjustedSettings = settingsUpdate.getServerSettings();
         this.serverSettings.setTimeInSeconds(adjustedSettings.getTimeInSeconds());
         this.serverSettings.setRounds(adjustedSettings.getRounds());
         this.serverSettings.setLanguage(adjustedSettings.getLanguage());
     }
 
-    private void checkWord(ChatUpdate chatUpdate) {
+    private boolean checkWord(ChatUpdate chatUpdate) {
         String message = chatUpdate.getMessage().trim().toLowerCase();
         String currentWord = this.currentWord.trim().toLowerCase();
 
-        if (message.equalsIgnoreCase(currentWord)) {
+        if (message.equalsIgnoreCase(currentWord) && !chatUpdate.getUser().isDrawing()) {
             sendToAllClients(new ChatUpdate(null, chatUpdate.getUser().getName() + " has guessed the word!", true));
 
             if (this.correctlyGuesses.isEmpty()) {
@@ -167,13 +161,13 @@ public class Server {
                 chatUpdate.getUser().addScore(points);
             }
 
-            return;
+            return true;
         }
 
         int matchedCharacters = 0;
         for (int i = 0; i < message.length(); i++) {
             if (i > this.currentWord.length())
-                return;
+                break;
 
             if (message.charAt(i) == currentWord.charAt(i)) {
                 matchedCharacters++;
@@ -184,6 +178,8 @@ public class Server {
             // ALMOST CORRECT!
             sendToSpecificClient(new ChatUpdate(null, "You are very close!", true), chatUpdate.getUser());
         }
+
+        return false;
     }
 
     private void sendToAllClients(Object obj) {
@@ -252,7 +248,7 @@ public class Server {
                 }
 
             }).start();
-        } else nextDrawer(true);
+        } else nextDrawer(false);
 
         startTimer();
     }
@@ -269,6 +265,7 @@ public class Server {
                     e.printStackTrace();
                 }
             }
+
             nextRound(false);
         }).start();
     }
@@ -282,6 +279,7 @@ public class Server {
         addPointsToDrawer(currentDrawer);
 
         if (isFirst) {
+            currentDrawer.setDrawing(true);
             sendToAllClients(new TurnUpdate(currentDrawer, currentWord));
             return;
         }
@@ -292,11 +290,14 @@ public class Server {
             return;
         }
 
+        currentDrawer.setDrawing(false);
+
         // Increase index of current drawer and then set the corresponding user to allow interaction with the canvas
         currentDrawerIndex++;
 
         applyAllPoints();
 
+        users.get(currentDrawerIndex).setDrawing(true);
         sendToAllClients(new TurnUpdate(users.get(currentDrawerIndex), currentWord));
     }
 
@@ -307,7 +308,7 @@ public class Server {
     }
 
     private void addPointsToDrawer(User currentDrawer) {
-        if (currentRoundIndex != 0 && currentDrawerIndex != 0 && correctlyGuesses.size() > 0){
+        if (currentRoundIndex != 0 && currentDrawerIndex != 0 && correctlyGuesses.size() > 0) {
             int pointsToAdd = (correctlyGuesses.size() / (connectedUsers.size() - 1) / recordTime) * 500;
             currentDrawer.addScore(pointsToAdd);
             correctlyGuesses.clear();
@@ -318,7 +319,7 @@ public class Server {
         if (i > 100) return;
 
         this.currentWord = this.englishWordList.poll();
-        if (this.currentWord == null){
+        if (this.currentWord == null) {
             // REACHED END OF THE LIST
             setupWordList();
             pickNextWord(++i);
