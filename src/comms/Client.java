@@ -57,9 +57,9 @@ public class Client {
             this.connected = true;
 
             this.objectOutputStream = new ObjectOutputStream(this.clientSocket.getOutputStream());
-            this.objectInputStream = new ObjectInputStream(this.clientSocket.getInputStream());
-
             this.objectOutputStream.writeObject(this.getUser());
+
+            this.objectInputStream = new ObjectInputStream(this.clientSocket.getInputStream());
 
             incomingDataThread = new Thread(this::handleIncomingData);
             incomingDataThread.start();
@@ -83,7 +83,6 @@ public class Client {
                 if (this.gameUpdateListener == null) {
                     System.out.println("GameUpdateListener was null! Not a big problem, just notifying!");
                     continue;
-//                    throw new NullPointerException("GameUpdateListener was null! Fix your shit");
                 }
 
                 if (objectIn instanceof User) {

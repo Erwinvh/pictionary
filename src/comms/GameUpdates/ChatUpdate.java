@@ -2,7 +2,9 @@ package comms.GameUpdates;
 
 import comms.User;
 
-public class ChatUpdate extends GameUpdate {
+import java.io.Serializable;
+
+public class ChatUpdate extends GameUpdate implements Serializable {
 
     private User user;
     private String message;
