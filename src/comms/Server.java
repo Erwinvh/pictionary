@@ -236,7 +236,7 @@ public class Server {
             currentRoundIndex++;
 
         if (serverSettings.getRounds() == currentRoundIndex) {
-            // TODO: 31/05/2020 End game
+            sendToAllClients(new RoundUpdate(this.serverSettings.getRounds()+1,this.serverSettings.getRounds()));
             return;
         }
 
@@ -269,8 +269,6 @@ public class Server {
                     e.printStackTrace();
                 }
             }
-
-            // TODO: 02/06/2020 Update points for clients who have guessed
             nextRound(false);
         }).start();
     }

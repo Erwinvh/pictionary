@@ -203,7 +203,13 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private void onRoundUpdate(RoundUpdate roundUpdate) {
-        Platform.runLater(() -> this.currentRoundLabel.setText(String.format("Round %s of %s rounds", roundUpdate.getRoundNum(), roundUpdate.getMaxRounds())));
+        Platform.runLater(() -> {
+            if (roundUpdate.getRoundNum() <= roundUpdate.getMaxRounds()) {
+                this.currentRoundLabel.setText(String.format("Round %s of %s rounds", roundUpdate.getRoundNum(), roundUpdate.getMaxRounds()));
+                return;
+            }
+            endGame();
+        });
     }
 
     private void onTimerUpdate(TimerUpdate timerUpdate) {
@@ -372,9 +378,10 @@ public class GameWindow implements GameUpdateListener {
         return inputBox;
     }
 
-    public void endGame() {
+    private void endGame() {
         //Show endscores inpopUP?
         // move back to lobby or home?
+        new EndScoreWindow(userList);
         new LobbyWindow(this.primaryStage, this.userList);
     }
 }
