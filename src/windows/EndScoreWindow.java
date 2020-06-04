@@ -2,11 +2,12 @@ package windows;
 
 import comms.User;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.awt.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class EndScoreWindow {
 
     private List<User> userList;
 
-    private EndScoreWindow(List<User> userList) {
+    public EndScoreWindow(List<User> userList) {
         this.userList = userList;
         setUp();
     }
@@ -34,7 +35,7 @@ public class EndScoreWindow {
         ArrayList<User> contained = new ArrayList<>();
         for (int i = 0; i < userList.size(); i++) {
             User highestUser = null;
-            int highest = 0;
+            int highest = -1;
             for (User user: userList) {
 
                 if (user.getScore()>highest&&!contained.contains(user)){
