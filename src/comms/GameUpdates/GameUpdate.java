@@ -11,7 +11,8 @@ public abstract class GameUpdate implements Serializable {
         HINT,
         USER,
         TURN,
-        SETTINGS
+        SETTINGS,
+        STATE
     }
 
     GameUpdateType gameUpdateType;

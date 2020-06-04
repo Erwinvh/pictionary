@@ -24,6 +24,8 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import static comms.GameUpdates.StateUpdate.stateType.GAME;
+
 public class GameWindow implements GameUpdateListener {
 
     //Stage
@@ -68,6 +70,7 @@ public class GameWindow implements GameUpdateListener {
         this.primaryStage.setHeight(730);
         this.primaryStage.setScene(new Scene(setupFrame()));
         this.primaryStage.show();
+        Client.getInstance().sendObject(new StateUpdate(Client.getInstance().getUser(), GAME));
     }
 
     private VBox setupFrame() {

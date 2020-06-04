@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import static comms.GameUpdates.StateUpdate.stateType.LOBBY;
 
 public class LobbyWindow implements GameUpdateListener {
 
@@ -55,6 +56,7 @@ public class LobbyWindow implements GameUpdateListener {
         this.primaryStage.setWidth(500);
         this.primaryStage.setResizable(false);
         this.primaryStage.show();
+        Client.getInstance().sendObject(new StateUpdate(Client.getInstance().getUser(), LOBBY));
     }
 
     private VBox getGameSettingsBox() {

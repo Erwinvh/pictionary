@@ -31,11 +31,13 @@ public class Server {
     private ArrayList<User> correctlyGuesses;
     private int recordTime = 0;
     private int roundTime;
+    private HashMap<User, StateUpdate.stateType> stateMap;
 
     public Server(ServerSettings serverSettings) {
         this.serverSettings = serverSettings;
         this.serverSocket = null;
         this.running = false;
+        this.stateMap = new HashMap<>();
 
         this.connectedUsers = new LinkedHashMap<>();
         this.objectOutputStreams = new ArrayList<>();
@@ -108,6 +110,8 @@ public class Server {
                         if (checkWord((ChatUpdate) objectIn)) continue;
                     } else if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.SETTINGS)) {
                         adjustServerSettings((SettingsUpdate) objectIn);
+                    } else if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.STATE)) {
+                        adjustState((StateUpdate) objectIn);
                     }
 
                     // Notify all connected clients a new GameUpdate has been received
@@ -133,6 +137,15 @@ public class Server {
             }
         } catch (IOException | ClassNotFoundException e) {
             connectedUsers.remove(user);
+        }
+    }
+
+    private void adjustState(StateUpdate stateUpdate) {
+        User user = stateUpdate.getUser();
+        if (!stateMap.containsKey(user)) {
+            stateMap.put(user, stateUpdate.getState());
+        } else {
+            stateMap.replace(user, stateUpdate.getState());
         }
     }
 
@@ -232,26 +245,30 @@ public class Server {
             currentRoundIndex++;
 
         if (serverSettings.getRounds() == currentRoundIndex) {
-            sendToAllClients(new RoundUpdate(this.serverSettings.getRounds()+1,this.serverSettings.getRounds()));
-            currentRoundIndex=0;
+            sendToAllClients(new RoundUpdate(this.serverSettings.getRounds() + 1, this.serverSettings.getRounds()));
+            currentRoundIndex = 0;
             return;
         }
 
         sendToAllClients(new RoundUpdate(currentRoundIndex, this.serverSettings.getRounds()));
 
-        if (isFirst) {
-            new Thread(() -> {
-                try {
-                    Thread.sleep(100);
-                    nextDrawer(true);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
 
-            }).start();
-        } else nextDrawer(false);
+        while (!attendanceGame()) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        nextDrawer(true);
 
-        startTimer();
+    }
+
+    public boolean attendanceGame() {
+        for (StateUpdate.stateType statetype : stateMap.values()) {
+            if (statetype == StateUpdate.stateType.LOBBY || statetype == null) return false;
+        }
+        return true;
     }
 
     private void startTimer() {
@@ -278,7 +295,7 @@ public class Server {
         pickNextWord(0);
 
         addPointsToDrawer(currentDrawer);
-
+        startTimer();
         if (isFirst) {
             currentDrawer.setDrawing(true);
             sendToAllClients(new TurnUpdate(currentDrawer, currentWord));
