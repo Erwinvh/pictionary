@@ -233,6 +233,7 @@ public class Server {
 
         if (serverSettings.getRounds() == currentRoundIndex) {
             sendToAllClients(new RoundUpdate(this.serverSettings.getRounds()+1,this.serverSettings.getRounds()));
+            currentRoundIndex=0;
             return;
         }
 
