@@ -47,7 +47,7 @@ public class Server {
         try {
             start();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Server did not start successfully!");
         }
     }
 
@@ -179,7 +179,7 @@ public class Server {
 
         int matchedCharacters = 0;
         for (int i = 0; i < message.length(); i++) {
-            if (i > this.currentWord.length())
+            if (i >= this.currentWord.length())
                 break;
 
             if (message.charAt(i) == currentWord.charAt(i)) {
@@ -202,7 +202,6 @@ public class Server {
         for (ObjectOutputStream objectOutputStream : objectOutputStreams) {
             try {
                 objectOutputStream.writeObject(obj);
-                objectOutputStream.reset();
             } catch (IOException e) {
                 System.out.println("Something went wrong whilst trying to send " + obj.toString() + " to " + objectOutputStream.toString());
                 e.printStackTrace();
@@ -252,7 +251,6 @@ public class Server {
 
         sendToAllClients(new RoundUpdate(currentRoundIndex, this.serverSettings.getRounds()));
 
-
         while (!attendanceGame()) {
             try {
                 Thread.sleep(10);
@@ -260,8 +258,8 @@ public class Server {
                 e.printStackTrace();
             }
         }
+        
         nextDrawer(true);
-
     }
 
     public boolean attendanceGame() {
@@ -284,7 +282,7 @@ public class Server {
                 }
             }
 
-            nextRound(false);
+            nextDrawer(false);
         }).start();
     }
 
@@ -296,6 +294,7 @@ public class Server {
 
         addPointsToDrawer(currentDrawer);
         startTimer();
+
         if (isFirst) {
             currentDrawer.setDrawing(true);
             sendToAllClients(new TurnUpdate(currentDrawer, currentWord));
@@ -303,7 +302,7 @@ public class Server {
         }
 
         // Check if the current drawer is the last drawer of this round
-        if (currentDrawerIndex == users.size()) {
+        if (currentDrawerIndex == users.size() - 1) {
             nextRound(false);
             return;
         }
@@ -322,6 +321,7 @@ public class Server {
     private void applyAllPoints() {
         for (User user : connectedUsers.keySet()) {
             sendToAllClients(new UserUpdate(user, false));
+            System.out.println(user.getScore());
         }
     }
 
@@ -351,14 +351,14 @@ public class Server {
     private void sendToSpecificClient(Object object, User user) {
         List<User> users = new ArrayList<>(connectedUsers.keySet());
         int index = users.indexOf(user);
+
+        if (!connectedUsers.get(user).isConnected())
+            return;
+
         try {
             objectOutputStreams.get(index).writeObject(object);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public ServerSettings getServerSettings() {
-        return serverSettings;
     }
 }

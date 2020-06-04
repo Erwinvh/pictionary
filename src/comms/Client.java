@@ -22,12 +22,12 @@ public class Client {
 
     private Thread incomingDataThread;
 
-    // static inner class - inner classes are not loaded until they are referenced.
+    // Static inner class - inner classes are not loaded until they are referenced.
     private static class ClientHolder {
         private static Client client = new Client();
     }
 
-    // global access point
+    // Global access point
     public static Client getInstance() {
         return ClientHolder.client;
     }
@@ -76,7 +76,14 @@ public class Client {
     }
 
     private void handleIncomingData() {
+
+        int errorCounter = 0;
+
         while (this.connected) {
+
+            this.connected = clientSocket.isConnected();
+            if (!this.connected) return;
+
             try {
                 Object objectIn = this.objectInputStream.readObject();
 
@@ -94,18 +101,26 @@ public class Client {
                     gameUpdateListener.onGameUpdate((GameUpdate) objectIn);
                 }
 
+                errorCounter--;
+
             } catch (IOException | ClassNotFoundException e) {
-                System.out.println("Something went wrong whilst handling incoming data!");
-                e.printStackTrace();
+                errorCounter++;
+
+                if (errorCounter >= 6){
+                    System.out.println("Something went wrong whilst handling incoming data!");
+                    e.printStackTrace();
+                }
+            } catch (NullPointerException e){
+                System.out.println("Received a null object!");
             }
         }
     }
 
     public void disconnectFromServer() {
         try {
-            this.connected = false;
-            sendObject(Boolean.FALSE);
             System.out.println(this.user.getName() + " is willingly disconnecting from server...");
+            sendObject(Boolean.FALSE);
+            this.connected = false;
 
             incomingDataThread.join();
 
@@ -116,8 +131,9 @@ public class Client {
     }
 
     public void sendObject(Object obj) {
-//        if (!this.connected)
+        if (!this.connected)
 //            throw new IllegalStateException("Client is not connected and thus cannot send data.");
+            System.out.println("Client is not connected and thus cannot send data.");
 
         try {
             objectOutputStream.writeObject(obj);
