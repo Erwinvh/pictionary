@@ -4,6 +4,7 @@ import comms.Client;
 import comms.GameUpdates.*;
 import comms.User;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
@@ -12,13 +13,14 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.jfree.fx.FXGraphics2D;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -40,7 +42,7 @@ public class GameWindow implements GameUpdateListener {
     private Label currentWordLabel = new Label();
     private Label timeLeftLabel = new Label();
     private Label currentRoundLabel = new Label("Round 1");
-
+    private Button sendButton;
     private VBox scoreBoard;
 
     private List<User> userList;
@@ -66,7 +68,7 @@ public class GameWindow implements GameUpdateListener {
         chatArrayList = new ArrayList<>();
 
         this.primaryStage.setResizable(false);
-        this.primaryStage.setWidth(1000);
+        this.primaryStage.setWidth(1050);
         this.primaryStage.setHeight(730);
         this.primaryStage.setScene(new Scene(setupFrame()));
         this.primaryStage.show();
@@ -89,9 +91,12 @@ public class GameWindow implements GameUpdateListener {
 
     private VBox getScoreboard() {
         this.scoreBoard = new VBox();
-
+        this.scoreBoard.setMaxWidth(200);
+//TODO: name too long, pushes chat away and ponts arent visible
         for (User user : this.userList) {
-            this.scoreBoard.getChildren().add(playerScoreMaker(user));
+            HBox hbox = playerScoreMaker(user);
+            hbox.setPrefWidth(this.scoreBoard.getWidth());
+            this.scoreBoard.getChildren().add(hbox);
         }
 
         return this.scoreBoard;
@@ -100,10 +105,16 @@ public class GameWindow implements GameUpdateListener {
     private HBox playerScoreMaker(User user) {
         HBox playerScore = LobbyWindow.playerMaker(user);
         playerScore.setSpacing(10);
+        Region empty = new Region();
+        empty.setMaxWidth(100);
+        empty.setMinWidth(0);
+HBox.setHgrow(empty, Priority.ALWAYS);
+        Label scoreLabel = new Label(user.getScore() +" ");
+        scoreLabel.setMinWidth(50);
+        scoreLabel.setMaxWidth(60);
+        scoreLabel.setAlignment(Pos.BASELINE_RIGHT);
 
-        Label scoreLabel = new Label(user.getScore() + " points");
-
-        playerScore.getChildren().addAll(scoreLabel);
+        playerScore.getChildren().addAll(empty, scoreLabel);
 
         return playerScore;
     }
@@ -357,10 +368,13 @@ public class GameWindow implements GameUpdateListener {
 
     private ScrollPane getChat() {
         ScrollPane chatScrollPane = new ScrollPane();
+        chatScrollPane.setFitToHeight(true);
+        chatScrollPane.setPrefHeight(200);
+        chatScrollPane.setPrefHeight(500);
 
         chatMessagesBox = new GridPane();
         chatMessagesBox.setVgap(10);
-
+        chatScrollPane.vvalueProperty().bind(chatMessagesBox.heightProperty());
         for (ChatUpdate chatUpdate : chatArrayList) {
             addNewMessage(chatUpdate);
         }
@@ -373,7 +387,7 @@ public class GameWindow implements GameUpdateListener {
     private HBox getInput() {
         HBox inputBox = new HBox();
         TextField messageInput = new TextField();
-        Button sendButton = new Button("Send");
+        sendButton = new Button("Send");
 
         sendButton.setOnAction(event -> {
             if (messageInput.getText() != null) {
@@ -384,6 +398,8 @@ public class GameWindow implements GameUpdateListener {
                 messageInput.clear();
             }
         });
+
+
 
         inputBox.getChildren().addAll(messageInput, sendButton);
 

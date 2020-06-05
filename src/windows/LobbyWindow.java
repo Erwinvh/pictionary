@@ -63,7 +63,7 @@ public class LobbyWindow implements GameUpdateListener {
 
     static HBox playerMaker(User user) {
         HBox hBox = new HBox();
-        hBox.setAlignment(Pos.CENTER);
+        hBox.setAlignment(Pos.CENTER_LEFT);
 
         ImageView imageView = new ImageView();
         File file = new File(user.getProfileImage());
@@ -72,6 +72,7 @@ public class LobbyWindow implements GameUpdateListener {
         imageView.setFitHeight(40);
 
         Label label = new Label(user.getName());
+        label.setMaxWidth(100);
 
         hBox.getChildren().addAll(imageView, label);
 

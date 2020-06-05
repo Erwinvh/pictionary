@@ -190,7 +190,7 @@ public class Server {
 
                     for (int i = 0; i < wordsJsonArray.size(); i++) {
                         JsonObject wordObject = wordsJsonArray.getJsonObject(i);
-                        String word = wordObject.getString("english");
+                        String word = wordObject.getString(serverSettings.getLanguage().toLowerCase());
                         englishWordList.add(word);
                     }
 
@@ -251,6 +251,7 @@ public class Server {
         pickNextWord(0);
 
         addPointsToUser(currentDrawer);
+        applyAllPoints();
         startTimer();
 
         if (isFirst) {
@@ -270,7 +271,6 @@ public class Server {
         // Increase index of current drawer and then set the corresponding user to allow interaction with the canvas
         currentDrawerIndex++;
 
-        applyAllPoints();
 
         users.get(currentDrawerIndex).setDrawing(true);
         this.clients.sendToAllClients(new TurnUpdate(users.get(currentDrawerIndex), currentWord));
@@ -293,7 +293,6 @@ public class Server {
 
     private void pickNextWord(int i) {
         if (i > 100) return;
-
         this.currentWord = this.englishWordList.poll();
         if (this.currentWord == null) {
             // REACHED END OF THE LIST
