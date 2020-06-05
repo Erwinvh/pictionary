@@ -42,7 +42,7 @@ public class Client {
         this.objectOutputStream = null;
     }
 
-    public boolean connectToServer(String serverAddress, int serverPort) {
+    public synchronized boolean connectToServer(String serverAddress, int serverPort) {
         if (this.connected) {
             System.out.println("Client already connected with the server.");
             return true;
@@ -83,38 +83,39 @@ public class Client {
 
             this.connected = clientSocket.isConnected();
             if (!this.connected) return;
+            synchronized (this.objectInputStream) {
+                try {
+                    Object objectIn = this.objectInputStream.readObject();
 
-            try {
-                Object objectIn = this.objectInputStream.readObject();
-
-                if (this.gameUpdateListener == null) {
-                    System.out.println("GameUpdateListener was null! Not a big problem, just notifying!");
-                    continue;
-                }
-
-                if (objectIn instanceof User) {
-                    if (objectIn.equals(this.getUser())) {
-                        System.out.println("Updated user");
-                        this.user = (User) objectIn;
+                    if (this.gameUpdateListener == null) {
+                        System.out.println("GameUpdateListener was null! Not a big problem, just notifying!");
+                        continue;
                     }
-                } else if (objectIn instanceof GameUpdate) {
-                    gameUpdateListener.onGameUpdate((GameUpdate) objectIn);
-                }
 
-                errorCounter--;
+                    if (objectIn instanceof User) {
+                        if (objectIn.equals(this.getUser())) {
+                            System.out.println("Updated user");
+                            this.user = (User) objectIn;
+                        }
+                    } else if (objectIn instanceof GameUpdate) {
+                        gameUpdateListener.onGameUpdate((GameUpdate) objectIn);
+                    }
 
-            } catch (IOException | ClassNotFoundException e) {
-                errorCounter++;
+                    errorCounter--;
 
-                if (errorCounter >= 5) {
-                    errorCounter = 0;
-                    System.out.println("Something went wrong whilst handling incoming data!");
+                } catch (IOException | ClassNotFoundException e) {
+                    errorCounter++;
+
+                    if (errorCounter >= 5) {
+                        errorCounter = 0;
+                        System.out.println("Something went wrong whilst handling incoming data!");
+                        e.printStackTrace();
+                    }
+                } catch (NullPointerException e) {
+                    System.out.println("Received a null object!");
+                } catch (ClassCastException e) {
                     e.printStackTrace();
                 }
-            } catch (NullPointerException e) {
-                System.out.println("Received a null object!");
-            } catch (ClassCastException e) {
-                e.printStackTrace();
             }
         }
     }
@@ -133,20 +134,16 @@ public class Client {
         }
     }
 
-    public void sendObject(Object obj) {
+    public synchronized void sendObject(Object obj) {
         if (!this.connected)
 //            throw new IllegalStateException("Client is not connected and thus cannot send data.");
             System.out.println("Client is not connected and thus cannot send data.");
 
         try {
-            objectOutputStream.writeObject(obj);
+            this.objectOutputStream.writeObject(obj);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public User getUser() {
@@ -154,6 +151,10 @@ public class Client {
             throw new NullPointerException("User has not yet been defined! Remember to call setUser() before trying to connect to a server!");
 
         return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public void setGameUpdateListener(GameUpdateListener gameUpdateListener) {

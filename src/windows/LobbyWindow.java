@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 import static comms.GameUpdates.StateUpdate.stateType.LOBBY;
 
 public class LobbyWindow implements GameUpdateListener {
@@ -36,7 +37,7 @@ public class LobbyWindow implements GameUpdateListener {
         this(primaryStage, new ArrayList<>());
     }
 
-    LobbyWindow(Stage primaryStage, List<User> userList){
+    LobbyWindow(Stage primaryStage, List<User> userList) {
         Client.getInstance().setGameUpdateListener(this);
 
         HBox base = new HBox();
@@ -60,6 +61,23 @@ public class LobbyWindow implements GameUpdateListener {
         Client.getInstance().sendObject(new StateUpdate(Client.getInstance().getUser(), LOBBY));
     }
 
+    static HBox playerMaker(User user) {
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER);
+
+        ImageView imageView = new ImageView();
+        File file = new File(user.getProfileImage());
+        imageView.setImage(new Image(file.toURI().toString()));
+        imageView.setFitWidth(40);
+        imageView.setFitHeight(40);
+
+        Label label = new Label(user.getName());
+
+        hBox.getChildren().addAll(imageView, label);
+
+        return hBox;
+    }
+
     private VBox getGameSettingsBox() {
         VBox gameSettingsBox = new VBox();
         gameSettingsBox.setDisable(!Client.getInstance().getUser().isHost());
@@ -81,10 +99,12 @@ public class LobbyWindow implements GameUpdateListener {
 
         Button startGameButton = new Button("Start game");
         startGameButton.setOnAction(event -> {
-                // Send user instance so the server can check whether I am host or not,
-                // since only the host can start a game
-                adjustServerSettings();
-                Client.getInstance().sendObject(Client.getInstance().getUser());
+            if (userList.size() <= 1) return;
+
+            // Send user instance so the server can check whether I am host or not,
+            // since only the host can start a game
+            adjustServerSettings();
+            Client.getInstance().sendObject(Client.getInstance().getUser());
         });
 
         gameSettingsBox.getChildren().addAll(amountOfRoundsLabel, roundsComboBox, languageLabel, languageComboBox, timePerRoundLabel, timePerRoundComboBox, lobbyCodeLabel, startGameButton);
@@ -102,23 +122,6 @@ public class LobbyWindow implements GameUpdateListener {
         return lobbyList;
     }
 
-    static HBox playerMaker(User user) {
-        HBox hBox = new HBox();
-        hBox.setAlignment(Pos.CENTER);
-
-        ImageView imageView = new ImageView();
-        File file = new File(user.getProfileImage());
-        imageView.setImage(new Image(file.toURI().toString()));
-        imageView.setFitWidth(40);
-        imageView.setFitHeight(40);
-
-        Label label = new Label(user.getName());
-
-        hBox.getChildren().addAll(imageView, label);
-
-        return hBox;
-    }
-
     private ComboBox<Integer> getComboBox(int min, int limit, int stepSize, int selectIndex) {
         ComboBox<Integer> comboBox = new ComboBox<>();
         for (int i = min; i <= limit; i += stepSize) {
@@ -129,7 +132,7 @@ public class LobbyWindow implements GameUpdateListener {
         return comboBox;
     }
 
-    private void adjustServerSettings(){
+    private void adjustServerSettings() {
         ServerSettings adjustedServerSettings = new ServerSettings(0);
         adjustedServerSettings.setTimeInSeconds(timePerRoundComboBox.getSelectionModel().getSelectedItem());
         adjustedServerSettings.setRounds(roundsComboBox.getSelectionModel().getSelectedItem());
@@ -161,14 +164,25 @@ public class LobbyWindow implements GameUpdateListener {
     }
 
     private void onUserUpdate(UserUpdate userUpdate) {
+        int matchingIndex = userList.indexOf(userUpdate.getUser());
+
         Platform.runLater(() -> {
-            if (userUpdate.hasLeft()) {
-                int indexToRemove = userList.indexOf(userUpdate.getUser());
-                lobbyList.getChildren().remove(indexToRemove);
-                userList.remove(userUpdate.getUser());
-            } else {
-                userList.add(userUpdate.getUser());
-                lobbyList.getChildren().add(playerMaker(userUpdate.getUser()));
+            // If the user has left, try to remove it from the list,
+            // if this is successful then also remove it from the scoreboard
+            if (userUpdate.hasLeft() && this.userList.remove(userUpdate.getUser())) {
+                lobbyList.getChildren().remove(matchingIndex);
+            }
+
+            // Otherwise if the user was already added to our list we can find the index and update that user
+            else if (this.userList.contains(userUpdate.getUser())) {
+                this.lobbyList.getChildren().set(matchingIndex, playerMaker(userUpdate.getUser()));
+                this.userList.set(matchingIndex, userUpdate.getUser());
+            }
+
+            // Otherwise the user has just joined and we should add it to our list
+            else {
+                this.lobbyList.getChildren().add(playerMaker(userUpdate.getUser()));
+                this.userList.add(userUpdate.getUser());
             }
         });
     }
