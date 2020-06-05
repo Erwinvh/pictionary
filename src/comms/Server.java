@@ -86,6 +86,9 @@ public class Server {
 
             // The client will send itself when connected
             user = (User) objectInputStream.readObject();
+
+            Thread.currentThread().setName(user.getName());
+
             connectedUsers.put(user, socket);
             sendToAllClients(new UserUpdate(user, false));
             objectOutputStreams.add(objectOutputStream);
@@ -262,7 +265,7 @@ public class Server {
         nextDrawer(true);
     }
 
-    public boolean attendanceGame() {
+    private boolean attendanceGame() {
         for (StateUpdate.stateType statetype : stateMap.values()) {
             if (statetype == StateUpdate.stateType.LOBBY || statetype == null) return false;
         }
