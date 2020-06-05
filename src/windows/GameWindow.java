@@ -12,9 +12,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.jfree.fx.FXGraphics2D;
 
@@ -100,7 +98,7 @@ public class GameWindow implements GameUpdateListener {
     private HBox playerScoreMaker(User user) {
         HBox playerScore = LobbyWindow.playerMaker(user);
         playerScore.setSpacing(10);
-
+//        System.out.println(user.getScore());
         Label scoreLabel = new Label(user.getScore() + " points");
 
         playerScore.getChildren().addAll(scoreLabel);
@@ -190,14 +188,14 @@ public class GameWindow implements GameUpdateListener {
     private void onDrawUpdate(DrawUpdate drawUpdate) {
         Platform.runLater(() -> {
             if (drawUpdate.isShouldClearCanvas()) {
-                graphics.clearRect(0, 0, (int) canvas.getWidth(), (int) canvas.getHeight());
+                this.graphics.clearRect(0, 0, (int) canvas.getWidth(), (int) canvas.getHeight());
             } else {
                 int brushSize = drawUpdate.getBrushSize();
-                graphics.setColor(drawUpdate.getColor());
+                this.graphics.setColor(drawUpdate.getColor());
 
                 Point2D point = drawUpdate.getPosition();
 
-                graphics.fillOval((int) point.getX() - brushSize, (int) point.getY() - brushSize, brushSize * 2, brushSize * 2);
+                this.graphics.fillOval((int) point.getX() - brushSize, (int) point.getY() - brushSize, brushSize * 2, brushSize * 2);
             }
         });
     }
@@ -225,7 +223,7 @@ public class GameWindow implements GameUpdateListener {
 
     private void onUserUpdate(UserUpdate userUpdate) {
         int matchingIndex = userList.indexOf(userUpdate.getUser());
-        System.out.println("GameWindow.onUserUpdate: " + userUpdate.getUser().toString());
+        System.out.println(userUpdate.getUser().getScore());
         Platform.runLater(() -> {
             // If the user has left, try to remove it from the list,
             // if this is successful then also remove it from the scoreboard
@@ -248,12 +246,11 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private void onTurnUpdate(TurnUpdate turnUpdate) {
-        getClearCanvasButton().fire();
+        graphics.clearRect(0, 0, (int) canvas.getWidth(), (int) canvas.getHeight());
 
         if (turnUpdate.getWord() == null) endGame();
 
         this.isDrawing = turnUpdate.getDrawer().equals(Client.getInstance().getUser());
-        System.out.println("onTurnUpdate " + isDrawing);
         Platform.runLater(() -> {
             this.drawingButtonsBox.setDisable(!this.isDrawing);
 
@@ -288,13 +285,28 @@ public class GameWindow implements GameUpdateListener {
         GridPane gridpane = new GridPane();
 
         Button greenButton = new Button("green");
+        greenButton.setStyle("-fx-background-color: #00FF00");
+
         Button redButton = new Button("red");
+        redButton.setStyle("-fx-background-color: #FF0000");
+
         Button blackButton = new Button("black");
+        blackButton.setStyle("-fx-background-color: #000000");
+
         Button blueButton = new Button("blue");
+        blueButton.setStyle("-fx-background-color: #0000FF");
+
         Button yellowButton = new Button("yellow");
+        yellowButton.setStyle("-fx-background-color: #FFFF00");
+
         Button orangeButton = new Button("orange");
+        orangeButton.setStyle("-fx-background-color: #ff8c00");
+
         Button purpleButton = new Button("purple");
+        purpleButton.setStyle("-fx-background-color: #c74fff");
+
         Button pinkButton = new Button("pink");
+        pinkButton.setStyle("-fx-background-color: #ff659f");
 
         greenButton.setOnAction(event -> brushColor = Color.green);
         redButton.setOnAction(event -> brushColor = Color.red);
@@ -338,7 +350,6 @@ public class GameWindow implements GameUpdateListener {
         Button button = new Button("Clear canvas");
         button.setOnAction(event -> {
             DrawUpdate drawUpdate = new DrawUpdate(0, Color.white, null, true);
-
             Client.getInstance().sendObject(drawUpdate);
         });
 
