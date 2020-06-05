@@ -9,10 +9,7 @@ import javax.json.JsonReader;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class Server {
 
@@ -24,7 +21,7 @@ public class Server {
     private ServerSettings serverSettings;
     private ServerSocket serverSocket;
     private boolean running;
-    private Queue<String> englishWordList = new LinkedList<>();
+    private Queue<String> wordList = new LinkedList<>();
 
     private int currentDrawerIndex = 0;
     private int currentRoundIndex = 0;
@@ -188,11 +185,15 @@ public class Server {
                     JsonReader jsonReader = Json.createReader(reader);
                     JsonArray wordsJsonArray = jsonReader.readArray();
 
+                    List<String> wordList = new ArrayList<>();
                     for (int i = 0; i < wordsJsonArray.size(); i++) {
                         JsonObject wordObject = wordsJsonArray.getJsonObject(i);
-                        String word = wordObject.getString("english");
-                        englishWordList.add(word);
+                        String word = wordObject.getString(serverSettings.getLanguage().toLowerCase());
+                        wordList.add(word);
                     }
+
+                    Collections.shuffle(wordList);
+                    this.wordList = new LinkedList<>(wordList);
 
                     jsonReader.close();
                 }
@@ -294,7 +295,7 @@ public class Server {
     private void pickNextWord(int i) {
         if (i > 100) return;
 
-        this.currentWord = this.englishWordList.poll();
+        this.currentWord = this.wordList.poll();
         if (this.currentWord == null) {
             // REACHED END OF THE LIST
             setupWordList();
