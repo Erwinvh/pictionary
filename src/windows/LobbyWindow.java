@@ -159,7 +159,7 @@ public class LobbyWindow implements GameUpdateListener {
     }
 
     private void onRoundUpdate(RoundUpdate roundUpdate) {
-        if (roundUpdate.getRoundNum() == 0) {
+        if (roundUpdate.getRoundNum() == 1) {
             Platform.runLater(() -> new GameWindow(this.primaryStage, userList));
         }
     }

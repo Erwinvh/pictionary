@@ -108,8 +108,8 @@ public class GameWindow implements GameUpdateListener {
         Region empty = new Region();
         empty.setMaxWidth(100);
         empty.setMinWidth(0);
-HBox.setHgrow(empty, Priority.ALWAYS);
-        Label scoreLabel = new Label(user.getScore() +" ");
+        HBox.setHgrow(empty, Priority.ALWAYS);
+        Label scoreLabel = new Label(user.getScore() + " ");
         scoreLabel.setMinWidth(50);
         scoreLabel.setMaxWidth(60);
         scoreLabel.setAlignment(Pos.BASELINE_RIGHT);
@@ -222,7 +222,7 @@ HBox.setHgrow(empty, Priority.ALWAYS);
 
         Platform.runLater(() -> {
             if (roundUpdate.getRoundNum() >= 1 && roundUpdate.getRoundNum() <= roundUpdate.getMaxRounds()) {
-                this.currentRoundLabel.setText(String.format("Round %s of %s rounds", roundUpdate.getRoundNum() + 1, roundUpdate.getMaxRounds()));
+                this.currentRoundLabel.setText(String.format("Round %s of %s rounds", roundUpdate.getRoundNum(), roundUpdate.getMaxRounds()));
                 return;
             }
 
@@ -411,7 +411,6 @@ HBox.setHgrow(empty, Priority.ALWAYS);
                 messageInput.clear();
             }
         });
-
 
 
         inputBox.getChildren().addAll(messageInput, sendButton);

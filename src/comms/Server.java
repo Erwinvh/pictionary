@@ -24,7 +24,7 @@ public class Server {
     private Queue<String> wordList = new LinkedList<>();
 
     private int currentDrawerIndex = 0;
-    private int currentRoundIndex = 0;
+    private int currentRoundIndex = 1;
     private String currentWord;
     private ArrayList<User> correctlyGuesses;
     private int recordTime = 0;
@@ -209,7 +209,6 @@ public class Server {
 
     private void nextRound(boolean isFirst) {
         currentDrawerIndex = 0;
-
         if (!isFirst)
             currentRoundIndex++;
 
@@ -228,12 +227,12 @@ public class Server {
             }
         } while (!attendanceGame());
 
-        nextDrawer(true);
+        nextTurn(true);
     }
 
     private void endGame() {
         this.clients.sendToAllClients(new RoundUpdate(-1, this.serverSettings.getRounds()));
-        this.currentRoundIndex = 0;
+        this.currentRoundIndex = 1;
     }
 
     private boolean attendanceGame() {
@@ -249,39 +248,33 @@ public class Server {
         this.timerThread.start();
     }
 
-    private void nextDrawer(boolean isFirst) {
-        List<User> users = new ArrayList<>(this.clients.getConnectedUsers().keySet());
+    private void nextTurn(boolean isFirst) {
 
-        // If a user has left while in game then ensure this index decreases to the amount of connected users
-        if (this.currentDrawerIndex > users.size() - 1) this.currentDrawerIndex = users.size() - 1;
+        List<User> users = new ArrayList<>(this.clients.getConnectedUsers().keySet());
 
         User currentDrawer = users.get(this.currentDrawerIndex);
 
+        if (!isFirst) {
+            addPointsToUser(currentDrawer);
+            applyAllPoints(); //dont know what and why this does stuff
+            correctlyGuesses.clear();
+            currentDrawer.setDrawing(false);
+            currentDrawerIndex++;
+            try {
+                currentDrawer = users.get(currentDrawerIndex);
+            } catch (IndexOutOfBoundsException e) {
+                nextRound(false);
+                return; //zou deze return door de loop/doorsturen een probleem veroorzaken?
+            }
+        }
+//is dit nodig? zou dat niet naar next round moeten gaan?
+//        if (this.currentDrawerIndex > users.size() - 1) this.currentDrawerIndex = users.size() - 1;
+//        if (currentDrawerIndex >= users.size() - 1) {
+//
+//        }
+        currentDrawer.setDrawing(true);
         pickNextWord(0);
-
-        addPointsToUser(currentDrawer);
-        correctlyGuesses.add(currentDrawer);
-        applyAllPoints();
         startTimer();
-
-        if (isFirst) {
-            currentDrawer.setDrawing(true);
-            this.clients.sendToAllClients(new TurnUpdate(currentDrawer, currentWord));
-            return;
-        }
-
-        // Check if the current drawer is the last drawer of this round
-        if (currentDrawerIndex == users.size() - 1) {
-            nextRound(false);
-            return;
-        }
-
-        currentDrawer.setDrawing(false);
-
-        // Increase index of current drawer and then set the corresponding user to allow interaction with the canvas
-        currentDrawerIndex++;
-
-        users.get(currentDrawerIndex).setDrawing(true);
         this.clients.sendToAllClients(new TurnUpdate(users.get(currentDrawerIndex), currentWord));
     }
 
@@ -330,7 +323,7 @@ public class Server {
                 }
             }
 
-            nextDrawer(false);
+            nextTurn(false);
         }
     }
 }
