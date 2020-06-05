@@ -83,6 +83,7 @@ public class Client {
 
             this.connected = clientSocket.isConnected();
             if (!this.connected) return;
+
             synchronized (this.objectInputStream) {
                 try {
                     Object objectIn = this.objectInputStream.readObject();

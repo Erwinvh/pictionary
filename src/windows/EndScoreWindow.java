@@ -27,7 +27,6 @@ public class EndScoreWindow {
         scoreStage.show();
     }
 
-
     private VBox ScoreList(){
         Label scoreLabel = new Label("Score list:");
         VBox scoreList = new VBox();

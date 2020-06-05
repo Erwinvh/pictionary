@@ -9,10 +9,7 @@ import javax.json.JsonReader;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class Server {
 
@@ -24,7 +21,7 @@ public class Server {
     private ServerSettings serverSettings;
     private ServerSocket serverSocket;
     private boolean running;
-    private Queue<String> englishWordList = new LinkedList<>();
+    private Queue<String> wordList = new LinkedList<>();
 
     private int currentDrawerIndex = 0;
     private int currentRoundIndex = 0;
@@ -141,7 +138,7 @@ public class Server {
         String message = chatUpdate.getMessage().trim().toLowerCase();
         String currentWord = this.currentWord.trim().toLowerCase();
 
-        if (chatUpdate.getUser().isDrawing()) return false;
+        if (chatUpdate.getUser().isDrawing() || correctlyGuesses.contains(chatUpdate.getUser())) return false;
 
         if (message.equalsIgnoreCase(currentWord)) {
             this.clients.sendToAllClients(new ChatUpdate(null, chatUpdate.getUser().getName() + " has guessed the word!", true));
@@ -188,11 +185,15 @@ public class Server {
                     JsonReader jsonReader = Json.createReader(reader);
                     JsonArray wordsJsonArray = jsonReader.readArray();
 
+                    List<String> wordList = new ArrayList<>();
                     for (int i = 0; i < wordsJsonArray.size(); i++) {
                         JsonObject wordObject = wordsJsonArray.getJsonObject(i);
                         String word = wordObject.getString(serverSettings.getLanguage().toLowerCase());
-                        englishWordList.add(word);
+                        wordList.add(word);
                     }
+
+                    Collections.shuffle(wordList);
+                    this.wordList = new LinkedList<>(wordList);
 
                     jsonReader.close();
                 }
@@ -213,8 +214,7 @@ public class Server {
             currentRoundIndex++;
 
         if (serverSettings.getRounds() == currentRoundIndex) {
-            this.clients.sendToAllClients(new RoundUpdate(-1, this.serverSettings.getRounds()));
-            currentRoundIndex = 0;
+            endGame();
             return;
         }
 
@@ -229,6 +229,11 @@ public class Server {
         } while (!attendanceGame());
 
         nextDrawer(true);
+    }
+
+    private void endGame() {
+        this.clients.sendToAllClients(new RoundUpdate(-1, this.serverSettings.getRounds()));
+        this.currentRoundIndex = 0;
     }
 
     private boolean attendanceGame() {
@@ -246,11 +251,16 @@ public class Server {
 
     private void nextDrawer(boolean isFirst) {
         List<User> users = new ArrayList<>(this.clients.getConnectedUsers().keySet());
+
+        // If a user has left while in game then ensure this index decreases to the amount of connected users
+        if (this.currentDrawerIndex > users.size() - 1) this.currentDrawerIndex = users.size() - 1;
+
         User currentDrawer = users.get(this.currentDrawerIndex);
 
         pickNextWord(0);
 
         addPointsToUser(currentDrawer);
+        correctlyGuesses.add(currentDrawer);
         applyAllPoints();
         startTimer();
 
@@ -271,13 +281,12 @@ public class Server {
         // Increase index of current drawer and then set the corresponding user to allow interaction with the canvas
         currentDrawerIndex++;
 
-
         users.get(currentDrawerIndex).setDrawing(true);
         this.clients.sendToAllClients(new TurnUpdate(users.get(currentDrawerIndex), currentWord));
     }
 
     private void applyAllPoints() {
-        for (User user : this.clients.getConnectedUsers().keySet()) {
+        for (User user : this.correctlyGuesses) {
             this.clients.sendToAllClients(new UserUpdate(user, false));
         }
 
@@ -293,7 +302,8 @@ public class Server {
 
     private void pickNextWord(int i) {
         if (i > 100) return;
-        this.currentWord = this.englishWordList.poll();
+
+        this.currentWord = this.wordList.poll();
         if (this.currentWord == null) {
             // REACHED END OF THE LIST
             setupWordList();
