@@ -1,22 +1,94 @@
 [
-    {
-        "english":"English",
-        "dutch":"Engels"
-    },
-    {
-        "english":"Dutch",
-        "dutch":"Nederlands"
-    },
-    {
-        "english":"windmill",
-        "dutch":"molen"
-    },
-    {
-        "english":"computer",
-        "dutch":"computer"
-    },
-    {
-        "english":"donkey",
-        "dutch":"ezel"
-    }
+  {
+    "english": "English",
+    "dutch": "Engels"
+  },
+  {
+    "english": "Dutch",
+    "dutch": "Nederlands"
+  },
+  {
+    "english": "windmill",
+    "dutch": "molen"
+  },
+  {
+    "english": "computer",
+    "dutch": "computer"
+  },
+  {
+    "english": "donkey",
+    "dutch": "ezel"
+  },
+  {
+    "english": "chair",
+    "dutch": "stoel"
+  },
+  {
+    "english": "bed",
+    "dutch": "bed"
+  },
+  {
+    "english": "tiger",
+    "dutch": "tijger"
+  },
+  {
+    "english": "pencil",
+    "dutch": "potlood"
+  },
+  {
+    "english": "gemstone",
+    "dutch": "edelsteen"
+  },
+  {
+    "english": "cup",
+    "dutch": "kopje"
+  },
+  {
+    "english": "Flag",
+    "dutch": "vlag"
+  },
+  {
+    "english": "vision",
+    "dutch": "zicht"
+  },
+  {
+    "english": "scissors",
+    "dutch": "schaar"
+  },
+  {
+    "english": "piano",
+    "dutch": "piano"
+  },
+  {
+    "english": "feast",
+    "dutch": "feestmaal"
+  },
+  {
+    "english": "hear",
+    "dutch": "horen"
+  },
+  {
+    "english": "dive",
+    "dutch": "duiken"
+  },
+  {
+    "english": "sink",
+    "dutch": "zinken"
+  },
+  {
+    "english": "hill",
+    "dutch": "heuvel"
+  },
+  {
+    "english": "bin",
+    "dutch": "prullenmand"
+  },
+  {
+    "english": "ankle",
+    "dutch": "enkel"
+  },
+  {
+    "english": "shower",
+    "dutch": "douche"
+  }
 ]
