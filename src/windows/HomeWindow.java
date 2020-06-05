@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -43,15 +44,25 @@ public class HomeWindow {
         List<String> namesList = Arrays.asList("cat", "chicken", "chip", "dog", "donkey", "goldy", "owl", "pengiun", "pine", "raccoon", "robot", "rudolph", "sticktail", "union", "vampier");
         pictureList.addAll(namesList);
 
+//        BorderPane borderPane = new BorderPane();
+
         VBox base = new VBox();
-        base.getChildren().addAll(new Label("Pictionary"), getPlayerInformation(), getJoinHostButtons());
-        base.setAlignment(Pos.CENTER);
+
+        Label headerLabel = new Label("Pictionary");
+        headerLabel.setStyle("-fx-font-size: 50pt");
+//        borderPane.setTop(headerLabel);
+//        borderPane.setCenter(getPlayerInformation());
+//        borderPane.setBottom(getJoinHostButtons());
+
+        base.getChildren().addAll(headerLabel, getPlayerInformation(), getJoinHostButtons());
+        base.setAlignment(Pos.TOP_CENTER);
 
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Pictionary - Home");
         this.primaryStage.setWidth(500);
         this.primaryStage.setHeight(400);
         this.primaryStage.setScene(new Scene(base));
+//        this.primaryStage.setScene(new Scene(borderPane));
         this.primaryStage.setResizable(false);
         this.primaryStage.show();
     }
