@@ -56,6 +56,7 @@ public class LobbyWindow implements GameUpdateListener {
         this.primaryStage.setWidth(500);
         this.primaryStage.setResizable(false);
         this.primaryStage.show();
+
         Client.getInstance().sendObject(new StateUpdate(Client.getInstance().getUser(), LOBBY));
     }
 

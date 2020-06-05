@@ -9,20 +9,21 @@ import javax.json.JsonReader;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 public class Server {
 
+    static final String JOIN_MESSAGE = "has joined the room!";
+    static final String LEAVE_MESSAGE = "has left the room!";
     // Game
     private static final String wordFileName = "/words.json";
-    private final String JOIN_MESSAGE = "has joined the room!";
-    private final String LEAVE_MESSAGE = "has left the room!";
     // Network
     private ServerSettings serverSettings;
     private ServerSocket serverSocket;
     private boolean running;
-    private HashMap<User, Socket> connectedUsers;
-    private List<ObjectOutputStream> objectOutputStreams;
     private Queue<String> englishWordList = new LinkedList<>();
 
     private int currentDrawerIndex = 0;
@@ -31,17 +32,15 @@ public class Server {
     private ArrayList<User> correctlyGuesses;
     private int recordTime = 0;
     private int roundTime;
-    private HashMap<User, StateUpdate.stateType> stateMap;
+
+    private Clients clients = new Clients();
 
     public Server(ServerSettings serverSettings) {
         this.serverSettings = serverSettings;
         this.serverSocket = null;
         this.running = false;
-        this.stateMap = new HashMap<>();
-
-        this.connectedUsers = new LinkedHashMap<>();
-        this.objectOutputStreams = new ArrayList<>();
         this.correctlyGuesses = new ArrayList<>();
+
         setupWordList();
 
         try {
@@ -89,19 +88,7 @@ public class Server {
 
             Thread.currentThread().setName(user.getName());
 
-            connectedUsers.put(user, socket);
-            sendToAllClients(new UserUpdate(user, false));
-            objectOutputStreams.add(objectOutputStream);
-
-            connectedUsers.keySet().forEach(userInstance -> {
-                try {
-                    objectOutputStream.writeObject(new UserUpdate(userInstance, false));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-
-            sendToAllClients(new ChatUpdate(user, JOIN_MESSAGE));
+            this.clients.addClient(user, objectOutputStream);
 
             while (connected) {
                 Object objectIn = objectInputStream.readObject();
@@ -110,45 +97,35 @@ public class Server {
                     connected = (boolean) objectIn;
                 } else if (objectIn instanceof GameUpdate) {
                     if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.CHAT)) {
-                        if (checkWord((ChatUpdate) objectIn)) continue;
+                        if (this.checkWord((ChatUpdate) objectIn)) continue;
                     } else if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.SETTINGS)) {
-                        adjustServerSettings((SettingsUpdate) objectIn);
+                        this.adjustServerSettings((SettingsUpdate) objectIn);
                     } else if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.STATE)) {
-                        adjustState((StateUpdate) objectIn);
+                        this.clients.adjustState((StateUpdate) objectIn);
+                        continue;
                     }
 
                     // Notify all connected clients a new GameUpdate has been received
-                    sendToAllClients(objectIn);
+                    this.clients.sendToAllClients(objectIn);
 
                 } else if (objectIn instanceof User) {
                     if (((User) objectIn).isHost()) {
+                        this.clients.getStateMap().replace(user, StateUpdate.stateType.GAME);
                         startGame();
                     }
                 }
             }
 
-            this.connectedUsers.remove(user);
-            this.objectOutputStreams.remove(objectOutputStream);
+            this.clients.removeClient(user);
             socket.close();
 
-            sendToAllClients(new ChatUpdate(user, LEAVE_MESSAGE));
-            sendToAllClients(new UserUpdate(user, true));
-
-            // Stop the entire server when all clients have left
-            if (this.connectedUsers.size() == 0 || user.isHost()) {
+            // Stop the entire server when the host has left
+            if (user.isHost()) {
                 stop();
             }
-        } catch (IOException | ClassNotFoundException e) {
-            connectedUsers.remove(user);
-        }
-    }
 
-    private void adjustState(StateUpdate stateUpdate) {
-        User user = stateUpdate.getUser();
-        if (!stateMap.containsKey(user)) {
-            stateMap.put(user, stateUpdate.getState());
-        } else {
-            stateMap.replace(user, stateUpdate.getState());
+        } catch (IOException | ClassNotFoundException e) {
+            this.clients.removeClient(user);
         }
     }
 
@@ -163,8 +140,10 @@ public class Server {
         String message = chatUpdate.getMessage().trim().toLowerCase();
         String currentWord = this.currentWord.trim().toLowerCase();
 
-        if (message.equalsIgnoreCase(currentWord) && !chatUpdate.getUser().isDrawing()) {
-            sendToAllClients(new ChatUpdate(null, chatUpdate.getUser().getName() + " has guessed the word!", true));
+        if (chatUpdate.getUser().isDrawing()) return false;
+
+        if (message.equalsIgnoreCase(currentWord)) {
+            this.clients.sendToAllClients(new ChatUpdate(null, chatUpdate.getUser().getName() + " has guessed the word!", true));
 
             if (this.correctlyGuesses.isEmpty()) {
                 chatUpdate.getUser().addScore(300);
@@ -172,9 +151,9 @@ public class Server {
                 this.recordTime = serverSettings.getTimeInSeconds() - this.roundTime;
 
             } else {
-                int points = 300 - (25 / connectedUsers.size()) * correctlyGuesses.size();
-                correctlyGuesses.add(chatUpdate.getUser());
+                int points = 300 - (25 / this.clients.getConnectedUsers().size()) * correctlyGuesses.size();
                 chatUpdate.getUser().addScore(points);
+                correctlyGuesses.add(chatUpdate.getUser());
             }
 
             return true;
@@ -192,24 +171,10 @@ public class Server {
 
         if (matchedCharacters >= currentWord.length() - 2) {
             // ALMOST CORRECT!
-            sendToSpecificClient(new ChatUpdate(null, "You are very close!", true), chatUpdate.getUser());
+            this.clients.sendToSpecificClient(new ChatUpdate(null, "You are very close!", true), chatUpdate.getUser());
         }
 
         return false;
-    }
-
-    private void sendToAllClients(Object obj) {
-        if (!(obj instanceof TimerUpdate))
-            System.out.println("Sending \"" + obj.toString() + "\" to " + connectedUsers.size() + " clients...");
-
-        for (ObjectOutputStream objectOutputStream : objectOutputStreams) {
-            try {
-                objectOutputStream.writeObject(obj);
-            } catch (IOException e) {
-                System.out.println("Something went wrong whilst trying to send " + obj.toString() + " to " + objectOutputStream.toString());
-                e.printStackTrace();
-            }
-        }
     }
 
     private void setupWordList() {
@@ -247,28 +212,29 @@ public class Server {
             currentRoundIndex++;
 
         if (serverSettings.getRounds() == currentRoundIndex) {
-            sendToAllClients(new RoundUpdate(this.serverSettings.getRounds() + 1, this.serverSettings.getRounds()));
+            this.clients.sendToAllClients(new RoundUpdate(this.serverSettings.getRounds() + 1, this.serverSettings.getRounds()));
             currentRoundIndex = 0;
             return;
         }
 
-        sendToAllClients(new RoundUpdate(currentRoundIndex, this.serverSettings.getRounds()));
+        this.clients.sendToAllClients(new RoundUpdate(currentRoundIndex, this.serverSettings.getRounds()));
 
         while (!attendanceGame()) {
             try {
-                Thread.sleep(10);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        
+
         nextDrawer(true);
     }
 
     private boolean attendanceGame() {
-        for (StateUpdate.stateType statetype : stateMap.values()) {
-            if (statetype == StateUpdate.stateType.LOBBY || statetype == null) return false;
+        for (StateUpdate.stateType stateType : this.clients.getStateMap().values()) {
+            if (stateType == StateUpdate.stateType.LOBBY || stateType == null) return false;
         }
+
         return true;
     }
 
@@ -279,7 +245,7 @@ public class Server {
                 try {
                     Thread.sleep(1000);
                     this.roundTime--;
-                    sendToAllClients(new TimerUpdate(this.roundTime));
+                    this.clients.sendToAllClients(new TimerUpdate(this.roundTime));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -290,17 +256,17 @@ public class Server {
     }
 
     private void nextDrawer(boolean isFirst) {
-        List<User> users = new ArrayList<>(connectedUsers.keySet());
+        List<User> users = new ArrayList<>(this.clients.getConnectedUsers().keySet());
         User currentDrawer = users.get(this.currentDrawerIndex);
 
         pickNextWord(0);
 
-        addPointsToDrawer(currentDrawer);
+        addPointsToUser(currentDrawer);
         startTimer();
 
         if (isFirst) {
             currentDrawer.setDrawing(true);
-            sendToAllClients(new TurnUpdate(currentDrawer, currentWord));
+            this.clients.sendToAllClients(new TurnUpdate(currentDrawer, currentWord));
             return;
         }
 
@@ -318,21 +284,21 @@ public class Server {
         applyAllPoints();
 
         users.get(currentDrawerIndex).setDrawing(true);
-        sendToAllClients(new TurnUpdate(users.get(currentDrawerIndex), currentWord));
+        this.clients.sendToAllClients(new TurnUpdate(users.get(currentDrawerIndex), currentWord));
     }
 
     private void applyAllPoints() {
-        for (User user : connectedUsers.keySet()) {
-            sendToAllClients(new UserUpdate(user, false));
-            System.out.println(user.getScore());
+        for (User user : this.clients.getConnectedUsers().keySet()) {
+            this.clients.sendToAllClients(new UserUpdate(user, false));
         }
+
+        correctlyGuesses.clear();
     }
 
-    private void addPointsToDrawer(User currentDrawer) {
+    private void addPointsToUser(User user) {
         if (currentRoundIndex != 0 && currentDrawerIndex != 0 && correctlyGuesses.size() > 0) {
-            int pointsToAdd = (correctlyGuesses.size() / (connectedUsers.size() - 1) / recordTime) * 500;
-            currentDrawer.addScore(pointsToAdd);
-            correctlyGuesses.clear();
+            int pointsToAdd = (correctlyGuesses.size() / (this.clients.getConnectedUsers().size() - 1) / recordTime) * 500;
+            user.addScore(pointsToAdd);
         }
     }
 
@@ -344,24 +310,6 @@ public class Server {
             // REACHED END OF THE LIST
             setupWordList();
             pickNextWord(++i);
-        }
-    }
-
-    public boolean getRunning() {
-        return running;
-    }
-
-    private void sendToSpecificClient(Object object, User user) {
-        List<User> users = new ArrayList<>(connectedUsers.keySet());
-        int index = users.indexOf(user);
-
-        if (!connectedUsers.get(user).isConnected())
-            return;
-
-        try {
-            objectOutputStreams.get(index).writeObject(object);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

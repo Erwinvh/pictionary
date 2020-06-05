@@ -113,6 +113,8 @@ public class Client {
                 }
             } catch (NullPointerException e) {
                 System.out.println("Received a null object!");
+            } catch (ClassCastException e) {
+                e.printStackTrace();
             }
         }
     }

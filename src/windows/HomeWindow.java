@@ -135,8 +135,8 @@ public class HomeWindow {
 
     private void setupClient(boolean isHost) {
         Client.getInstance().setUser(new User(username.getText(), fileLocation, isHost));
-        new LobbyWindow(primaryStage);
         Client.getInstance().connectToServer("localhost", portNumber);
+        new LobbyWindow(primaryStage);
 //        Client.getInstance().sendObject(new UserUpdate(Client.getInstance().getUser(), false));
     }
 

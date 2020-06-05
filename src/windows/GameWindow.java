@@ -57,9 +57,9 @@ public class GameWindow implements GameUpdateListener {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Pictionary - Game");
 
-        this.userList = userList;
-
         Client.getInstance().setGameUpdateListener(this);
+
+        this.userList = userList;
 
         brushColor = Color.BLACK;
 
@@ -70,6 +70,7 @@ public class GameWindow implements GameUpdateListener {
         this.primaryStage.setHeight(730);
         this.primaryStage.setScene(new Scene(setupFrame()));
         this.primaryStage.show();
+
         Client.getInstance().sendObject(new StateUpdate(Client.getInstance().getUser(), GAME));
     }
 
