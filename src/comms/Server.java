@@ -31,9 +31,10 @@ public class Server {
     private String currentWord;
     private ArrayList<User> correctlyGuesses;
     private int recordTime = 0;
-    private int roundTime;
 
     private Clients clients = new Clients();
+
+    private TimerThread timerThread = new TimerThread();
 
     public Server(ServerSettings serverSettings) {
         this.serverSettings = serverSettings;
@@ -148,7 +149,7 @@ public class Server {
             if (this.correctlyGuesses.isEmpty()) {
                 chatUpdate.getUser().addScore(300);
                 this.correctlyGuesses.add(chatUpdate.getUser());
-                this.recordTime = serverSettings.getTimeInSeconds() - this.roundTime;
+                this.recordTime = serverSettings.getTimeInSeconds() - this.timerThread.roundTime;
 
             } else {
                 int points = 300 - (25 / this.clients.getConnectedUsers().size()) * correctlyGuesses.size();
@@ -212,20 +213,20 @@ public class Server {
             currentRoundIndex++;
 
         if (serverSettings.getRounds() == currentRoundIndex) {
-            this.clients.sendToAllClients(new RoundUpdate(this.serverSettings.getRounds() + 1, this.serverSettings.getRounds()));
+            this.clients.sendToAllClients(new RoundUpdate(-1, this.serverSettings.getRounds()));
             currentRoundIndex = 0;
             return;
         }
 
         this.clients.sendToAllClients(new RoundUpdate(currentRoundIndex, this.serverSettings.getRounds()));
 
-        while (!attendanceGame()) {
+        do {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
+        } while (!attendanceGame());
 
         nextDrawer(true);
     }
@@ -239,20 +240,8 @@ public class Server {
     }
 
     private void startTimer() {
-        new Thread(() -> {
-            this.roundTime = serverSettings.getTimeInSeconds();
-            while (this.roundTime > 0) {
-                try {
-                    Thread.sleep(1000);
-                    this.roundTime--;
-                    this.clients.sendToAllClients(new TimerUpdate(this.roundTime));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            nextDrawer(false);
-        }).start();
+        this.timerThread = new TimerThread();
+        this.timerThread.start();
     }
 
     private void nextDrawer(boolean isFirst) {
@@ -310,6 +299,29 @@ public class Server {
             // REACHED END OF THE LIST
             setupWordList();
             pickNextWord(++i);
+        }
+    }
+
+    private class TimerThread extends Thread {
+
+        int roundTime = 0;
+
+        @Override
+        public void run() {
+            this.roundTime = serverSettings.getTimeInSeconds();
+            clients.sendToAllClients(new TimerUpdate(this.roundTime));
+
+            while (this.roundTime > 0) {
+                try {
+                    Thread.sleep(1000);
+                    this.roundTime--;
+                    clients.sendToAllClients(new TimerUpdate(this.roundTime));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            nextDrawer(false);
         }
     }
 }

@@ -32,7 +32,7 @@ class Clients {
         sendToAllClients(new ChatUpdate(user, Server.JOIN_MESSAGE));
     }
 
-    private void notifyNewUser(ObjectOutputStream objectOutputStream) {
+    private synchronized void notifyNewUser(ObjectOutputStream objectOutputStream) {
         // Each user
         connectedUsers.keySet().forEach(userInstance -> {
             try {
@@ -53,7 +53,7 @@ class Clients {
         sendToAllClients(new UserUpdate(user, true));
     }
 
-    void sendToAllClients(Object obj) {
+    synchronized void sendToAllClients(Object obj) {
         if (!(obj instanceof TimerUpdate))
             System.out.println("Sending \"" + obj.toString() + "\" to " + connectedUsers.size() + " clients...");
 
@@ -67,7 +67,7 @@ class Clients {
         });
     }
 
-    void sendToSpecificClient(Object object, User user) {
+    synchronized void sendToSpecificClient(Object object, User user) {
         try {
             this.connectedUsers.get(user).writeObject(object);
         } catch (IOException e) {
