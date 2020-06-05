@@ -42,11 +42,6 @@ public class Client {
         this.objectOutputStream = null;
     }
 
-    // Global access point
-    public static Client getInstance() {
-        return ClientHolder.client;
-    }
-
     public synchronized boolean connectToServer(String serverAddress, int serverPort) {
         if (this.connected) {
             System.out.println("Client already connected with the server.");
@@ -164,10 +159,5 @@ public class Client {
 
     public void setGameUpdateListener(GameUpdateListener gameUpdateListener) {
         this.gameUpdateListener = gameUpdateListener;
-    }
-
-    // Static inner class - inner classes are not loaded until they are referenced.
-    private static class ClientHolder {
-        private static Client client = new Client();
     }
 }
