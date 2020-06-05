@@ -39,7 +39,7 @@ public class GameWindow implements GameUpdateListener {
     private Label roleLabel = new Label("Guessing");
     private Label currentWordLabel = new Label();
     private Label timeLeftLabel = new Label();
-    private Label currentRoundLabel = new Label();
+    private Label currentRoundLabel = new Label("Round 1");
 
     private VBox scoreBoard;
 
@@ -101,7 +101,7 @@ public class GameWindow implements GameUpdateListener {
         HBox playerScore = LobbyWindow.playerMaker(user);
         playerScore.setSpacing(10);
 
-        Label scoreLabel = new Label(user.getScore() + " Points");
+        Label scoreLabel = new Label(user.getScore() + " points");
 
         playerScore.getChildren().addAll(scoreLabel);
 
@@ -207,11 +207,14 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private void onRoundUpdate(RoundUpdate roundUpdate) {
+        System.out.println("onRoundUpdate");
+
         Platform.runLater(() -> {
-            if (roundUpdate.getRoundNum() <= roundUpdate.getMaxRounds()) {
-                this.currentRoundLabel.setText(String.format("Round %s of %s rounds", roundUpdate.getRoundNum(), roundUpdate.getMaxRounds()));
+            if (roundUpdate.getRoundNum() >= 1 && roundUpdate.getRoundNum() <= roundUpdate.getMaxRounds()) {
+                this.currentRoundLabel.setText(String.format("Round %s of %s rounds", roundUpdate.getRoundNum() + 1, roundUpdate.getMaxRounds()));
                 return;
             }
+
             endGame();
         });
     }
@@ -245,6 +248,10 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private void onTurnUpdate(TurnUpdate turnUpdate) {
+        getClearCanvasButton().fire();
+
+        if (turnUpdate.getWord() == null) endGame();
+
         this.isDrawing = turnUpdate.getDrawer().equals(Client.getInstance().getUser());
         System.out.println("onTurnUpdate " + isDrawing);
         Platform.runLater(() -> {
@@ -256,6 +263,7 @@ public class GameWindow implements GameUpdateListener {
             } else {
                 this.roleLabel.setText("Guessing");
                 StringBuilder guessWord = new StringBuilder();
+
                 for (int i = 0; i < turnUpdate.getWord().length(); i++) {
                     guessWord.append("_ ");
                 }
