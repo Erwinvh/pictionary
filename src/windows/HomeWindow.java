@@ -4,6 +4,7 @@ import comms.Client;
 import comms.Server;
 import comms.ServerSettings;
 import comms.User;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -11,10 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -129,6 +127,7 @@ public class HomeWindow {
                 setupClient(false);
             }
         });
+        joinButton.setPrefWidth(100);
 
         Button hostButton = new Button("Host game");
         hostButton.setOnAction(event -> {
@@ -137,15 +136,23 @@ public class HomeWindow {
                 setupClient(true);
             }
         });
+        hostButton.setPrefWidth(100);
+        Label serverAdressLabel = new Label("Serveraddress:");
+        Label portLabel = new Label("Port:");
+        Region emptySpace = new Region();
+        emptySpace.setPrefHeight(20);
 
-        joinHostButtons.add(serverAddressTextField, 0, 0);
-        joinHostButtons.add(portTextField, 0, 1);
+        joinHostButtons.add(serverAdressLabel,0,0);
+        joinHostButtons.add(serverAddressTextField, 0, 1);
+        joinHostButtons.add(emptySpace,0,2);
+        joinHostButtons.add(portLabel,0,3);
+        joinHostButtons.add(portTextField, 0, 4);
         joinHostButtons.add(hostButton, 1, 1);
-        joinHostButtons.add(joinButton, 2, 1);
+        joinHostButtons.add(joinButton, 1, 4);
 
-        joinHostButtons.setVgap(10);
-        joinHostButtons.setHgap(10);
-        joinHostButtons.setAlignment(Pos.CENTER);
+        joinHostButtons.setHgap(70);
+        joinHostButtons.setAlignment(Pos.CENTER_LEFT);
+        joinHostButtons.setPadding(new Insets(0,0,0,40));
 
         return joinHostButtons;
     }
