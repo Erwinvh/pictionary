@@ -57,7 +57,7 @@ public class LobbyWindow implements GameUpdateListener {
 
         this.primaryStage = primaryStage;
         this.primaryStage.setScene(new Scene(borderPane));
-        this.primaryStage.setTitle("Pictionary - Lobby");
+        this.primaryStage.setTitle("Pictionary - Lobby - " + Client.getInstance().getUser().getName());
         this.primaryStage.setHeight(600);
         this.primaryStage.setWidth(500);
         this.primaryStage.setResizable(false);
@@ -183,7 +183,7 @@ public class LobbyWindow implements GameUpdateListener {
 
     private void onRoundUpdate(RoundUpdate roundUpdate) {
         if (roundUpdate.getRoundNum() == 1) {
-            Platform.runLater(() -> new GameWindow(this.primaryStage, userList));
+            Platform.runLater(() -> new GameWindow(this.primaryStage, userList, roundsComboBox.getSelectionModel().getSelectedItem()));
         }
     }
 

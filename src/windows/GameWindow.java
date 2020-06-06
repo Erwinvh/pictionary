@@ -4,6 +4,7 @@ import comms.Client;
 import comms.GameUpdates.*;
 import comms.User;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -14,13 +15,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.jfree.fx.FXGraphics2D;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -41,9 +40,9 @@ public class GameWindow implements GameUpdateListener {
     private Label roleLabel = new Label("Guessing");
     private Label currentWordLabel = new Label();
     private Label timeLeftLabel = new Label();
-    private Label currentRoundLabel = new Label("Round 1");
+    private Label currentRoundLabel;
     private Button sendButton;
-    private VBox scoreBoard;
+    private VBox scoreBoard  = new VBox();
 
     private List<User> userList;
 
@@ -55,16 +54,16 @@ public class GameWindow implements GameUpdateListener {
     private HBox drawingButtonsBox;
     private boolean isDrawing;
 
-    GameWindow(Stage primaryStage, List<User> userList) {
+    GameWindow(Stage primaryStage, List<User> userList, int maxRounds) {
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("Pictionary - Game");
+        this.primaryStage.setTitle("Pictionary - Game - "+Client.getInstance().getUser().getName());
 
         Client.getInstance().setGameUpdateListener(this);
 
         this.userList = userList;
 
         brushColor = Color.BLACK;
-
+        this.currentRoundLabel = new Label(String.format("Round 1 of %s rounds", maxRounds));
         chatArrayList = new ArrayList<>();
 
         this.primaryStage.setResizable(false);
@@ -76,21 +75,31 @@ public class GameWindow implements GameUpdateListener {
         Client.getInstance().sendObject(new StateUpdate(Client.getInstance().getUser(), GAME));
     }
 
-    private VBox setupFrame() {
-        VBox base = new VBox();
-        HBox head = new HBox();
-        head.getChildren().addAll(timeLeftLabel, currentRoundLabel, roleLabel);
-
-        HBox body = new HBox();
+    private BorderPane setupFrame() {
+        BorderPane frame = new BorderPane();
         setupCanvas();
-        body.getChildren().addAll(getScoreboard(), getDrawingArea(), getInfoVBox());
-        base.setSpacing(10);
-        base.getChildren().addAll(head, body);
-        return base;
+        this.currentWordLabel.setFont(new Font("Arial",30));
+        this.timeLeftLabel.setFont(new Font("Arial",30));
+        this.currentRoundLabel.setFont(new Font("Arial",30));
+        HBox head = new HBox();
+        Region emptySpace1 = new Region();
+        Region emptySpace2 = new Region();
+        head.getChildren().addAll(this.timeLeftLabel, emptySpace1, this.currentWordLabel, emptySpace2, this.currentRoundLabel);
+        head.setHgrow(emptySpace1,Priority.ALWAYS);
+        head.setHgrow(emptySpace2,Priority.ALWAYS);
+//        this.timeLeftLabel.setAlignment(Pos.BASELINE_LEFT);
+//        this.currentWordLabel.setAlignment(Pos.CENTER);
+//        this.currentRoundLabel.setAlignment(Pos.BASELINE_RIGHT);
+        head.setPrefWidth(primaryStage.getWidth());
+        frame.setTop(head);
+        frame.setAlignment(head,Pos.CENTER);
+        frame.setCenter(getDrawingArea());
+        frame.setLeft(getScoreboard());
+        frame.setRight(getInfoVBox());
+        return frame;
     }
 
     private VBox getScoreboard() {
-        this.scoreBoard = new VBox();
         this.scoreBoard.setMaxWidth(200);
 //TODO: name too long, pushes chat away and ponts arent visible
         for (User user : this.userList) {
@@ -229,7 +238,7 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private void onTimerUpdate(TimerUpdate timerUpdate) {
-        Platform.runLater(() -> this.timeLeftLabel.setText(String.valueOf(timerUpdate.getTimeLeft())));
+        Platform.runLater(() -> this.timeLeftLabel.setText(timerUpdate.getTimeLeft()+" seconds"));
     }
 
     private void onUserUpdate(UserUpdate userUpdate) {
@@ -276,7 +285,7 @@ public class GameWindow implements GameUpdateListener {
                     guessWord.append("_ ");
                 }
 
-                currentWordLabel.setText(guessWord.toString());
+                this.currentWordLabel.setText(guessWord.toString());
             }
         });
     }
@@ -285,8 +294,9 @@ public class GameWindow implements GameUpdateListener {
         VBox drawSideSetup = new VBox();
 
         drawingButtonsBox = new HBox();
-        drawingButtonsBox.getChildren().addAll(getColourButtons(), getSizeButtons(), getClearCanvasButton());
+        drawingButtonsBox.getChildren().addAll(getColourButtons(), getSizeButtons());
         drawingButtonsBox.setSpacing(20);
+        drawingButtonsBox.setPadding(new Insets(5,0,0,0));
 
         drawSideSetup.getChildren().addAll(canvas, drawingButtonsBox);
         return drawSideSetup;
@@ -295,28 +305,28 @@ public class GameWindow implements GameUpdateListener {
     private GridPane getColourButtons() {
         GridPane gridpane = new GridPane();
 
-        Button greenButton = new Button("green");
+        Button greenButton = new Button();
         greenButton.setStyle("-fx-background-color: #00FF00");
 
-        Button redButton = new Button("red");
+        Button redButton = new Button();
         redButton.setStyle("-fx-background-color: #FF0000");
 
-        Button blackButton = new Button("black");
+        Button blackButton = new Button();
         blackButton.setStyle("-fx-background-color: #000000");
 
-        Button blueButton = new Button("blue");
+        Button blueButton = new Button();
         blueButton.setStyle("-fx-background-color: #0000FF");
 
-        Button yellowButton = new Button("yellow");
+        Button yellowButton = new Button();
         yellowButton.setStyle("-fx-background-color: #FFFF00");
 
-        Button orangeButton = new Button("orange");
+        Button orangeButton = new Button();
         orangeButton.setStyle("-fx-background-color: #ff8c00");
 
-        Button purpleButton = new Button("purple");
+        Button purpleButton = new Button();
         purpleButton.setStyle("-fx-background-color: #c74fff");
 
-        Button pinkButton = new Button("pink");
+        Button pinkButton = new Button();
         pinkButton.setStyle("-fx-background-color: #ff659f");
 
         greenButton.setOnAction(event -> brushColor = Color.green);
@@ -328,6 +338,15 @@ public class GameWindow implements GameUpdateListener {
         purpleButton.setOnAction(event -> brushColor = Color.magenta);
         pinkButton.setOnAction(event -> brushColor = Color.pink);
 
+        greenButton.setPrefSize(40,40);
+        redButton.setPrefSize(40,40);
+        blackButton.setPrefSize(40,40);
+        blueButton.setPrefSize(40,40);
+        yellowButton.setPrefSize(40,40);
+        orangeButton.setPrefSize(40,40);
+        purpleButton.setPrefSize(40,40);
+        pinkButton.setPrefSize(40,40);
+
         gridpane.add(blackButton, 1, 1);
         gridpane.add(blueButton, 1, 2);
         gridpane.add(greenButton, 2, 1);
@@ -336,6 +355,11 @@ public class GameWindow implements GameUpdateListener {
         gridpane.add(purpleButton, 3, 2);
         gridpane.add(orangeButton, 4, 1);
         gridpane.add(redButton, 3, 1);
+
+        gridpane.setVgap(5);
+        gridpane.setHgap(10);
+
+
 
         return gridpane;
     }
@@ -351,8 +375,11 @@ public class GameWindow implements GameUpdateListener {
 
         Button largeButton = new Button("large");
         largeButton.setOnAction(event -> radius = 30);
+        hBox.setPadding(new Insets(1,0,0,0));
+        Region emptySpace = new Region();
+        emptySpace.setPrefWidth(100);
 
-        hBox.getChildren().addAll(smallButton, mediumButton, largeButton);
+        hBox.getChildren().addAll(smallButton, mediumButton, largeButton, emptySpace, getClearCanvasButton());
 
         return hBox;
     }
@@ -372,7 +399,7 @@ public class GameWindow implements GameUpdateListener {
 
         Label chatLogLabel = new Label("Chat");
 
-        infoVBox.getChildren().addAll(this.roleLabel, this.currentWordLabel, chatLogLabel, getChat(), getInput());
+        infoVBox.getChildren().addAll(this.roleLabel, chatLogLabel, getChat(), getInput());
 
         return infoVBox;
     }
