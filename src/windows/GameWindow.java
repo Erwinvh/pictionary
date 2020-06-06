@@ -70,7 +70,7 @@ public class GameWindow implements GameUpdateListener {
 
         this.primaryStage.setResizable(false);
         this.primaryStage.setWidth(1200);
-        this.primaryStage.setHeight(770);
+        this.primaryStage.setHeight(780);
         this.primaryStage.setScene(new Scene(setupFrame()));
         this.primaryStage.show();
 
@@ -84,6 +84,7 @@ public class GameWindow implements GameUpdateListener {
         this.timeLeftLabel.setFont(new Font("Arial", 30));
         this.currentRoundLabel.setFont(new Font("Arial", 30));
         HBox head = new HBox();
+        head.setPadding(new Insets(5,5,5,5));
         Region emptySpace1 = new Region();
         Region emptySpace2 = new Region();
         head.getChildren().addAll(this.timeLeftLabel, emptySpace1, this.currentWordLabel, emptySpace2, this.currentRoundLabel);
@@ -102,6 +103,7 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private VBox getScoreboard() {
+        this.scoreBoard.setPadding(new Insets(0,0,0,5));
         this.scoreBoard.setMaxWidth(300);
         this.scoreBoard.setMinWidth(300);
         this.scoreBoard.setPrefWidth(300);
@@ -134,9 +136,7 @@ public class GameWindow implements GameUpdateListener {
         scoreLabel.setMinWidth(50);
         scoreLabel.setMaxWidth(60);
         scoreLabel.setAlignment(Pos.BASELINE_RIGHT);
-
-        playerScore.getChildren().addAll(empty, scoreLabel);
-        hBox.getChildren().addAll(isDrawingImage, playerScore);
+        hBox.getChildren().addAll(isDrawingImage, playerScore, empty, scoreLabel);
         return hBox;
     }
 
@@ -287,10 +287,10 @@ public class GameWindow implements GameUpdateListener {
             this.drawingButtonsBox.setDisable(!this.isDrawing);
 
             if (this.isDrawing) {
-                this.roleLabel.setText("Drawing");
+                this.roleLabel.setText("You are: Drawing");
                 this.currentWordLabel.setText(turnUpdate.getWord());
             } else {
-                this.roleLabel.setText("Guessing");
+                this.roleLabel.setText("You are: Guessing");
                 StringBuilder guessWord = new StringBuilder();
 
                 for (int i = 0; i < turnUpdate.getWord().length(); i++) {
@@ -407,6 +407,7 @@ public class GameWindow implements GameUpdateListener {
 
     private VBox getInfoVBox() {
         VBox infoVBox = new VBox();
+        infoVBox.setPadding(new Insets(0,0,0,5));
         infoVBox.setPrefWidth(300);
         infoVBox.setMaxWidth(300);
         infoVBox.setMinWidth(300);
