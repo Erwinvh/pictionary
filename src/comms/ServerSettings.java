@@ -16,7 +16,7 @@ public class ServerSettings implements Serializable {
         this.port = port;
     }
 
-    int getRounds() {
+    public int getRounds() {
         return rounds;
     }
 
@@ -24,7 +24,7 @@ public class ServerSettings implements Serializable {
         this.rounds = rounds;
     }
 
-    int getTimeInSeconds() {
+    public int getTimeInSeconds() {
         return timeInSeconds;
     }
 
@@ -32,7 +32,7 @@ public class ServerSettings implements Serializable {
         this.timeInSeconds = timeInSeconds;
     }
 
-    String getLanguage() {
+    public String getLanguage() {
         return language;
     }
 

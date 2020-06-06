@@ -5,6 +5,7 @@ import comms.GameUpdates.*;
 import comms.ServerSettings;
 import comms.User;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -13,7 +14,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -40,18 +43,20 @@ public class LobbyWindow implements GameUpdateListener {
     LobbyWindow(Stage primaryStage, List<User> userList) {
         Client.getInstance().setGameUpdateListener(this);
 
-        HBox base = new HBox();
-        base.setSpacing(40);
-
         this.userList = userList;
+
+        BorderPane borderPane = new BorderPane();
 
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setMaxWidth(1000);
+        scrollPane.setPrefWidth(200);
         scrollPane.setContent(getLobbyListBox());
 
-        base.getChildren().addAll(getGameSettingsBox(), scrollPane);
+        borderPane.setLeft(getGameSettingsBox());
+        borderPane.setRight(scrollPane);
+
         this.primaryStage = primaryStage;
-        this.primaryStage.setScene(new Scene(base));
+        this.primaryStage.setScene(new Scene(borderPane));
         this.primaryStage.setTitle("Pictionary - Lobby");
         this.primaryStage.setHeight(600);
         this.primaryStage.setWidth(500);
@@ -81,34 +86,47 @@ public class LobbyWindow implements GameUpdateListener {
 
     private VBox getGameSettingsBox() {
         VBox gameSettingsBox = new VBox();
+
+        // Do not allow interaction when the user is not the host of this game
         gameSettingsBox.setDisable(!Client.getInstance().getUser().isHost());
+
         gameSettingsBox.setAlignment(Pos.CENTER_LEFT);
-        gameSettingsBox.setSpacing(10);
+        gameSettingsBox.setPadding(new Insets(0.0, 0.0, 0.0, 20.0));
+
+        gameSettingsBox.setSpacing(5);
 
         Label amountOfRoundsLabel = new Label("Amount of rounds:");
         roundsComboBox = getComboBox(1, 50, 1, 4);
+
+        Region regionRounds = new Region();
+        regionRounds.setPrefHeight(10);
 
         Label languageLabel = new Label("Language:");
         languageComboBox = new ComboBox<>();
         languageComboBox.getItems().addAll("English", "Dutch");
         languageComboBox.getSelectionModel().selectFirst();
 
-        Label timePerRoundLabel = new Label("Time per Round in seconds");
-        timePerRoundComboBox = getComboBox(10, 120, 10, 5);
+        Region regionLanguage = new Region();
+        regionLanguage.setPrefHeight(10);
 
-        Label lobbyCodeLabel = new Label("Lobby Code");
+        Label timePerRoundLabel = new Label("Time per round in seconds");
+        timePerRoundComboBox = getComboBox(10, 180, 10, 5);
+
+        Region regionTime = new Region();
+        regionTime.setPrefHeight(20);
 
         Button startGameButton = new Button("Start game");
         startGameButton.setOnAction(event -> {
             if (userList.size() <= 1) return;
 
+            adjustServerSettings();
+
             // Send user instance so the server can check whether I am host or not,
             // since only the host can start a game
-            adjustServerSettings();
             Client.getInstance().sendObject(Client.getInstance().getUser());
         });
 
-        gameSettingsBox.getChildren().addAll(amountOfRoundsLabel, roundsComboBox, languageLabel, languageComboBox, timePerRoundLabel, timePerRoundComboBox, lobbyCodeLabel, startGameButton);
+        gameSettingsBox.getChildren().addAll(amountOfRoundsLabel, roundsComboBox, regionRounds, languageLabel, languageComboBox, regionLanguage, timePerRoundLabel, timePerRoundComboBox, regionTime, startGameButton);
         return gameSettingsBox;
     }
 
@@ -154,6 +172,10 @@ public class LobbyWindow implements GameUpdateListener {
                 onUserUpdate((UserUpdate) gameUpdate);
                 break;
 
+            case SETTINGS:
+                onSettingsUpdate((SettingsUpdate) gameUpdate);
+                break;
+
             case TURN:
                 System.out.println("LobbyWindow received TURN GameUpdateType");
         }
@@ -187,5 +209,12 @@ public class LobbyWindow implements GameUpdateListener {
                 this.userList.add(userUpdate.getUser());
             }
         });
+    }
+
+    private void onSettingsUpdate(SettingsUpdate settingsUpdate) {
+        ServerSettings newSettings = settingsUpdate.getServerSettings();
+        roundsComboBox.getSelectionModel().select(newSettings.getRounds());
+        languageComboBox.getSelectionModel().select(newSettings.getLanguage());
+        timePerRoundComboBox.getSelectionModel().select(newSettings.getTimeInSeconds());
     }
 }
