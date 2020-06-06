@@ -160,6 +160,9 @@ public class Server {
                 correctlyGuesses.add(chatUpdate.getUser());
             }
 
+            if (correctlyGuesses.size() >= this.clients.getConnectedUsers().size() - 1)
+                nextTurn(false);
+
             return true;
         }
 
