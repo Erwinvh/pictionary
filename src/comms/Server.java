@@ -136,6 +136,8 @@ public class Server {
         this.serverSettings.setTimeInSeconds(adjustedSettings.getTimeInSeconds());
         this.serverSettings.setRounds(adjustedSettings.getRounds());
         this.serverSettings.setLanguage(adjustedSettings.getLanguage());
+
+        this.setupWordList();
     }
 
     private boolean checkWord(ChatUpdate chatUpdate) {
@@ -192,7 +194,7 @@ public class Server {
                     List<String> wordList = new ArrayList<>();
                     for (int i = 0; i < wordsJsonArray.size(); i++) {
                         JsonObject wordObject = wordsJsonArray.getJsonObject(i);
-                        String word = wordObject.getString(serverSettings.getLanguage().toLowerCase());
+                        String word = wordObject.getString(this.serverSettings.getLanguage().toLowerCase());
                         wordList.add(word);
                     }
 
