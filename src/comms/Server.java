@@ -152,16 +152,16 @@ public class Server {
             if (this.correctlyGuesses.isEmpty()) {
                 chatUpdate.getUser().addScore(300);
                 this.correctlyGuesses.add(chatUpdate.getUser());
-                this.recordTime = serverSettings.getTimeInSeconds() - this.timerThread.roundTime;
+                this.recordTime = this.serverSettings.getTimeInSeconds() - this.timerThread.roundTime;
 
             } else {
-                int points = 300 - (25 / this.clients.getConnectedUsers().size()) * correctlyGuesses.size();
+                int points = 300 - (25 / this.clients.getConnectedUsers().size()) * this.correctlyGuesses.size();
                 chatUpdate.getUser().addScore(points);
-                correctlyGuesses.add(chatUpdate.getUser());
+                this.correctlyGuesses.add(chatUpdate.getUser());
             }
 
             if (correctlyGuesses.size() >= this.clients.getConnectedUsers().size() - 1)
-                nextTurn(false);
+                this.timerThread.roundTime = 0;
 
             return true;
         }
@@ -171,12 +171,12 @@ public class Server {
             if (i >= this.currentWord.length())
                 break;
 
-            if (message.charAt(i) == currentWord.charAt(i)) {
+            if (message.charAt(i) == this.currentWord.charAt(i)) {
                 matchedCharacters++;
             }
         }
 
-        if (matchedCharacters >= currentWord.length() - 2) {
+        if (matchedCharacters >= this.currentWord.length() - 2) {
             // ALMOST CORRECT!
             this.clients.sendToSpecificClient(new ChatUpdate(null, "You are very close!", true), chatUpdate.getUser());
         }
