@@ -456,8 +456,8 @@ public class GameWindow implements GameUpdateListener {
         sendButton = new Button("Send");
 
         sendButton.setOnAction(event -> {
-            if (messageInput.getText() != null) {
-                ChatUpdate newChatUpdate = new ChatUpdate(Client.getInstance().getUser(), messageInput.getText());
+            if (!messageInput.getText().trim().isEmpty()) {
+                ChatUpdate newChatUpdate = new ChatUpdate(Client.getInstance().getUser(), messageInput.getText().trim());
 
                 // Make the client send the message to the server
                 Client.getInstance().sendObject(newChatUpdate);
