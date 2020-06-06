@@ -110,8 +110,9 @@ public class Client {
 
                     if (errorCounter >= 15) {
                         System.out.println("Something went wrong whilst handling incoming data!");
-                        break;
+                        disconnectFromServer();
                     }
+                    
                 } catch (NullPointerException e) {
                     System.out.println("Received a null object!");
                 } catch (ClassCastException e) {
