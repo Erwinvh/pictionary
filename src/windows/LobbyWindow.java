@@ -134,10 +134,11 @@ public class LobbyWindow implements GameUpdateListener {
     }
 
     private void adjustServerSettings() {
-        ServerSettings adjustedServerSettings = new ServerSettings(0);
+        ServerSettings adjustedServerSettings = new ServerSettings();
         adjustedServerSettings.setTimeInSeconds(timePerRoundComboBox.getSelectionModel().getSelectedItem());
         adjustedServerSettings.setRounds(roundsComboBox.getSelectionModel().getSelectedItem());
         adjustedServerSettings.setLanguage(languageComboBox.getSelectionModel().getSelectedItem());
+
         Client.getInstance().sendObject(new SettingsUpdate(adjustedServerSettings));
     }
 

@@ -35,9 +35,11 @@ public class HomeWindow {
 
     // User information
     private TextField username = new TextField();
+    private TextField serverAddressTextField;
     private TextField portTextField;
 
     // Launch settings
+    private String serverAddress;
     private int portNumber;
 
     public HomeWindow(Stage primaryStage) {
@@ -115,8 +117,11 @@ public class HomeWindow {
     private GridPane getJoinHostButtons() {
         GridPane joinHostButtons = new GridPane();
 
-        portTextField = new TextField();
-        portTextField.setText("10000");
+        this.serverAddressTextField = new TextField();
+        this.serverAddressTextField.setText("localhost");
+
+        this.portTextField = new TextField();
+        this.portTextField.setText("10000");
 
         Button joinButton = new Button("Join game");
         joinButton.setOnAction(event -> {
@@ -128,11 +133,12 @@ public class HomeWindow {
         Button hostButton = new Button("Host game");
         hostButton.setOnAction(event -> {
             if (inputCheck()) {
-                new Thread(() -> new Server(new ServerSettings(portNumber))).start();
+                new Thread(() -> new Server(new ServerSettings(serverAddress, portNumber))).start();
                 setupClient(true);
             }
         });
 
+        joinHostButtons.add(serverAddressTextField, 0, 0);
         joinHostButtons.add(portTextField, 0, 1);
         joinHostButtons.add(hostButton, 1, 1);
         joinHostButtons.add(joinButton, 2, 1);
@@ -162,6 +168,7 @@ public class HomeWindow {
         }
 
         try {
+            serverAddress = serverAddressTextField.getText();
             portNumber = Integer.parseInt(portTextField.getText());
         } catch (Exception e) {
             System.out.println("Not a port");

@@ -6,10 +6,15 @@ public class ServerSettings implements Serializable {
     private int rounds = 3;
     private int timeInSeconds = 30;
     private String language = "English";
-    private String serverAddress = "pictionary.duckdns.org";
+    private String serverAddress;
     private int port;
 
-    public ServerSettings(int port) {
+    public ServerSettings() {
+        this("localhost", 10000);
+    }
+
+    public ServerSettings(String serverAddress, int port) {
+        this.serverAddress = serverAddress;
         this.port = port;
     }
 
