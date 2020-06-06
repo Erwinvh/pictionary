@@ -48,7 +48,7 @@ public class EndScoreWindow {
         scoreLabel.setFont(new Font("Arial", 30));
         scoreList.getChildren().add(scoreLabel);
 
-        userList.sort(Comparator.comparingInt(User::getScore));
+        userList.sort(Comparator.comparingInt(User::getScore).reversed());
 
         for (int i = 0; i < userList.size(); i++) {
             User user = userList.get(i);
