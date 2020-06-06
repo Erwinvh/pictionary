@@ -12,6 +12,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -22,6 +24,7 @@ import org.jfree.fx.FXGraphics2D;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +46,6 @@ public class GameWindow implements GameUpdateListener {
     private Label currentRoundLabel;
     private Button sendButton;
     private VBox scoreBoard  = new VBox();
-
     private List<User> userList;
 
     // Drawing
@@ -67,8 +69,8 @@ public class GameWindow implements GameUpdateListener {
         chatArrayList = new ArrayList<>();
 
         this.primaryStage.setResizable(false);
-        this.primaryStage.setWidth(1050);
-        this.primaryStage.setHeight(730);
+        this.primaryStage.setWidth(1200);
+        this.primaryStage.setHeight(770);
         this.primaryStage.setScene(new Scene(setupFrame()));
         this.primaryStage.show();
 
@@ -100,7 +102,9 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private VBox getScoreboard() {
-        this.scoreBoard.setMaxWidth(200);
+        this.scoreBoard.setMaxWidth(300);
+        this.scoreBoard.setMinWidth(300);
+        this.scoreBoard.setPrefWidth(300);
 //TODO: name too long, pushes chat away and ponts arent visible
         for (User user : this.userList) {
             HBox hbox = playerScoreMaker(user);
@@ -112,11 +116,19 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private HBox playerScoreMaker(User user) {
+        HBox hBox = new HBox();
+        ImageView isDrawingImage = new ImageView();
+        if (user.isDrawing()){
+            File file = new File("resources/pictures/brush.png");
+            isDrawingImage.setImage(new Image(file.toURI().toString()));
+        }
+        isDrawingImage.setFitHeight(40);
+        isDrawingImage.setFitWidth(40);
+
         HBox playerScore = LobbyWindow.playerMaker(user);
         playerScore.setSpacing(10);
         Region empty = new Region();
-        empty.setMaxWidth(100);
-        empty.setMinWidth(0);
+
         HBox.setHgrow(empty, Priority.ALWAYS);
         Label scoreLabel = new Label(user.getScore() + " ");
         scoreLabel.setMinWidth(50);
@@ -124,8 +136,8 @@ public class GameWindow implements GameUpdateListener {
         scoreLabel.setAlignment(Pos.BASELINE_RIGHT);
 
         playerScore.getChildren().addAll(empty, scoreLabel);
-
-        return playerScore;
+        hBox.getChildren().addAll(isDrawingImage, playerScore);
+        return hBox;
     }
 
     private void setupCanvas() {
@@ -396,6 +408,10 @@ public class GameWindow implements GameUpdateListener {
 
     private VBox getInfoVBox() {
         VBox infoVBox = new VBox();
+        infoVBox.setPrefWidth(300);
+        infoVBox.setMaxWidth(300);
+        infoVBox.setMinWidth(300);
+        infoVBox.setSpacing(10);
 
         Label chatLogLabel = new Label("Chat");
 
