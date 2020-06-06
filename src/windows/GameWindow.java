@@ -45,7 +45,7 @@ public class GameWindow implements GameUpdateListener {
     private Label timeLeftLabel = new Label();
     private Label currentRoundLabel;
     private Button sendButton;
-    private VBox scoreBoard  = new VBox();
+    private VBox scoreBoard = new VBox();
     private List<User> userList;
 
     // Drawing
@@ -58,7 +58,7 @@ public class GameWindow implements GameUpdateListener {
 
     GameWindow(Stage primaryStage, List<User> userList, int maxRounds) {
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("Pictionary - Game - "+Client.getInstance().getUser().getName());
+        this.primaryStage.setTitle("Pictionary - Game - " + Client.getInstance().getUser().getName());
 
         Client.getInstance().setGameUpdateListener(this);
 
@@ -80,21 +80,21 @@ public class GameWindow implements GameUpdateListener {
     private BorderPane setupFrame() {
         BorderPane frame = new BorderPane();
         setupCanvas();
-        this.currentWordLabel.setFont(new Font("Arial",30));
-        this.timeLeftLabel.setFont(new Font("Arial",30));
-        this.currentRoundLabel.setFont(new Font("Arial",30));
+        this.currentWordLabel.setFont(new Font("Arial", 30));
+        this.timeLeftLabel.setFont(new Font("Arial", 30));
+        this.currentRoundLabel.setFont(new Font("Arial", 30));
         HBox head = new HBox();
         Region emptySpace1 = new Region();
         Region emptySpace2 = new Region();
         head.getChildren().addAll(this.timeLeftLabel, emptySpace1, this.currentWordLabel, emptySpace2, this.currentRoundLabel);
-        head.setHgrow(emptySpace1,Priority.ALWAYS);
-        head.setHgrow(emptySpace2,Priority.ALWAYS);
+        head.setHgrow(emptySpace1, Priority.ALWAYS);
+        head.setHgrow(emptySpace2, Priority.ALWAYS);
 //        this.timeLeftLabel.setAlignment(Pos.BASELINE_LEFT);
 //        this.currentWordLabel.setAlignment(Pos.CENTER);
 //        this.currentRoundLabel.setAlignment(Pos.BASELINE_RIGHT);
         head.setPrefWidth(primaryStage.getWidth());
         frame.setTop(head);
-        frame.setAlignment(head,Pos.CENTER);
+        frame.setAlignment(head, Pos.CENTER);
         frame.setCenter(getDrawingArea());
         frame.setLeft(getScoreboard());
         frame.setRight(getInfoVBox());
@@ -250,7 +250,7 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private void onTimerUpdate(TimerUpdate timerUpdate) {
-        Platform.runLater(() -> this.timeLeftLabel.setText(timerUpdate.getTimeLeft()+" seconds"));
+        Platform.runLater(() -> this.timeLeftLabel.setText(timerUpdate.getTimeLeft() + " seconds"));
     }
 
     private void onUserUpdate(UserUpdate userUpdate) {
@@ -308,7 +308,7 @@ public class GameWindow implements GameUpdateListener {
         drawingButtonsBox = new HBox();
         drawingButtonsBox.getChildren().addAll(getColourButtons(), getSizeButtons());
         drawingButtonsBox.setSpacing(20);
-        drawingButtonsBox.setPadding(new Insets(5,0,0,0));
+        drawingButtonsBox.setPadding(new Insets(5, 0, 0, 0));
 
         drawSideSetup.getChildren().addAll(canvas, drawingButtonsBox);
         return drawSideSetup;
@@ -350,14 +350,14 @@ public class GameWindow implements GameUpdateListener {
         purpleButton.setOnAction(event -> brushColor = Color.magenta);
         pinkButton.setOnAction(event -> brushColor = Color.pink);
 
-        greenButton.setPrefSize(40,40);
-        redButton.setPrefSize(40,40);
-        blackButton.setPrefSize(40,40);
-        blueButton.setPrefSize(40,40);
-        yellowButton.setPrefSize(40,40);
-        orangeButton.setPrefSize(40,40);
-        purpleButton.setPrefSize(40,40);
-        pinkButton.setPrefSize(40,40);
+        greenButton.setPrefSize(40, 40);
+        redButton.setPrefSize(40, 40);
+        blackButton.setPrefSize(40, 40);
+        blueButton.setPrefSize(40, 40);
+        yellowButton.setPrefSize(40, 40);
+        orangeButton.setPrefSize(40, 40);
+        purpleButton.setPrefSize(40, 40);
+        pinkButton.setPrefSize(40, 40);
 
         gridpane.add(blackButton, 1, 1);
         gridpane.add(blueButton, 1, 2);
@@ -370,7 +370,6 @@ public class GameWindow implements GameUpdateListener {
 
         gridpane.setVgap(5);
         gridpane.setHgap(10);
-
 
 
         return gridpane;
@@ -387,7 +386,7 @@ public class GameWindow implements GameUpdateListener {
 
         Button largeButton = new Button("large");
         largeButton.setOnAction(event -> radius = 30);
-        hBox.setPadding(new Insets(1,0,0,0));
+        hBox.setPadding(new Insets(1, 0, 0, 0));
         Region emptySpace = new Region();
         emptySpace.setPrefWidth(100);
 
