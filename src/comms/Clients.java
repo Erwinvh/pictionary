@@ -1,9 +1,6 @@
 package comms;
 
-import comms.GameUpdates.ChatUpdate;
-import comms.GameUpdates.StateUpdate;
-import comms.GameUpdates.TimerUpdate;
-import comms.GameUpdates.UserUpdate;
+import comms.GameUpdates.*;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -54,7 +51,7 @@ class Clients {
     }
 
     synchronized void sendToAllClients(Object obj) {
-        if (!(obj instanceof TimerUpdate))
+        if (!(obj instanceof TimerUpdate) && !(obj instanceof DrawUpdate))
             System.out.println("Sending \"" + obj.toString() + "\" to " + connectedUsers.size() + " clients...");
 
         this.connectedUsers.values().forEach(objectOutputStream -> {
