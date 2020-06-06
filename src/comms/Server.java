@@ -119,6 +119,10 @@ public class Server {
             }
 
             this.clients.removeClient(user);
+            if (user.isDrawing()) {
+                if (this.correctlyGuesses.contains(user)) this.correctlyGuesses.remove(user);
+                nextTurn(true);
+            }
             socket.close();
 
             // Stop the entire server when the host has left
@@ -259,6 +263,10 @@ public class Server {
 
     private void nextTurn(boolean isFirst) {
         List<User> users = new ArrayList<>(this.clients.getConnectedUsers().keySet());
+        if (this.currentDrawerIndex > users.size() - 1) {
+            nextRound(false);
+            return;
+        }
         User currentDrawer = users.get(this.currentDrawerIndex);
 
         if (!isFirst) {
@@ -269,10 +277,6 @@ public class Server {
             this.clients.sendToAllClients(new UserUpdate(currentDrawer,false));
             currentDrawerIndex++;
 
-            if (this.currentDrawerIndex > users.size() - 1) {
-                nextRound(false);
-                return;
-            }
 
             currentDrawer = users.get(currentDrawerIndex);
         }
