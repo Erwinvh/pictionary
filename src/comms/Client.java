@@ -108,10 +108,9 @@ public class Client {
                 } catch (IOException | ClassNotFoundException e) {
                     errorCounter++;
 
-                    if (errorCounter >= 5) {
-                        errorCounter = 0;
+                    if (errorCounter >= 15) {
                         System.out.println("Something went wrong whilst handling incoming data!");
-                        e.printStackTrace();
+                        break;
                     }
                 } catch (NullPointerException e) {
                     System.out.println("Received a null object!");
