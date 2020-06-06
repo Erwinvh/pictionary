@@ -133,7 +133,7 @@ public class HomeWindow {
         Button hostButton = new Button("Host game");
         hostButton.setOnAction(event -> {
             if (inputCheck()) {
-                new Thread(() -> new Server(new ServerSettings(serverAddress, portNumber))).start();
+                new Thread(() -> new Server(new ServerSettings(portNumber))).start();
                 setupClient(true);
             }
         });
@@ -152,7 +152,7 @@ public class HomeWindow {
 
     private void setupClient(boolean isHost) {
         Client.getInstance().setUser(new User(username.getText(), fileLocation, isHost));
-        Client.getInstance().connectToServer("localhost", portNumber);
+        Client.getInstance().connectToServer(serverAddress, portNumber);
 
         new LobbyWindow(primaryStage);
 //        Client.getInstance().sendObject(new UserUpdate(Client.getInstance().getUser(), false));

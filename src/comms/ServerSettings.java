@@ -6,19 +6,17 @@ public class ServerSettings implements Serializable {
     private int rounds = 3;
     private int timeInSeconds = 30;
     private String language = "English";
-    private String serverAddress;
     private int port;
 
     public ServerSettings() {
-        this("localhost", 10000);
+        this(10000);
     }
 
-    public ServerSettings(String serverAddress, int port) {
-        this.serverAddress = serverAddress;
+    public ServerSettings(int port) {
         this.port = port;
     }
 
-    public int getRounds() {
+    int getRounds() {
         return rounds;
     }
 
@@ -26,7 +24,7 @@ public class ServerSettings implements Serializable {
         this.rounds = rounds;
     }
 
-    public int getTimeInSeconds() {
+    int getTimeInSeconds() {
         return timeInSeconds;
     }
 
@@ -34,7 +32,7 @@ public class ServerSettings implements Serializable {
         this.timeInSeconds = timeInSeconds;
     }
 
-    public String getLanguage() {
+    String getLanguage() {
         return language;
     }
 
@@ -42,11 +40,7 @@ public class ServerSettings implements Serializable {
         this.language = language;
     }
 
-    public String getServerAddress() {
-        return serverAddress;
-    }
-
-    public int getPort() {
+    int getPort() {
         return port;
     }
 }
