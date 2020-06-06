@@ -2,6 +2,7 @@ package comms;
 
 import comms.GameUpdates.GameUpdate;
 import comms.GameUpdates.GameUpdateListener;
+import comms.GameUpdates.UserUpdate;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -160,5 +161,9 @@ public class Client {
 
     public void setGameUpdateListener(GameUpdateListener gameUpdateListener) {
         this.gameUpdateListener = gameUpdateListener;
+    }
+
+    public boolean isConnected() {
+        return connected;
     }
 }

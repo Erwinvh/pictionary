@@ -70,4 +70,16 @@ public class User implements Serializable {
     public String getProfileImage() {
         return profileImage;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", profileImage='" + profileImage + '\'' +
+                ", score=" + score +
+                ", isHost=" + isHost +
+                ", isDrawing=" + isDrawing +
+                ", id=" + id +
+                '}';
+    }
 }

@@ -218,8 +218,6 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private void onRoundUpdate(RoundUpdate roundUpdate) {
-        System.out.println("onRoundUpdate");
-
         Platform.runLater(() -> {
             if (roundUpdate.getRoundNum() >= 1 && roundUpdate.getRoundNum() <= roundUpdate.getMaxRounds()) {
                 this.currentRoundLabel.setText(String.format("Round %s of %s rounds", roundUpdate.getRoundNum(), roundUpdate.getMaxRounds()));
@@ -236,7 +234,7 @@ public class GameWindow implements GameUpdateListener {
 
     private void onUserUpdate(UserUpdate userUpdate) {
         int matchingIndex = userList.indexOf(userUpdate.getUser());
-        System.out.println(userUpdate.getUser().getScore());
+
         Platform.runLater(() -> {
             // If the user has left, try to remove it from the list,
             // if this is successful then also remove it from the scoreboard

@@ -44,7 +44,7 @@ public class Server {
         try {
             start();
         } catch (IOException e) {
-            System.out.println("Server did not start successfully!");
+            stop();
         }
     }
 
@@ -67,10 +67,14 @@ public class Server {
         System.out.println("Server stopped");
     }
 
-    private void stop() throws IOException {
-        System.out.println("Stopping server...");
-        this.running = false;
-        serverSocket.close();
+    private void stop() {
+        try {
+            System.out.println("Stopping server...");
+            this.running = false;
+            serverSocket.close();
+        } catch (IOException e) {
+            System.out.println("Something went wrong whilst trying to stop the server");
+        }
     }
 
     private void handleClientConnectionObject(Socket socket) {
@@ -249,29 +253,24 @@ public class Server {
     }
 
     private void nextTurn(boolean isFirst) {
-
         List<User> users = new ArrayList<>(this.clients.getConnectedUsers().keySet());
-
         User currentDrawer = users.get(this.currentDrawerIndex);
 
         if (!isFirst) {
             addPointsToUser(currentDrawer);
-            applyAllPoints(); //dont know what and why this does stuff
-            correctlyGuesses.clear();
+            applyAllPoints();
+
             currentDrawer.setDrawing(false);
             currentDrawerIndex++;
-            try {
-                currentDrawer = users.get(currentDrawerIndex);
-            } catch (IndexOutOfBoundsException e) {
+
+            if (this.currentDrawerIndex > users.size() - 1) {
                 nextRound(false);
-                return; //zou deze return door de loop/doorsturen een probleem veroorzaken?
+                return;
             }
+
+            currentDrawer = users.get(currentDrawerIndex);
         }
-//is dit nodig? zou dat niet naar next round moeten gaan?
-//        if (this.currentDrawerIndex > users.size() - 1) this.currentDrawerIndex = users.size() - 1;
-//        if (currentDrawerIndex >= users.size() - 1) {
-//
-//        }
+
         currentDrawer.setDrawing(true);
         pickNextWord(0);
         startTimer();
@@ -287,9 +286,10 @@ public class Server {
     }
 
     private void addPointsToUser(User user) {
-        if (currentRoundIndex != 0 && currentDrawerIndex != 0 && correctlyGuesses.size() > 0) {
-            int pointsToAdd = (correctlyGuesses.size() / (this.clients.getConnectedUsers().size() - 1) / recordTime) * 500;
+        if (!correctlyGuesses.isEmpty()) {
+            int pointsToAdd = (int) ((correctlyGuesses.size() / (this.clients.getConnectedUsers().size() - 1) / (double) recordTime) * 500);
             user.addScore(pointsToAdd);
+            correctlyGuesses.add(user);
         }
     }
 

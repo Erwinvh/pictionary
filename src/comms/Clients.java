@@ -60,6 +60,7 @@ class Clients {
         this.connectedUsers.values().forEach(objectOutputStream -> {
             try {
                 objectOutputStream.writeObject(obj);
+                objectOutputStream.reset();
             } catch (IOException e) {
                 System.out.println("Something went wrong whilst trying to send " + obj.toString() + " to " + objectOutputStream.toString());
                 e.printStackTrace();
@@ -70,6 +71,7 @@ class Clients {
     synchronized void sendToSpecificClient(Object object, User user) {
         try {
             this.connectedUsers.get(user).writeObject(object);
+            this.connectedUsers.get(user).reset();
         } catch (IOException e) {
             System.out.println("Something went wrong whilst trying to send " + object.toString() + " to " + user.getName());
             e.printStackTrace();

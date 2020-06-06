@@ -21,7 +21,10 @@ public class Main extends Application {
 
     @Override
     public void stop() throws Exception {
+        if (Client.getInstance().isConnected()){
+            Client.getInstance().disconnectFromServer();
+        }
+
         super.stop();
-        Client.getInstance().disconnectFromServer();
     }
 }
