@@ -272,19 +272,20 @@ public class Server {
             applyAllPoints();
 
             currentDrawer.setDrawing(false);
-            this.clients.sendToAllClients(new UserUpdate(currentDrawer,false));
-            currentDrawerIndex++;
+            this.clients.sendToAllClients(new UserUpdate(currentDrawer, false));
 
+            currentDrawerIndex++;
 
             if (this.currentDrawerIndex > users.size() - 1) {
                 nextRound(false);
                 return;
             }
+
             currentDrawer = users.get(currentDrawerIndex);
         }
 
         currentDrawer.setDrawing(true);
-        this.clients.sendToAllClients(new UserUpdate(currentDrawer,false));
+        this.clients.sendToAllClients(new UserUpdate(currentDrawer, false));
         pickNextWord(0);
         startTimer();
         this.clients.sendToAllClients(new TurnUpdate(currentDrawer, currentWord));
