@@ -14,6 +14,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -71,10 +73,19 @@ public class GameWindow implements GameUpdateListener {
         this.primaryStage.setResizable(false);
         this.primaryStage.setWidth(1200);
         this.primaryStage.setHeight(780);
-        this.primaryStage.setScene(new Scene(setupFrame()));
+
+        Scene scene = new Scene(setupFrame());
+        scene.setOnKeyPressed(this::keyHandler);
+        this.primaryStage.setScene(scene);
         this.primaryStage.show();
 
         Client.getInstance().sendObject(new StateUpdate(Client.getInstance().getUser(), GAME));
+    }
+
+    private void keyHandler(KeyEvent keyEvent) {
+        if (keyEvent.getCode().equals(KeyCode.ENTER)) {
+            sendButton.fire();
+        }
     }
 
     private BorderPane setupFrame() {
@@ -84,18 +95,19 @@ public class GameWindow implements GameUpdateListener {
         this.timeLeftLabel.setFont(new Font("Arial", 30));
         this.currentRoundLabel.setFont(new Font("Arial", 30));
         HBox head = new HBox();
-        head.setPadding(new Insets(5,5,5,5));
+        head.setPadding(new Insets(5, 5, 5, 5));
         Region emptySpace1 = new Region();
         Region emptySpace2 = new Region();
         head.getChildren().addAll(this.timeLeftLabel, emptySpace1, this.currentWordLabel, emptySpace2, this.currentRoundLabel);
-        head.setHgrow(emptySpace1, Priority.ALWAYS);
-        head.setHgrow(emptySpace2, Priority.ALWAYS);
+
+        HBox.setHgrow(emptySpace1, Priority.ALWAYS);
+        HBox.setHgrow(emptySpace2, Priority.ALWAYS);
 //        this.timeLeftLabel.setAlignment(Pos.BASELINE_LEFT);
 //        this.currentWordLabel.setAlignment(Pos.CENTER);
 //        this.currentRoundLabel.setAlignment(Pos.BASELINE_RIGHT);
         head.setPrefWidth(primaryStage.getWidth());
         frame.setTop(head);
-        frame.setAlignment(head, Pos.CENTER);
+        BorderPane.setAlignment(head, Pos.CENTER);
         frame.setCenter(getDrawingArea());
         frame.setLeft(getScoreboard());
         frame.setRight(getInfoVBox());
@@ -103,7 +115,7 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private VBox getScoreboard() {
-        this.scoreBoard.setPadding(new Insets(0,0,0,5));
+        this.scoreBoard.setPadding(new Insets(0, 0, 0, 5));
         this.scoreBoard.setMaxWidth(300);
         this.scoreBoard.setMinWidth(300);
         this.scoreBoard.setPrefWidth(300);
@@ -120,7 +132,7 @@ public class GameWindow implements GameUpdateListener {
     private HBox playerScoreMaker(User user) {
         HBox hBox = new HBox();
         ImageView isDrawingImage = new ImageView();
-        if (user.isDrawing()){
+        if (user.isDrawing()) {
             File file = new File("resources/pictures/brush.png");
             isDrawingImage.setImage(new Image(file.toURI().toString()));
         }
@@ -407,7 +419,7 @@ public class GameWindow implements GameUpdateListener {
 
     private VBox getInfoVBox() {
         VBox infoVBox = new VBox();
-        infoVBox.setPadding(new Insets(0,0,0,5));
+        infoVBox.setPadding(new Insets(0, 0, 0, 5));
         infoVBox.setPrefWidth(300);
         infoVBox.setMaxWidth(300);
         infoVBox.setMinWidth(300);
@@ -452,7 +464,6 @@ public class GameWindow implements GameUpdateListener {
                 messageInput.clear();
             }
         });
-
 
         inputBox.getChildren().addAll(messageInput, sendButton);
 
