@@ -221,7 +221,7 @@ public class Server {
         if (!isFirst)
             currentRoundIndex++;
 
-        if (serverSettings.getRounds() == currentRoundIndex) {
+        if (currentRoundIndex > serverSettings.getRounds()) {
             endGame();
             return;
         }
@@ -266,6 +266,7 @@ public class Server {
             applyAllPoints();
 
             currentDrawer.setDrawing(false);
+            this.clients.sendToAllClients(new UserUpdate(currentDrawer,false));
             currentDrawerIndex++;
 
             if (this.currentDrawerIndex > users.size() - 1) {
@@ -277,9 +278,10 @@ public class Server {
         }
 
         currentDrawer.setDrawing(true);
+        this.clients.sendToAllClients(new UserUpdate(currentDrawer,false));
         pickNextWord(0);
         startTimer();
-        this.clients.sendToAllClients(new TurnUpdate(users.get(currentDrawerIndex), currentWord));
+        this.clients.sendToAllClients(new TurnUpdate(currentDrawer, currentWord));
     }
 
     private void applyAllPoints() {
