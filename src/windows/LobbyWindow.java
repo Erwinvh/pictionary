@@ -96,7 +96,7 @@ public class LobbyWindow implements GameUpdateListener {
         gameSettingsBox.setSpacing(5);
 
         Label amountOfRoundsLabel = new Label("Amount of rounds:");
-        roundsComboBox = getComboBox(1, 50, 1, 4);
+        roundsComboBox = getComboBox(2, 50, 1, 4);
 
         Region regionRounds = new Region();
         regionRounds.setPrefHeight(10);
@@ -116,17 +116,25 @@ public class LobbyWindow implements GameUpdateListener {
         regionTime.setPrefHeight(20);
 
         Button startGameButton = new Button("Start game");
-        startGameButton.setOnAction(event -> {
-            if (userList.size() <= 1) return;
 
-            adjustServerSettings();
+        if (Client.getInstance().getUser().isHost()) {
+            roundsComboBox.valueProperty().addListener(e -> adjustServerSettings());
+            languageComboBox.valueProperty().addListener(e -> adjustServerSettings());
+            timePerRoundComboBox.valueProperty().addListener(e -> adjustServerSettings());
 
-            // Send user instance so the server can check whether I am host or not,
-            // since only the host can start a game
-            Client.getInstance().sendObject(Client.getInstance().getUser());
-        });
+            startGameButton.setOnAction(event -> {
+                if (userList.size() <= 1) return;
+
+                adjustServerSettings();
+
+                // Send user instance so the server can check whether I am host or not,
+                // since only the host can start a game
+                Client.getInstance().sendObject(Client.getInstance().getUser());
+            });
+        }
 
         gameSettingsBox.getChildren().addAll(amountOfRoundsLabel, roundsComboBox, regionRounds, languageLabel, languageComboBox, regionLanguage, timePerRoundLabel, timePerRoundComboBox, regionTime, startGameButton);
+
         return gameSettingsBox;
     }
 
@@ -212,9 +220,15 @@ public class LobbyWindow implements GameUpdateListener {
     }
 
     private void onSettingsUpdate(SettingsUpdate settingsUpdate) {
+
+        if (Client.getInstance().getUser().isHost()) return;
+
         ServerSettings newSettings = settingsUpdate.getServerSettings();
-        roundsComboBox.getSelectionModel().select(newSettings.getRounds());
-        languageComboBox.getSelectionModel().select(newSettings.getLanguage());
-        timePerRoundComboBox.getSelectionModel().select(newSettings.getTimeInSeconds());
+
+        Platform.runLater(() -> {
+            roundsComboBox.getSelectionModel().select((Integer) newSettings.getRounds());
+            languageComboBox.getSelectionModel().select(newSettings.getLanguage());
+            timePerRoundComboBox.getSelectionModel().select((Integer) newSettings.getTimeInSeconds());
+        });
     }
 }
