@@ -84,7 +84,7 @@ public class GameWindow implements GameUpdateListener {
         this.timeLeftLabel.setFont(new Font("Arial", 30));
         this.currentRoundLabel.setFont(new Font("Arial", 30));
         HBox head = new HBox();
-        head.setPadding(new Insets(5,5,5,5));
+        head.setPadding(new Insets(5, 5, 5, 5));
         Region emptySpace1 = new Region();
         Region emptySpace2 = new Region();
         head.getChildren().addAll(this.timeLeftLabel, emptySpace1, this.currentWordLabel, emptySpace2, this.currentRoundLabel);
@@ -103,7 +103,7 @@ public class GameWindow implements GameUpdateListener {
     }
 
     private VBox getScoreboard() {
-        this.scoreBoard.setPadding(new Insets(0,0,0,5));
+        this.scoreBoard.setPadding(new Insets(0, 0, 0, 5));
         this.scoreBoard.setMaxWidth(300);
         this.scoreBoard.setMinWidth(300);
         this.scoreBoard.setPrefWidth(300);
@@ -120,7 +120,7 @@ public class GameWindow implements GameUpdateListener {
     private HBox playerScoreMaker(User user) {
         HBox hBox = new HBox();
         ImageView isDrawingImage = new ImageView();
-        if (user.isDrawing()){
+        if (user.isDrawing()) {
             File file = new File("resources/pictures/brush.png");
             isDrawingImage.setImage(new Image(file.toURI().toString()));
         }
@@ -407,7 +407,7 @@ public class GameWindow implements GameUpdateListener {
 
     private VBox getInfoVBox() {
         VBox infoVBox = new VBox();
-        infoVBox.setPadding(new Insets(0,0,0,5));
+        infoVBox.setPadding(new Insets(0, 0, 0, 5));
         infoVBox.setPrefWidth(300);
         infoVBox.setMaxWidth(300);
         infoVBox.setMinWidth(300);
@@ -444,15 +444,14 @@ public class GameWindow implements GameUpdateListener {
         sendButton = new Button("Send");
 
         sendButton.setOnAction(event -> {
-            if (messageInput.getText() != null) {
-                ChatUpdate newChatUpdate = new ChatUpdate(Client.getInstance().getUser(), messageInput.getText());
+            if (!messageInput.getText().trim().isEmpty()) {
+                ChatUpdate newChatUpdate = new ChatUpdate(Client.getInstance().getUser(), messageInput.getText().trim());
 
                 // Make the client send the message to the server
                 Client.getInstance().sendObject(newChatUpdate);
                 messageInput.clear();
             }
         });
-
 
         inputBox.getChildren().addAll(messageInput, sendButton);
 
