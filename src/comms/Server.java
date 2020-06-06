@@ -120,9 +120,11 @@ public class Server {
 
             this.clients.removeClient(user);
             if (user.isDrawing()) {
-                if (this.correctlyGuesses.contains(user)) this.correctlyGuesses.remove(user);
                 nextTurn(true);
             }
+
+            this.correctlyGuesses.remove(user);
+
             socket.close();
 
             // Stop the entire server when the host has left
