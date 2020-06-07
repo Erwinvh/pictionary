@@ -32,13 +32,13 @@ import java.util.List;
 
 import static comms.GameUpdates.StateUpdate.stateType.GAME;
 
-public class GameWindow implements GameUpdateListener {
+public class GameWindow implements GameUpdateListener, ChatUpdateListener {
 
     //Stage
     private Stage primaryStage;
 
     // Chat
-    private List<ChatUpdate> chatArrayList;
+    private List<String> chatArrayList;
     private GridPane chatMessagesBox;
 
     //Game information
@@ -63,6 +63,7 @@ public class GameWindow implements GameUpdateListener {
         this.primaryStage.setTitle("Pictionary - Game - " + Client.getInstance().getUser().getName());
 
         Client.getInstance().setGameUpdateListener(this);
+        Client.getInstance().setChatUpdateListener(this);
 
         this.userList = userList;
 
@@ -190,13 +191,13 @@ public class GameWindow implements GameUpdateListener {
         Client.getInstance().sendObject(drawUpdate);
     }
 
-    private void addNewMessage(ChatUpdate newChatUpdate) {
-        Label messageLabel = new Label(newChatUpdate.toString());
+    private void addNewMessage(String newMessage) {
+        Label messageLabel = new Label(newMessage);
 
-        if (!chatArrayList.contains(newChatUpdate))
-            chatArrayList.add(newChatUpdate);
+        if (!chatArrayList.contains(newMessage))
+            chatArrayList.add(newMessage);
 
-        int messageRow = chatArrayList.indexOf(newChatUpdate);
+        int messageRow = chatArrayList.indexOf(newMessage);
         int messageColumn = 1;
 
         HBox messageBox = new HBox();
@@ -209,10 +210,6 @@ public class GameWindow implements GameUpdateListener {
     public void onGameUpdate(GameUpdate gameUpdate) {
         GameUpdate.GameUpdateType gameUpdateType = gameUpdate.getGameUpdateType();
         switch (gameUpdateType) {
-            case CHAT:
-                onChatUpdate((ChatUpdate) gameUpdate);
-                break;
-
             case DRAW:
                 onDrawUpdate((DrawUpdate) gameUpdate);
                 break;
@@ -248,10 +245,6 @@ public class GameWindow implements GameUpdateListener {
                 this.graphics.fillOval((int) point.getX() - brushSize, (int) point.getY() - brushSize, brushSize * 2, brushSize * 2);
             }
         });
-    }
-
-    private void onChatUpdate(ChatUpdate chatUpdate) {
-        addNewMessage(chatUpdate);
     }
 
     private void onRoundUpdate(RoundUpdate roundUpdate) {
@@ -445,8 +438,8 @@ public class GameWindow implements GameUpdateListener {
         chatMessagesBox = new GridPane();
         chatMessagesBox.setVgap(10);
         chatScrollPane.vvalueProperty().bind(chatMessagesBox.heightProperty());
-        for (ChatUpdate chatUpdate : chatArrayList) {
-            addNewMessage(chatUpdate);
+        for (String message : chatArrayList) {
+            addNewMessage(message);
         }
 
         chatScrollPane.setContent(chatMessagesBox);
@@ -479,5 +472,11 @@ public class GameWindow implements GameUpdateListener {
         // move back to lobby or home?
         new EndScoreWindow(userList);
         new LobbyWindow(this.primaryStage, this.userList);
+    }
+
+    @Override
+    public void onChatUpdate(String message) {
+        addNewMessage(message);
+
     }
 }

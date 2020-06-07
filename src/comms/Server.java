@@ -155,6 +155,7 @@ public class Server {
         if (chatUpdate.getUser().isDrawing() || correctlyGuesses.contains(chatUpdate.getUser())) return false;
 
         if (message.equalsIgnoreCase(currentWord)) {
+            //TODO: data output here
             this.clients.sendToAllClients(new ChatUpdate(null, chatUpdate.getUser().getName() + " has guessed the word!", true));
 
             if (this.correctlyGuesses.isEmpty()) {
@@ -186,6 +187,7 @@ public class Server {
 
         if (matchedCharacters >= this.currentWord.length() - 2) {
             // ALMOST CORRECT!
+            //TODO:
             this.clients.sendToSpecificClient(new ChatUpdate(null, "You are very close!", true), chatUpdate.getUser());
         }
 
