@@ -15,8 +15,10 @@ public class Server {
 
     static final String JOIN_MESSAGE = "has joined the room!";
     static final String LEAVE_MESSAGE = "has left the room!";
+
     // Game
     private static final String wordFileName = "/words.json";
+
     // Network
     private ServerSettings serverSettings;
     private ServerSocket serverSocket;

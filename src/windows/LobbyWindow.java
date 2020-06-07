@@ -20,7 +20,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,8 +70,7 @@ public class LobbyWindow implements GameUpdateListener {
         hBox.setAlignment(Pos.CENTER_LEFT);
 
         ImageView imageView = new ImageView();
-        File file = new File(user.getProfileImage());
-        imageView.setImage(new Image(file.toURI().toString()));
+        imageView.setImage(new Image(user.getProfileImage()));
         imageView.setFitWidth(40);
         imageView.setFitHeight(40);
 

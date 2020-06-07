@@ -102,15 +102,16 @@ public class GameWindow implements GameUpdateListener {
 
         HBox.setHgrow(emptySpace1, Priority.ALWAYS);
         HBox.setHgrow(emptySpace2, Priority.ALWAYS);
-//        this.timeLeftLabel.setAlignment(Pos.BASELINE_LEFT);
-//        this.currentWordLabel.setAlignment(Pos.CENTER);
-//        this.currentRoundLabel.setAlignment(Pos.BASELINE_RIGHT);
+
         head.setPrefWidth(primaryStage.getWidth());
         frame.setTop(head);
+
         BorderPane.setAlignment(head, Pos.CENTER);
+
         frame.setCenter(getDrawingArea());
         frame.setLeft(getScoreboard());
         frame.setRight(getInfoVBox());
+
         return frame;
     }
 
@@ -119,7 +120,7 @@ public class GameWindow implements GameUpdateListener {
         this.scoreBoard.setMaxWidth(300);
         this.scoreBoard.setMinWidth(300);
         this.scoreBoard.setPrefWidth(300);
-//TODO: name too long, pushes chat away and ponts arent visible
+
         for (User user : this.userList) {
             HBox hbox = playerScoreMaker(user);
             hbox.setPrefWidth(this.scoreBoard.getWidth());
@@ -131,11 +132,13 @@ public class GameWindow implements GameUpdateListener {
 
     private HBox playerScoreMaker(User user) {
         HBox hBox = new HBox();
+
         ImageView isDrawingImage = new ImageView();
         if (user.isDrawing()) {
-            File file = new File("resources/pictures/brush.png");
-            isDrawingImage.setImage(new Image(file.toURI().toString()));
+            String brushPath = getClass().getResource("/pictures/brush.png").toString();
+            isDrawingImage.setImage(new Image(brushPath));
         }
+
         isDrawingImage.setFitHeight(40);
         isDrawingImage.setFitWidth(40);
 
@@ -149,6 +152,7 @@ public class GameWindow implements GameUpdateListener {
         scoreLabel.setMaxWidth(60);
         scoreLabel.setAlignment(Pos.BASELINE_RIGHT);
         hBox.getChildren().addAll(isDrawingImage, playerScore, empty, scoreLabel);
+
         return hBox;
     }
 
