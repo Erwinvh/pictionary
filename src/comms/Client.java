@@ -1,9 +1,10 @@
 package comms;
 
+import comms.GameUpdates.ChatUpdateListener;
 import comms.GameUpdates.GameUpdate;
 import comms.GameUpdates.GameUpdateListener;
-import comms.GameUpdates.UserUpdate;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -16,12 +17,19 @@ public class Client {
 
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
+    private DataInputStream dataInputStream;
 
     private User user;
 
     private GameUpdateListener gameUpdateListener;
+    private ChatUpdateListener chatUpdateListener;
+    private int errorCounter = 0;
 
     private Thread incomingDataThread;
+
+    public void setChatUpdateListener(ChatUpdateListener chatUpdateListener) {
+        this.chatUpdateListener = chatUpdateListener;
+    }
 
     // Static inner class - inner classes are not loaded until they are referenced.
     private static class ClientHolder {
@@ -41,6 +49,7 @@ public class Client {
 
         this.objectInputStream = null;
         this.objectOutputStream = null;
+        this.dataInputStream = null;
     }
 
     public synchronized boolean connectToServer(String serverAddress, int serverPort) {
@@ -61,6 +70,7 @@ public class Client {
             this.objectOutputStream.writeObject(this.getUser());
 
             this.objectInputStream = new ObjectInputStream(this.clientSocket.getInputStream());
+            this.dataInputStream = new DataInputStream(this.clientSocket.getInputStream());
 
             incomingDataThread = new Thread(this::handleIncomingData);
             incomingDataThread.start();
@@ -77,20 +87,22 @@ public class Client {
     }
 
     private void handleIncomingData() {
-
-        int errorCounter = 0;
-
         while (this.connected) {
 
             this.connected = clientSocket.isConnected();
             if (!this.connected) return;
+
+            if (this.errorCounter >= 15) {
+                System.out.println("Something went wrong whilst handling incoming data!");
+                disconnectFromServer();
+            }
 
             synchronized (this.objectInputStream) {
                 try {
                     Object objectIn = this.objectInputStream.readObject();
 
                     if (this.gameUpdateListener == null) {
-                        System.out.println("GameUpdateListener was null! Not a big problem, just notifying!");
+                        System.out.println("GameUpdateListener was null!");
                         continue;
                     }
 
@@ -108,15 +120,29 @@ public class Client {
                 } catch (IOException | ClassNotFoundException e) {
                     errorCounter++;
 
-                    if (errorCounter >= 15) {
-                        System.out.println("Something went wrong whilst handling incoming data!");
-                        disconnectFromServer();
-                    }
-                    
                 } catch (NullPointerException e) {
                     System.out.println("Received a null object!");
                 } catch (ClassCastException e) {
                     e.printStackTrace();
+                }
+            }
+
+            synchronized (this.dataInputStream) {
+                try {
+                    String message = this.dataInputStream.readUTF();
+                    if (this.chatUpdateListener == null) {
+                        System.out.println("ChatUpdateListener was null!");
+                        continue;
+                    }
+                    if (!message.isEmpty()) {
+                        chatUpdateListener.onChatUpdate(message);
+                    }
+
+                    this.errorCounter--;
+
+                } catch (IOException e) {
+                    this.errorCounter++;
+                    System.out.println("Something went wrong whilst receiving via dataStreams");
                 }
             }
         }

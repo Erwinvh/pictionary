@@ -84,6 +84,7 @@ public class Server {
         User user = null;
 
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
              ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream())) {
             boolean connected = true;
 
@@ -92,7 +93,7 @@ public class Server {
 
             Thread.currentThread().setName(user.getName());
 
-            this.clients.addClient(user, objectOutputStream);
+            this.clients.addClient(user, objectOutputStream, dataOutputStream);
 
             while (connected) {
                 Object objectIn = objectInputStream.readObject();
@@ -101,7 +102,13 @@ public class Server {
                     connected = (boolean) objectIn;
                 } else if (objectIn instanceof GameUpdate) {
                     if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.CHAT)) {
-                        if (this.checkWord((ChatUpdate) objectIn)) continue;
+                        if (this.checkWord((ChatUpdate) objectIn)) {
+                            continue;
+                        }
+
+                        this.clients.sendChatToAllClients(objectIn.toString());
+                        continue;
+
                     } else if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.SETTINGS)) {
                         this.adjustServerSettings((SettingsUpdate) objectIn);
                     } else if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.STATE)) {
@@ -155,8 +162,7 @@ public class Server {
         if (chatUpdate.getUser().isDrawing() || correctlyGuesses.contains(chatUpdate.getUser())) return false;
 
         if (message.equalsIgnoreCase(currentWord)) {
-            //TODO: data output here
-            this.clients.sendToAllClients(new ChatUpdate(null, chatUpdate.getUser().getName() + " has guessed the word!", true));
+            this.clients.sendChatToAllClients(new ChatUpdate(null, chatUpdate.getUser().getName() + " has guessed the word!", true).toString());
 
             if (this.correctlyGuesses.isEmpty()) {
                 chatUpdate.getUser().addScore(300);
@@ -187,8 +193,7 @@ public class Server {
 
         if (matchedCharacters >= this.currentWord.length() - 2) {
             // ALMOST CORRECT!
-            //TODO:
-            this.clients.sendToSpecificClient(new ChatUpdate(null, "You are very close!", true), chatUpdate.getUser());
+            this.clients.sendChatToSpecificClient(new ChatUpdate(null, "You are very close!", true).toString(), chatUpdate.getUser());
         }
 
         return false;
