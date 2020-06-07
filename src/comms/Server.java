@@ -61,7 +61,7 @@ public class Server {
 
         while (this.running) {
             System.out.println("Waiting for client to connect...");
-            final Socket socket = this.serverSocket.accept();
+            Socket socket = this.serverSocket.accept();
 
             System.out.println("A new client has connected (" + socket.toString() + "), handling connection.");
 

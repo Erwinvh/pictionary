@@ -15,6 +15,7 @@ public class Client {
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
     private DataInputStream dataInputStream;
+    private DataOutputStream dataOutputStream;
 
     private User user;
 
@@ -23,8 +24,6 @@ public class Client {
 
     private Thread incomingObjectThread;
     private Thread incomingDataThread;
-    private Thread incomingChatThread;
-    private DataOutputStream dataOutputStream;
 
     public void setChatUpdateListener(ChatUpdateListener chatUpdateListener) {
         this.chatUpdateListener = chatUpdateListener;
@@ -65,7 +64,7 @@ public class Client {
             this.clientSocket = new Socket(serverAddress, serverPort);
             this.connected = true;
 
-            new DataOutputStream(this.clientSocket.getOutputStream());
+            this.dataOutputStream = new DataOutputStream(this.clientSocket.getOutputStream());
 
             this.objectOutputStream = new ObjectOutputStream(this.clientSocket.getOutputStream());
             this.objectOutputStream.writeObject(this.getUser());
@@ -79,9 +78,6 @@ public class Client {
 
             incomingDataThread = new Thread(this::handleIncomingObjects);
             incomingDataThread.start();
-
-            incomingChatThread = new Thread(this::handleIncomingChat);
-            incomingChatThread.start();
 
             System.out.println("Client " + user.getName() + " successfully connected!");
 
