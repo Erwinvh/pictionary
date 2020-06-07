@@ -66,18 +66,13 @@ public class Client {
             this.connected = true;
 
             new DataOutputStream(this.clientSocket.getOutputStream());
-            this.dataInputStream = new DataInputStream(this.clientSocket.getInputStream());
 
             this.objectOutputStream = new ObjectOutputStream(this.clientSocket.getOutputStream());
             this.objectOutputStream.writeObject(this.getUser());
 
             this.objectInputStream = new ObjectInputStream(this.clientSocket.getInputStream());
-<<<<<<< Updated upstream
-=======
 
-            this.dataOutputStream = new DataOutputStream(this.clientSocket.getOutputStream());
             this.dataInputStream = new DataInputStream(this.clientSocket.getInputStream());
->>>>>>> Stashed changes
 
             incomingObjectThread = new Thread(this::handleIncomingData);
             incomingObjectThread.start();
@@ -100,10 +95,11 @@ public class Client {
     }
 
     private void handleIncomingChat() {
+        int errorCounter = 0;
         while (this.connected){
             this.connected = clientSocket.isConnected();
             if (!this.connected) return;
-            if (this.errorCounter >= 15) {
+            if (errorCounter >= 15) {
                 System.out.println("Something went wrong whilst handling incoming chatMessage!");
                 disconnectFromServer();
             }
@@ -115,10 +111,10 @@ public class Client {
                             chatUpdateListener.onChatUpdate(message);
                         }
 
-                        this.errorCounter--;
+                        errorCounter--;
 
                     } catch (IOException e) {
-                        this.errorCounter++;
+                        errorCounter++;
                         System.out.println("Something went wrong whilst receiving via dataStreams");
                     }
                 }
