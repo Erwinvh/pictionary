@@ -1,94 +1,1982 @@
 [
   {
-    "english": "English",
-    "dutch": "Engels"
+    "english": "cat",
+    "dutch": "kat"
   },
   {
-    "english": "Dutch",
-    "dutch": "Nederlands"
+    "english": "sun",
+    "dutch": "zon"
   },
   {
-    "english": "windmill",
-    "dutch": "molen"
+    "english": "cup",
+    "dutch": "beker"
   },
   {
-    "english": "computer",
-    "dutch": "computer"
+    "english": "ghost",
+    "dutch": "geest"
   },
   {
-    "english": "donkey",
-    "dutch": "ezel"
+    "english": "flower",
+    "dutch": "bloem"
   },
   {
-    "english": "chair",
-    "dutch": "stoel"
+    "english": "pie",
+    "dutch": "taart"
+  },
+  {
+    "english": "cow",
+    "dutch": "koe"
+  },
+  {
+    "english": "banana",
+    "dutch": "banaan"
+  },
+  {
+    "english": "snowflake",
+    "dutch": "sneeuwvlok"
+  },
+  {
+    "english": "bug",
+    "dutch": "insect"
+  },
+  {
+    "english": "book",
+    "dutch": "boek"
+  },
+  {
+    "english": "jar",
+    "dutch": "pot"
+  },
+  {
+    "english": "snake",
+    "dutch": "slang"
+  },
+  {
+    "english": "light",
+    "dutch": "licht"
+  },
+  {
+    "english": "tree",
+    "dutch": "boom"
+  },
+  {
+    "english": "lips",
+    "dutch": "lippen"
+  },
+  {
+    "english": "apple",
+    "dutch": "appel"
+  },
+  {
+    "english": "slide",
+    "dutch": "glijbaan"
+  },
+  {
+    "english": "socks",
+    "dutch": "sokken"
+  },
+  {
+    "english": "smile",
+    "dutch": "glimlachen"
+  },
+  {
+    "english": "swing",
+    "dutch": "slingeren"
+  },
+  {
+    "english": "coat",
+    "dutch": "jas"
+  },
+  {
+    "english": "shoe",
+    "dutch": "schoen"
+  },
+  {
+    "english": "water",
+    "dutch": "water"
+  },
+  {
+    "english": "heart",
+    "dutch": "hart"
+  },
+  {
+    "english": "hat",
+    "dutch": "hoed"
+  },
+  {
+    "english": "ocean",
+    "dutch": "oceaan"
+  },
+  {
+    "english": "kite",
+    "dutch": "vlieger"
+  },
+  {
+    "english": "dog",
+    "dutch": "hond"
+  },
+  {
+    "english": "mouth",
+    "dutch": "mond"
+  },
+  {
+    "english": "milk",
+    "dutch": "melk"
+  },
+  {
+    "english": "duck",
+    "dutch": "eend"
+  },
+  {
+    "english": "eyes",
+    "dutch": "ogen"
+  },
+  {
+    "english": "skateboard",
+    "dutch": "skateboard"
+  },
+  {
+    "english": "bird",
+    "dutch": "vogel"
+  },
+  {
+    "english": "boy",
+    "dutch": "jongen"
+  },
+  {
+    "english": "apple",
+    "dutch": "appel"
+  },
+  {
+    "english": "person",
+    "dutch": "persoon"
+  },
+  {
+    "english": "girl",
+    "dutch": "meisje"
+  },
+  {
+    "english": "mouse",
+    "dutch": "muis"
+  },
+  {
+    "english": "ball",
+    "dutch": "bal"
+  },
+  {
+    "english": "house",
+    "dutch": "huis"
+  },
+  {
+    "english": "star",
+    "dutch": "ster"
+  },
+  {
+    "english": "nose",
+    "dutch": "neus"
   },
   {
     "english": "bed",
     "dutch": "bed"
   },
   {
-    "english": "tiger",
-    "dutch": "tijger"
+    "english": "whale",
+    "dutch": "walvis"
+  },
+  {
+    "english": "jacket",
+    "dutch": "jas"
+  },
+  {
+    "english": "shirt",
+    "dutch": "overhemd"
+  },
+  {
+    "english": "hippo",
+    "dutch": "nijlpaard"
+  },
+  {
+    "english": "beach",
+    "dutch": "strand"
+  },
+  {
+    "english": "egg",
+    "dutch": "ei"
+  },
+  {
+    "english": "face",
+    "dutch": "gezicht"
+  },
+  {
+    "english": "cookie",
+    "dutch": "koekje"
+  },
+  {
+    "english": "cheese",
+    "dutch": "kaas"
+  },
+  {
+    "english": "ice cream",
+    "dutch": "ijs"
+  },
+  {
+    "english": "cone",
+    "dutch": "kegel"
+  },
+  {
+    "english": "circle",
+    "dutch": "cirkel"
+  },
+  {
+    "english": "spoon",
+    "dutch": "lepel"
+  },
+  {
+    "english": "worm",
+    "dutch": "worm"
+  },
+  {
+    "english": "spider web",
+    "dutch": "spinnenweb"
+  },
+  {
+    "english": "bridge",
+    "dutch": "brug"
+  },
+  {
+    "english": "bone",
+    "dutch": "bot"
+  },
+  {
+    "english": "grapes",
+    "dutch": "druiven"
+  },
+  {
+    "english": "bell",
+    "dutch": "bel"
+  },
+  {
+    "english": "jellyfish",
+    "dutch": "kwal"
+  },
+  {
+    "english": "bunny",
+    "dutch": "konijn"
+  },
+  {
+    "english": "truck",
+    "dutch": "vrachtwagen"
+  },
+  {
+    "english": "grass",
+    "dutch": "gras"
+  },
+  {
+    "english": "door",
+    "dutch": "deur"
+  },
+  {
+    "english": "monkey",
+    "dutch": "aap"
+  },
+  {
+    "english": "spider",
+    "dutch": "spin"
+  },
+  {
+    "english": "bread",
+    "dutch": "brood"
+  },
+  {
+    "english": "ears",
+    "dutch": "oren"
+  },
+  {
+    "english": "bowl",
+    "dutch": "kom"
+  },
+  {
+    "english": "bracelet",
+    "dutch": "armband"
+  },
+  {
+    "english": "alligator",
+    "dutch": "alligator"
+  },
+  {
+    "english": "bat",
+    "dutch": "vleermuis"
+  },
+  {
+    "english": "clock",
+    "dutch": "klok"
+  },
+  {
+    "english": "lollipop",
+    "dutch": "lolly"
+  },
+  {
+    "english": "moon",
+    "dutch": "maan"
+  },
+  {
+    "english": "doll",
+    "dutch": "pop"
+  },
+  {
+    "english": "orange",
+    "dutch": "sinaasappel"
+  },
+  {
+    "english": "ear",
+    "dutch": "oor"
+  },
+  {
+    "english": "basketball",
+    "dutch": "basketbal"
+  },
+  {
+    "english": "bike",
+    "dutch": "fiets"
+  },
+  {
+    "english": "airplane",
+    "dutch": "vliegtuig"
+  },
+  {
+    "english": "pen",
+    "dutch": "pen"
+  },
+  {
+    "english": "caterpillar",
+    "dutch": "rups"
+  },
+  {
+    "english": "seashell",
+    "dutch": "zeeschelp"
+  },
+  {
+    "english": "rocket",
+    "dutch": "raket"
+  },
+  {
+    "english": "cloud",
+    "dutch": "wolk"
+  },
+  {
+    "english": "bear",
+    "dutch": "beer"
+  },
+  {
+    "english": "corn",
+    "dutch": "ma�s"
+  },
+  {
+    "english": "chicken",
+    "dutch": "kip"
+  },
+  {
+    "english": "purse",
+    "dutch": "portemonnee"
+  },
+  {
+    "english": "glasses",
+    "dutch": "glazen"
+  },
+  {
+    "english": "blocks",
+    "dutch": "blokken"
+  },
+  {
+    "english": "carrot",
+    "dutch": "wortel"
+  },
+  {
+    "english": "turtle",
+    "dutch": "schildpad"
   },
   {
     "english": "pencil",
     "dutch": "potlood"
   },
   {
-    "english": "gemstone",
-    "dutch": "edelsteen"
+    "english": "horse",
+    "dutch": "paard"
   },
   {
-    "english": "cup",
-    "dutch": "kopje"
+    "english": "dinosaur",
+    "dutch": "dinosaurus"
   },
   {
-    "english": "flag",
-    "dutch": "vlag"
+    "english": "head",
+    "dutch": "hoofd"
   },
   {
-    "english": "vision",
-    "dutch": "zicht"
+    "english": "lamp",
+    "dutch": "lamp"
   },
   {
-    "english": "scissors",
-    "dutch": "schaar"
+    "english": "snowman",
+    "dutch": "sneeuwman"
   },
   {
-    "english": "piano",
-    "dutch": "piano"
+    "english": "ant",
+    "dutch": "mier"
   },
   {
-    "english": "feast",
-    "dutch": "feestmaal"
+    "english": "giraffe",
+    "dutch": "giraf"
   },
   {
-    "english": "hear",
-    "dutch": "horen"
+    "english": "cupcake",
+    "dutch": "cupcake"
   },
   {
-    "english": "dive",
-    "dutch": "duiken"
+    "english": "chair",
+    "dutch": "stoel"
   },
   {
-    "english": "sink",
-    "dutch": "zinken"
+    "english": "leaf",
+    "dutch": "blad"
   },
   {
-    "english": "hill",
-    "dutch": "heuvel"
+    "english": "bunk bed",
+    "dutch": "stapelbed"
   },
   {
-    "english": "bin",
-    "dutch": "prullenmand"
+    "english": "snail",
+    "dutch": "slak"
   },
   {
-    "english": "ankle",
-    "dutch": "enkel"
+    "english": "baby",
+    "dutch": "baby"
+  },
+  {
+    "english": "balloon",
+    "dutch": "ballon"
+  },
+  {
+    "english": "bus",
+    "dutch": "bus"
+  },
+  {
+    "english": "cherry",
+    "dutch": "kers"
+  },
+  {
+    "english": "crab",
+    "dutch": "krab"
+  },
+  {
+    "english": "football",
+    "dutch": "voetbal"
+  },
+  {
+    "english": "branch",
+    "dutch": "filiaal"
+  },
+  {
+    "english": "robot",
+    "dutch": "robot"
+  },
+  {
+    "english": "horse",
+    "dutch": "paard"
+  },
+  {
+    "english": "door",
+    "dutch": "deur"
+  },
+  {
+    "english": "song",
+    "dutch": "lied"
+  },
+  {
+    "english": "trip",
+    "dutch": "trip"
+  },
+  {
+    "english": "backbone",
+    "dutch": "ruggengraat"
+  },
+  {
+    "english": "bomb",
+    "dutch": "bom"
+  },
+  {
+    "english": "round",
+    "dutch": "rond"
+  },
+  {
+    "english": "treasure",
+    "dutch": "schat"
+  },
+  {
+    "english": "garbage",
+    "dutch": "vuilnis"
+  },
+  {
+    "english": "park",
+    "dutch": "park"
+  },
+  {
+    "english": "pirate",
+    "dutch": "piraat"
+  },
+  {
+    "english": "ski",
+    "dutch": "ski"
+  },
+  {
+    "english": "state",
+    "dutch": "staat"
+  },
+  {
+    "english": "whistle",
+    "dutch": "fluit"
+  },
+  {
+    "english": "palace",
+    "dutch": "paleis"
+  },
+  {
+    "english": "baseball",
+    "dutch": "honkbal"
+  },
+  {
+    "english": "coal",
+    "dutch": "kolen"
+  },
+  {
+    "english": "queen",
+    "dutch": "koningin"
+  },
+  {
+    "english": "dominoes",
+    "dutch": "dominostenen"
+  },
+  {
+    "english": "photograph",
+    "dutch": "foto"
+  },
+  {
+    "english": "computer",
+    "dutch": "computer"
+  },
+  {
+    "english": "hockey",
+    "dutch": "hockey"
+  },
+  {
+    "english": "aircraft",
+    "dutch": "vliegtuig"
+  },
+  {
+    "english": "hot dog",
+    "dutch": "hotdog"
+  },
+  {
+    "english": "salt and pepper",
+    "dutch": "peper en zout"
+  },
+  {
+    "english": "key",
+    "dutch": "sleutel"
+  },
+  {
+    "english": "iPad",
+    "dutch": "iPad"
+  },
+  {
+    "english": "whisk",
+    "dutch": "garde"
+  },
+  {
+    "english": "frog",
+    "dutch": "kikker"
+  },
+  {
+    "english": "lawnmower",
+    "dutch": "grasmaaier"
+  },
+  {
+    "english": "mattress",
+    "dutch": "matras"
+  },
+  {
+    "english": "pinwheel",
+    "dutch": "pinwheel"
+  },
+  {
+    "english": "cake",
+    "dutch": "cake"
+  },
+  {
+    "english": "circus",
+    "dutch": "circus"
+  },
+  {
+    "english": "battery",
+    "dutch": "batterij"
+  },
+  {
+    "english": "mailman",
+    "dutch": "postbode"
+  },
+  {
+    "english": "cowboy",
+    "dutch": "cowboy"
+  },
+  {
+    "english": "password",
+    "dutch": "wachtwoord"
+  },
+  {
+    "english": "bicycle",
+    "dutch": "fiets"
+  },
+  {
+    "english": "skate",
+    "dutch": "skate"
+  },
+  {
+    "english": "electricity",
+    "dutch": "elektriciteit"
+  },
+  {
+    "english": "lightsaber",
+    "dutch": "lichtzwaard"
+  },
+  {
+    "english": "thief",
+    "dutch": "dief"
+  },
+  {
+    "english": "teapot",
+    "dutch": "theepot"
+  },
+  {
+    "english": "deep",
+    "dutch": "diep"
+  },
+  {
+    "english": "spring",
+    "dutch": "lente"
+  },
+  {
+    "english": "nature",
+    "dutch": "natuur"
+  },
+  {
+    "english": "shallow",
+    "dutch": "ondiep"
+  },
+  {
+    "english": "toast",
+    "dutch": "toast"
+  },
+  {
+    "english": "outside",
+    "dutch": "buiten"
+  },
+  {
+    "english": "America",
+    "dutch": "Amerika"
+  },
+  {
+    "english": "roller blading",
+    "dutch": "skaten"
+  },
+  {
+    "english": "gingerbread man",
+    "dutch": "peperkoekman"
+  },
+  {
+    "english": "bowtie",
+    "dutch": "vlinderdas"
+  },
+  {
+    "english": "half",
+    "dutch": "half"
+  },
+  {
+    "english": "spare",
+    "dutch": "reserve"
+  },
+  {
+    "english": "wax",
+    "dutch": "was"
+  },
+  {
+    "english": "light bulb",
+    "dutch": "gloeilamp"
+  },
+  {
+    "english": "platypus",
+    "dutch": "vogelbekdier"
+  },
+  {
+    "english": "music",
+    "dutch": "muziek"
+  },
+  {
+    "english": "sailboat",
+    "dutch": "zeilboot"
+  },
+  {
+    "english": "popsicle",
+    "dutch": "ijslolly"
+  },
+  {
+    "english": "brain",
+    "dutch": "hersenen"
+  },
+  {
+    "english": "birthday cake",
+    "dutch": "verjaardagstaart"
+  },
+  {
+    "english": "skirt",
+    "dutch": "rok"
+  },
+  {
+    "english": "knee",
+    "dutch": "knie"
+  },
+  {
+    "english": "pineapple",
+    "dutch": "ananas"
+  },
+  {
+    "english": "tusk",
+    "dutch": "slagtand"
+  },
+  {
+    "english": "sprinkler",
+    "dutch": "sproeier"
+  },
+  {
+    "english": "money",
+    "dutch": "geld"
+  },
+  {
+    "english": "spool",
+    "dutch": "spoel"
+  },
+  {
+    "english": "lighthouse",
+    "dutch": "vuurtoren"
+  },
+  {
+    "english": "doormat",
+    "dutch": "deurmat"
+  },
+  {
+    "english": "face",
+    "dutch": "gezicht"
+  },
+  {
+    "english": "flute",
+    "dutch": "fluit"
+  },
+  {
+    "english": "rug",
+    "dutch": "kleed"
+  },
+  {
+    "english": "snowball",
+    "dutch": "sneeuwbal"
+  },
+  {
+    "english": "purse",
+    "dutch": "handtas"
+  },
+  {
+    "english": "owl",
+    "dutch": "uil"
+  },
+  {
+    "english": "gate",
+    "dutch": "poort"
+  },
+  {
+    "english": "suitcase",
+    "dutch": "koffer"
+  },
+  {
+    "english": "stomach",
+    "dutch": "maag"
+  },
+  {
+    "english": "doghouse",
+    "dutch": "hondenhok"
+  },
+  {
+    "english": "pajamas",
+    "dutch": "pyjama"
+  },
+  {
+    "english": "bathroom",
+    "dutch": "badkamer"
+  },
+  {
+    "english": "peach",
+    "dutch": "perzik"
+  },
+  {
+    "english": "newspaper",
+    "dutch": "krant"
+  },
+  {
+    "english": "watering can",
+    "dutch": "gieter"
+  },
+  {
+    "english": "hook",
+    "dutch": "haak"
+  },
+  {
+    "english": "school",
+    "dutch": "school"
+  },
+  {
+    "english": "beaver",
+    "dutch": "bever"
+  },
+  {
+    "english": "french fries",
+    "dutch": "frietjes"
+  },
+  {
+    "english": "beehive",
+    "dutch": "bijenkorf"
+  },
+  {
+    "english": "beach",
+    "dutch": "strand"
+  },
+  {
+    "english": "artist",
+    "dutch": "artiest"
+  },
+  {
+    "english": "flagpole",
+    "dutch": "vlaggenmast"
+  },
+  {
+    "english": "camera",
+    "dutch": "camera"
+  },
+  {
+    "english": "hair dryer",
+    "dutch": "f�hn"
+  },
+  {
+    "english": "mushroom",
+    "dutch": "paddenstoel"
+  },
+  {
+    "english": "toe",
+    "dutch": "teen"
+  },
+  {
+    "english": "pretzel",
+    "dutch": "krakeling"
+  },
+  {
+    "english": "TV",
+    "dutch": "tv"
+  },
+  {
+    "english": "quilt",
+    "dutch": "deken"
+  },
+  {
+    "english": "chalk",
+    "dutch": "krijt"
+  },
+  {
+    "english": "dollar",
+    "dutch": "dollar"
+  },
+  {
+    "english": "soda",
+    "dutch": "frisdrank"
+  },
+  {
+    "english": "chin",
+    "dutch": "kin"
+  },
+  {
+    "english": "swing",
+    "dutch": "schommel"
+  },
+  {
+    "english": "garden",
+    "dutch": "tuin"
+  },
+  {
+    "english": "ticket",
+    "dutch": "kaartje"
+  },
+  {
+    "english": "boot",
+    "dutch": "laars"
+  },
+  {
+    "english": "cello",
+    "dutch": "cello"
+  },
+  {
+    "english": "rain",
+    "dutch": "regen"
+  },
+  {
+    "english": "clam",
+    "dutch": "mossel"
+  },
+  {
+    "english": "pelican",
+    "dutch": "pelikaan"
+  },
+  {
+    "english": "stingray",
+    "dutch": "pijlstaartrog"
+  },
+  {
+    "english": "fur",
+    "dutch": "vacht"
+  },
+  {
+    "english": "blowfish",
+    "dutch": "kogelvis"
+  },
+  {
+    "english": "rainbow",
+    "dutch": "regenboog"
+  },
+  {
+    "english": "happy",
+    "dutch": "gelukkig"
+  },
+  {
+    "english": "fist",
+    "dutch": "vuist"
+  },
+  {
+    "english": "base",
+    "dutch": "basis"
+  },
+  {
+    "english": "storm",
+    "dutch": "storm"
+  },
+  {
+    "english": "mitten",
+    "dutch": "want"
+  },
+  {
+    "english": "easel",
+    "dutch": "ezel"
+  },
+  {
+    "english": "nail",
+    "dutch": "spijker"
+  },
+  {
+    "english": "sheep",
+    "dutch": "schapen"
+  },
+  {
+    "english": "stoplight",
+    "dutch": "stoplicht"
+  },
+  {
+    "english": "coconut",
+    "dutch": "kokosnoot"
+  },
+  {
+    "english": "crib",
+    "dutch": "wieg"
+  },
+  {
+    "english": "hippopotamus",
+    "dutch": "nijlpaard"
+  },
+  {
+    "english": "ring",
+    "dutch": "ring"
+  },
+  {
+    "english": "seesaw",
+    "dutch": "wip"
+  },
+  {
+    "english": "plate",
+    "dutch": "bord"
+  },
+  {
+    "english": "fishing",
+    "dutch": "vissen"
+  },
+  {
+    "english": "Dikke Max",
+    "dutch": "Dikke Max"
+  },
+  {
+    "english": "bell pepper",
+    "dutch": "paprika"
+  },
+  {
+    "english": "front porch",
+    "dutch": "veranda"
+  },
+  {
+    "english": "cheek",
+    "dutch": "wang"
+  },
+  {
+    "english": "video camera",
+    "dutch": "videocamera"
+  },
+  {
+    "english": "washing machine",
+    "dutch": "wasmachine"
+  },
+  {
+    "english": "telephone",
+    "dutch": "telefoon"
+  },
+  {
+    "english": "silverware",
+    "dutch": "zilverwerk"
+  },
+  {
+    "english": "barn",
+    "dutch": "schuur"
+  },
+  {
+    "english": "snowflake",
+    "dutch": "sneeuwvlok"
+  },
+  {
+    "english": "bib",
+    "dutch": "slabbetje"
+  },
+  {
+    "english": "flashlight",
+    "dutch": "zaklamp"
+  },
+  {
+    "english": "popsicle",
+    "dutch": "waterijsje"
+  },
+  {
+    "english": "muffin",
+    "dutch": "muffin"
+  },
+  {
+    "english": "sunflower",
+    "dutch": "zonnebloem"
+  },
+  {
+    "english": "skirt",
+    "dutch": "rok"
+  },
+  {
+    "english": "top hat",
+    "dutch": "hoge hoed"
+  },
+  {
+    "english": "swimming pool",
+    "dutch": "zwembad"
+  },
+  {
+    "english": "tusk",
+    "dutch": "slagtand"
+  },
+  {
+    "english": "radish",
+    "dutch": "radijs"
+  },
+  {
+    "english": "peanut",
+    "dutch": "pinda"
+  },
+  {
+    "english": "spool",
+    "dutch": "spoel"
+  },
+  {
+    "english": "poodle",
+    "dutch": "poedel"
+  },
+  {
+    "english": "potato",
+    "dutch": "aardappel"
+  },
+  {
+    "english": "face",
+    "dutch": "gezicht"
+  },
+  {
+    "english": "shark",
+    "dutch": "haai"
+  },
+  {
+    "english": "fang",
+    "dutch": "hoektand"
+  },
+  {
+    "english": "snowball",
+    "dutch": "sneeuwbal"
+  },
+  {
+    "english": "waist",
+    "dutch": "taille"
+  },
+  {
+    "english": "spoon",
+    "dutch": "lepel"
+  },
+  {
+    "english": "gate",
+    "dutch": "poort"
+  },
+  {
+    "english": "bottle",
+    "dutch": "fles"
+  },
+  {
+    "english": "mail",
+    "dutch": "post"
+  },
+  {
+    "english": "sheep",
+    "dutch": "schapen"
+  },
+  {
+    "english": "lobster",
+    "dutch": "kreeft"
+  },
+  {
+    "english": "ice",
+    "dutch": "ijs"
+  },
+  {
+    "english": "crib",
+    "dutch": "wieg"
+  },
+  {
+    "english": "lawn mower",
+    "dutch": "grasmaaier"
+  },
+  {
+    "english": "bubble",
+    "dutch": "bubbel"
+  },
+  {
+    "english": "seesaw",
+    "dutch": "wip"
+  },
+  {
+    "english": "pencil",
+    "dutch": "potlood"
+  },
+  {
+    "english": "cheeseburger",
+    "dutch": "cheeseburger"
+  },
+  {
+    "english": "hopscotch",
+    "dutch": "hinkelen"
+  },
+  {
+    "english": "rocking chair",
+    "dutch": "schommelstoel"
+  },
+  {
+    "english": "corner",
+    "dutch": "hoek"
+  },
+  {
+    "english": "cheek",
+    "dutch": "wang"
+  },
+  {
+    "english": "roly poly",
+    "dutch": "pissebed"
+  },
+  {
+    "english": "popcorn",
+    "dutch": "popcorn"
+  },
+  {
+    "english": "telephone",
+    "dutch": "telefoon"
+  },
+  {
+    "english": "yoyo",
+    "dutch": "jojo"
+  },
+  {
+    "english": "seahorse",
+    "dutch": "zeepaard"
+  },
+  {
+    "english": "snowflake",
+    "dutch": "sneeuwvlok"
+  },
+  {
+    "english": "spine",
+    "dutch": "rug"
+  },
+  {
+    "english": "desk",
+    "dutch": "bureau"
+  },
+  {
+    "english": "half",
+    "dutch": "half"
+  },
+  {
+    "english": "cardboard",
+    "dutch": "karton"
+  },
+  {
+    "english": "oar",
+    "dutch": "riem"
+  },
+  {
+    "english": "baby-sitter",
+    "dutch": "oppas"
+  },
+  {
+    "english": "drip",
+    "dutch": "infuus"
+  },
+  {
+    "english": "shampoo",
+    "dutch": "shampoo"
+  },
+  {
+    "english": "point",
+    "dutch": "punt"
+  },
+  {
+    "english": "time machine",
+    "dutch": "tijdmachine"
+  },
+  {
+    "english": "yardstick",
+    "dutch": "maatstaf"
+  },
+  {
+    "english": "think",
+    "dutch": "denk"
+  },
+  {
+    "english": "lace",
+    "dutch": "kant"
+  },
+  {
+    "english": "darts",
+    "dutch": "darts"
+  },
+  {
+    "english": "world",
+    "dutch": "wereld"
+  },
+  {
+    "english": "avocado",
+    "dutch": "avocado"
+  },
+  {
+    "english": "bleach",
+    "dutch": "bleekmiddel"
   },
   {
     "english": "shower",
     "dutch": "douche"
+  },
+  {
+    "english": "curtain extension cord",
+    "dutch": "gordijnverlengsnoer"
+  },
+  {
+    "english": "dent",
+    "dutch": "deukje"
+  },
+  {
+    "english": "birthday",
+    "dutch": "verjaardag"
+  },
+  {
+    "english": "lap",
+    "dutch": "schoot"
+  },
+  {
+    "english": "sandbox",
+    "dutch": "zandbak"
+  },
+  {
+    "english": "bruise",
+    "dutch": "blauwe plek"
+  },
+  {
+    "english": "quicksand",
+    "dutch": "drijfzand"
+  },
+  {
+    "english": "fog",
+    "dutch": "mist"
+  },
+  {
+    "english": "gasoline",
+    "dutch": "benzine"
+  },
+  {
+    "english": "pocket",
+    "dutch": "zak"
+  },
+  {
+    "english": "honk",
+    "dutch": "toeteren"
+  },
+  {
+    "english": "sponge",
+    "dutch": "spons"
+  },
+  {
+    "english": "rim",
+    "dutch": "rand"
+  },
+  {
+    "english": "bride",
+    "dutch": "bruid"
+  },
+  {
+    "english": "wig",
+    "dutch": "pruik"
+  },
+  {
+    "english": "zipper",
+    "dutch": "rits"
+  },
+  {
+    "english": "wag",
+    "dutch": "wag"
+  },
+  {
+    "english": "letter opener",
+    "dutch": "brievenopener"
+  },
+  {
+    "english": "fiddle",
+    "dutch": "viool"
+  },
+  {
+    "english": "water buffalo",
+    "dutch": "waterbuffel"
+  },
+  {
+    "english": "pilot",
+    "dutch": "piloot"
+  },
+  {
+    "english": "brand",
+    "dutch": "merk"
+  },
+  {
+    "english": "pail",
+    "dutch": "emmer"
+  },
+  {
+    "english": "baguette",
+    "dutch": "stokbrood"
+  },
+  {
+    "english": "rib",
+    "dutch": "rib"
+  },
+  {
+    "english": "mascot",
+    "dutch": "mascotte"
+  },
+  {
+    "english": "fireman pole",
+    "dutch": "brandweerpaal"
+  },
+  {
+    "english": "zoo",
+    "dutch": "dierentuin"
+  },
+  {
+    "english": "sushi",
+    "dutch": "sushi"
+  },
+  {
+    "english": "fizz",
+    "dutch": "bruisend"
+  },
+  {
+    "english": "ceiling fan",
+    "dutch": "plafondventilator"
+  },
+  {
+    "english": "bald",
+    "dutch": "kaal"
+  },
+  {
+    "english": "houseboat",
+    "dutch": "woonboot"
+  },
+  {
+    "english": "punk",
+    "dutch": "punk"
+  },
+  {
+    "english": "post office",
+    "dutch": "postkantoor"
+  },
+  {
+    "english": "season",
+    "dutch": "seizoen"
+  },
+  {
+    "english": "Internet",
+    "dutch": "internet"
+  },
+  {
+    "english": "chess",
+    "dutch": "schaken"
+  },
+  {
+    "english": "puppet",
+    "dutch": "marionet"
+  },
+  {
+    "english": "chime",
+    "dutch": "klokkenspel"
+  },
+  {
+    "english": "ivy",
+    "dutch": "klimop"
+  },
+  {
+    "english": "full",
+    "dutch": "vol"
+  },
+  {
+    "english": "koala",
+    "dutch": "koala"
+  },
+  {
+    "english": "dentist",
+    "dutch": "tandarts"
+  },
+  {
+    "english": "baseboards",
+    "dutch": "plinten"
+  },
+  {
+    "english": "ping pong",
+    "dutch": "tafeltennis"
+  },
+  {
+    "english": "bonnet",
+    "dutch": "motorkap"
+  },
+  {
+    "english": "mast",
+    "dutch": "mast"
+  },
+  {
+    "english": "hut",
+    "dutch": "hut"
+  },
+  {
+    "english": "welder",
+    "dutch": "lasser"
+  },
+  {
+    "english": "dryer",
+    "dutch": "droger"
+  },
+  {
+    "english": "sheets",
+    "dutch": "lakens"
+  },
+  {
+    "english": "sunburn",
+    "dutch": "zonnebrand"
+  },
+  {
+    "english": "sleep",
+    "dutch": "slapen"
+  },
+  {
+    "english": "kneel",
+    "dutch": "knielen"
+  },
+  {
+    "english": "crust",
+    "dutch": "korst"
+  },
+  {
+    "english": "grandpa",
+    "dutch": "opa"
+  },
+  {
+    "english": "speakers",
+    "dutch": "sprekers"
+  },
+  {
+    "english": "cheerleader",
+    "dutch": "cheerleader"
+  },
+  {
+    "english": "dust",
+    "dutch": "stof"
+  },
+  {
+    "english": "bunny",
+    "dutch": "konijn"
+  },
+  {
+    "english": "salmon",
+    "dutch": "zalm"
+  },
+  {
+    "english": "handle",
+    "dutch": "handvat"
+  },
+  {
+    "english": "swamp",
+    "dutch": "moeras"
+  },
+  {
+    "english": "cruise",
+    "dutch": "cruise"
+  },
+  {
+    "english": "wedding cake",
+    "dutch": "bruidstaart"
+  },
+  {
+    "english": "crow's nest",
+    "dutch": "kraaiennest"
+  },
+  {
+    "english": "macho",
+    "dutch": "macho"
+  },
+  {
+    "english": "drain",
+    "dutch": "afvoer"
+  },
+  {
+    "english": "foil",
+    "dutch": "folie"
+  },
+  {
+    "english": "orbit",
+    "dutch": "baan"
+  },
+  {
+    "english": "dream",
+    "dutch": "droom"
+  },
+  {
+    "english": "recycle",
+    "dutch": "recycleer"
+  },
+  {
+    "english": "raft",
+    "dutch": "vlot"
+  },
+  {
+    "english": "gold",
+    "dutch": "goud"
+  },
+  {
+    "english": "plank",
+    "dutch": "plank"
+  },
+  {
+    "english": "cliff",
+    "dutch": "klif"
+  },
+  {
+    "english": "sweater",
+    "dutch": "trui"
+  },
+  {
+    "english": "vest",
+    "dutch": "vest"
+  },
+  {
+    "english": "cape",
+    "dutch": "cape"
+  },
+  {
+    "english": "picnic",
+    "dutch": "picknicken"
+  },
+  {
+    "english": "shrink",
+    "dutch": "krimpen"
+  },
+  {
+    "english": "leak",
+    "dutch": "lekken"
+  },
+  {
+    "english": "boa constrictor",
+    "dutch": "boa constrictor"
+  },
+  {
+    "english": "deep",
+    "dutch": "diep"
+  },
+  {
+    "english": "mold",
+    "dutch": "schimmel"
+  },
+  {
+    "english": "CD",
+    "dutch": "CD"
+  },
+  {
+    "english": "tiptoe",
+    "dutch": "tenen"
+  },
+  {
+    "english": "hurdle",
+    "dutch": "hindernis"
+  },
+  {
+    "english": "knight",
+    "dutch": "ridder"
+  },
+  {
+    "english": "loveseat",
+    "dutch": "loveseat"
+  },
+  {
+    "english": "cloak",
+    "dutch": "mantel"
+  },
+  {
+    "english": "bedbug",
+    "dutch": "bedwants"
+  },
+  {
+    "english": "bobsled",
+    "dutch": "bobslee"
+  },
+  {
+    "english": "hot tub",
+    "dutch": "bubbelbad"
+  },
+  {
+    "english": "firefighter",
+    "dutch": "brandweerman"
+  },
+  {
+    "english": "cell phone charger",
+    "dutch": "telefoonoplader"
+  },
+  {
+    "english": "beanstalk",
+    "dutch": "bonenstaak"
+  },
+  {
+    "english": "nightmare",
+    "dutch": "nachtmerrie"
+  },
+  {
+    "english": "coach",
+    "dutch": "coach"
+  },
+  {
+    "english": "moth",
+    "dutch": "mot"
+  },
+  {
+    "english": "sneeze",
+    "dutch": "nies"
+  },
+  {
+    "english": "wooly mammoth",
+    "dutch": "wolharige mammoet"
+  },
+  {
+    "english": "pigpen",
+    "dutch": "varkenshok"
+  },
+  {
+    "english": "swarm",
+    "dutch": "zwerm"
+  },
+  {
+    "english": "goblin",
+    "dutch": "kobold"
+  },
+  {
+    "english": "chef",
+    "dutch": "chef"
+  },
+  {
+    "english": "applause",
+    "dutch": "applaus"
+  },
+  {
+    "english": "wax",
+    "dutch": "was"
+  },
+  {
+    "english": "sheep dog",
+    "dutch": "herdershond"
+  },
+  {
+    "english": "safe",
+    "dutch": "veilig"
+  },
+  {
+    "english": "plow",
+    "dutch": "ploeg"
+  },
+  {
+    "english": "runt",
+    "dutch": "runt"
+  },
+  {
+    "english": "vision",
+    "dutch": "visie"
+  },
+  {
+    "english": "loiterer",
+    "dutch": "hangjongeren"
+  },
+  {
+    "english": "observatory",
+    "dutch": "observatorium"
+  },
+  {
+    "english": "century",
+    "dutch": "eeuw"
+  },
+  {
+    "english": "Atlantis",
+    "dutch": "Atlantis"
+  },
+  {
+    "english": "kilogram",
+    "dutch": "kilogram"
+  },
+  {
+    "english": "neutron",
+    "dutch": "neutron"
+  },
+  {
+    "english": "stowaway",
+    "dutch": "verstekeling"
+  },
+  {
+    "english": "psychologist",
+    "dutch": "psycholoog"
+  },
+  {
+    "english": "exponential",
+    "dutch": "exponentieel"
+  },
+  {
+    "english": "aristocrat",
+    "dutch": "aristocraat"
+  },
+  {
+    "english": "eureka",
+    "dutch": "eureka"
+  },
+  {
+    "english": "parody",
+    "dutch": "parodie"
+  },
+  {
+    "english": "cartography",
+    "dutch": "cartografie"
+  },
+  {
+    "english": "figment",
+    "dutch": "verzinsels"
+  },
+  {
+    "english": "philosopher",
+    "dutch": "filosoof"
+  },
+  {
+    "english": "tinting",
+    "dutch": "tinting"
+  },
+  {
+    "english": "overture",
+    "dutch": "ouverture"
+  },
+  {
+    "english": "opaque",
+    "dutch": "ondoorzichtig"
+  },
+  {
+    "english": "cabin",
+    "dutch": "cabine"
+  },
+  {
+    "english": "ironic",
+    "dutch": "ironisch"
+  },
+  {
+    "english": "zero",
+    "dutch": "nul"
+  },
+  {
+    "english": "landfill",
+    "dutch": "storten"
+  },
+  {
+    "english": "implode",
+    "dutch": "imploderen"
+  },
+  {
+    "english": "czar",
+    "dutch": "tsaar"
+  },
+  {
+    "english": "armada",
+    "dutch": "armada"
+  },
+  {
+    "english": "crisp",
+    "dutch": "knapperig"
+  },
+  {
+    "english": "stockholder",
+    "dutch": "aandeelhouder"
+  },
+  {
+    "english": "inquisition",
+    "dutch": "inquisitie"
+  },
+  {
+    "english": "scale",
+    "dutch": "schaal"
+  },
+  {
+    "english": "gallop",
+    "dutch": "galop"
+  },
+  {
+    "english": "archaeologist",
+    "dutch": "archeoloog"
+  },
+  {
+    "english": "blacksmith",
+    "dutch": "smid"
+  },
+  {
+    "english": "upgrade",
+    "dutch": "upgrade"
+  },
+  {
+    "english": "hang",
+    "dutch": "hang"
+  },
+  {
+    "english": "siesta",
+    "dutch": "si�sta"
+  },
+  {
+    "english": "acre",
+    "dutch": "acre"
+  },
+  {
+    "english": "twang",
+    "dutch": "twang"
+  },
+  {
+    "english": "minecart",
+    "dutch": "mijnkar"
+  },
+  {
+    "english": "protestant",
+    "dutch": "protestant"
+  },
+  {
+    "english": "brunette",
+    "dutch": "brunette"
+  },
+  {
+    "english": "stout",
+    "dutch": "stout"
+  },
+  {
+    "english": "quarantine",
+    "dutch": "quarantaine"
+  },
+  {
+    "english": "tutor",
+    "dutch": "tutor"
+  },
+  {
+    "english": "positive",
+    "dutch": "positief"
+  },
+  {
+    "english": "champion",
+    "dutch": "kampioen"
+  },
+  {
+    "english": "pastry",
+    "dutch": "gebak"
+  },
+  {
+    "english": "tournament",
+    "dutch": "toernooi"
+  },
+  {
+    "english": "KFC",
+    "dutch": "KFC"
+  },
+  {
+    "english": "rainwater",
+    "dutch": "regenwater"
+  },
+  {
+    "english": "random",
+    "dutch": "willekeurig"
+  },
+  {
+    "english": "lyrics",
+    "dutch": "teksten"
+  },
+  {
+    "english": "ice fishing",
+    "dutch": "ijsvissen"
+  },
+  {
+    "english": "clue",
+    "dutch": "aanwijzing"
+  },
+  {
+    "english": "flutter",
+    "dutch": "fladderen"
+  },
+  {
+    "english": "slump",
+    "dutch": "inzakken"
+  },
+  {
+    "english": "ligament",
+    "dutch": "ligament"
   }
 ]
