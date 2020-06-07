@@ -29,7 +29,7 @@ class Clients {
 
         // Notify all other users this player has joined
         sendToAllClients(new UserUpdate(user, false));
-        sendToAllClients(new ChatUpdate(user, Server.JOIN_MESSAGE));
+//        sendChatToAllClients(new ChatUpdate(user, Server.JOIN_MESSAGE));
     }
 
     private synchronized void notifyNewUser(ObjectOutputStream objectOutputStream) {
@@ -50,7 +50,7 @@ class Clients {
         this.connectedUsers.remove(user);
         this.connectedUsersData.remove(user);
 
-        sendToAllClients(new ChatUpdate(user, LEAVE_MESSAGE));
+        sendChatToAllClients(new ChatUpdate(user, LEAVE_MESSAGE));
         sendToAllClients(new UserUpdate(user, true));
     }
 
@@ -69,32 +69,22 @@ class Clients {
         });
     }
 
-    synchronized void sendToSpecificClient(Object object, User user) {
-        try {
-            this.connectedUsers.get(user).writeObject(object);
-            this.connectedUsers.get(user).reset();
-        } catch (IOException e) {
-            System.out.println("Something went wrong whilst trying to send " + object.toString() + " to " + user.getName());
-            e.printStackTrace();
-        }
-    }
-
-    synchronized void sendChatToAllClients(String message) {
+    synchronized void sendChatToAllClients(ChatUpdate chatUpdate) {
         this.connectedUsersData.values().forEach(dataOutputStream -> {
             try {
-                dataOutputStream.writeUTF(message);
+                dataOutputStream.writeUTF(chatUpdate.toString());
             } catch (IOException e) {
-                System.out.println("Something went wrong whilst trying to send " + message + " to " + dataOutputStream.toString());
+                System.out.println("Something went wrong whilst trying to send " + chatUpdate.toString() + " to " + dataOutputStream.toString());
                 e.printStackTrace();
             }
         });
     }
 
-    synchronized void sendChatToSpecificClient(String message, User user) {
+    synchronized void sendChatToSpecificClient(ChatUpdate chatUpdate, User user) {
         try {
-            this.connectedUsersData.get(user).writeUTF(message);
+            this.connectedUsersData.get(user).writeUTF(chatUpdate.toString());
         } catch (IOException e) {
-            System.out.println("Something went wrong whilst trying to send " + message + " to " + user.getName());
+            System.out.println("Something went wrong whilst trying to send " + chatUpdate.toString() + " to " + user.getName());
             e.printStackTrace();
         }
     }

@@ -4,10 +4,7 @@ import comms.GameUpdates.ChatUpdateListener;
 import comms.GameUpdates.GameUpdate;
 import comms.GameUpdates.GameUpdateListener;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class Client {
@@ -23,8 +20,8 @@ public class Client {
 
     private GameUpdateListener gameUpdateListener;
     private ChatUpdateListener chatUpdateListener;
-    private int errorCounter = 0;
 
+    private Thread incomingObjectThread;
     private Thread incomingDataThread;
 
     public void setChatUpdateListener(ChatUpdateListener chatUpdateListener) {
@@ -66,11 +63,16 @@ public class Client {
             this.clientSocket = new Socket(serverAddress, serverPort);
             this.connected = true;
 
+            new DataOutputStream(this.clientSocket.getOutputStream());
+            this.dataInputStream = new DataInputStream(this.clientSocket.getInputStream());
+
             this.objectOutputStream = new ObjectOutputStream(this.clientSocket.getOutputStream());
             this.objectOutputStream.writeObject(this.getUser());
 
             this.objectInputStream = new ObjectInputStream(this.clientSocket.getInputStream());
-            this.dataInputStream = new DataInputStream(this.clientSocket.getInputStream());
+
+//            incomingObjectThread = new Thread(this::handleIncomingObjects);
+//            incomingObjectThread.start();
 
             incomingDataThread = new Thread(this::handleIncomingData);
             incomingDataThread.start();
@@ -86,15 +88,35 @@ public class Client {
         return false;
     }
 
-    private void handleIncomingData() {
+    private void handleIncomingObjects() {
+        int errorCounter = 0;
+
         while (this.connected) {
 
             this.connected = clientSocket.isConnected();
             if (!this.connected) return;
 
-            if (this.errorCounter >= 15) {
-                System.out.println("Something went wrong whilst handling incoming data!");
+            if (errorCounter >= 50) {
+                System.out.println("Something went wrong whilst handling incoming objects!");
                 disconnectFromServer();
+            }
+
+
+        }
+    }
+
+    private void handleIncomingData() {
+        int errorCounter = 0;
+
+        while (this.connected) {
+
+            this.connected = clientSocket.isConnected();
+            if (!this.connected) return;
+
+            if (errorCounter >= 50) {
+                errorCounter = 0;
+                System.out.println("Something went wrong whilst handling incoming data!");
+                //disconnectFromServer();
             }
 
             synchronized (this.objectInputStream) {
@@ -115,9 +137,10 @@ public class Client {
                         gameUpdateListener.onGameUpdate((GameUpdate) objectIn);
                     }
 
-                    errorCounter--;
+                    errorCounter = 0;
 
                 } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
                     errorCounter++;
 
                 } catch (NullPointerException e) {
@@ -127,33 +150,34 @@ public class Client {
                 }
             }
 
-            synchronized (this.dataInputStream) {
-                try {
-                    String message = this.dataInputStream.readUTF();
-                    if (this.chatUpdateListener == null) {
-                        System.out.println("ChatUpdateListener was null!");
-                        continue;
-                    }
-                    if (!message.isEmpty()) {
-                        chatUpdateListener.onChatUpdate(message);
-                    }
+            if (this.chatUpdateListener != null) {
 
-                    this.errorCounter--;
+                synchronized (this.dataInputStream) {
+                    try {
+                        String message = this.dataInputStream.readUTF();
 
-                } catch (IOException e) {
-                    this.errorCounter++;
-                    System.out.println("Something went wrong whilst receiving via dataStreams");
+                        if (!message.isEmpty()) {
+                            chatUpdateListener.onChatUpdate(message);
+                        }
+
+                        errorCounter--;
+
+                    } catch (IOException e) {
+                        errorCounter++;
+                        System.out.println("Something went wrong whilst receiving via dataStreams");
+                    }
                 }
             }
         }
     }
 
-    public void disconnectFromServer() {
+    public synchronized void disconnectFromServer() {
         try {
             System.out.println(this.user.getName() + " is willingly disconnecting from server...");
             sendObject(Boolean.FALSE);
             this.connected = false;
 
+            incomingObjectThread.join();
             incomingDataThread.join();
 
             this.clientSocket.close();

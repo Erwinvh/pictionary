@@ -83,9 +83,10 @@ public class Server {
         System.out.println("A new client has connected (" + socket.toString() + "), handling connection.");
         User user = null;
 
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+        try (DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream())) {
+
             boolean connected = true;
 
             // The client will send itself when connected
@@ -106,7 +107,7 @@ public class Server {
                             continue;
                         }
 
-                        this.clients.sendChatToAllClients(objectIn.toString());
+//                        this.clients.sendChatToAllClients((ChatUpdate) objectIn);
                         continue;
 
                     } else if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.SETTINGS)) {
@@ -162,7 +163,7 @@ public class Server {
         if (chatUpdate.getUser().isDrawing() || correctlyGuesses.contains(chatUpdate.getUser())) return false;
 
         if (message.equalsIgnoreCase(currentWord)) {
-            this.clients.sendChatToAllClients(new ChatUpdate(null, chatUpdate.getUser().getName() + " has guessed the word!", true).toString());
+            this.clients.sendChatToAllClients(new ChatUpdate(null, chatUpdate.getUser().getName() + " has guessed the word!", true));
 
             if (this.correctlyGuesses.isEmpty()) {
                 chatUpdate.getUser().addScore(300);
@@ -193,7 +194,7 @@ public class Server {
 
         if (matchedCharacters >= this.currentWord.length() - 2) {
             // ALMOST CORRECT!
-            this.clients.sendChatToSpecificClient(new ChatUpdate(null, "You are very close!", true).toString(), chatUpdate.getUser());
+            this.clients.sendChatToSpecificClient(new ChatUpdate(null, "You are very close!", true), chatUpdate.getUser());
         }
 
         return false;

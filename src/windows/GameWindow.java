@@ -477,6 +477,5 @@ public class GameWindow implements GameUpdateListener, ChatUpdateListener {
     @Override
     public void onChatUpdate(String message) {
         addNewMessage(message);
-
     }
 }
