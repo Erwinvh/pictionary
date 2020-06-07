@@ -50,7 +50,7 @@ class Clients {
         this.connectedUsers.remove(user);
         this.connectedUsersData.remove(user);
 
-        sendChatToAllClients(new ChatUpdate(user, LEAVE_MESSAGE));
+        sendChatToAllClients(new ChatUpdate(user, LEAVE_MESSAGE).toString());
         sendToAllClients(new UserUpdate(user, true));
     }
 
@@ -69,12 +69,12 @@ class Clients {
         });
     }
 
-    synchronized void sendChatToAllClients(ChatUpdate chatUpdate) {
+    synchronized void sendChatToAllClients(String message) {
         this.connectedUsersData.values().forEach(dataOutputStream -> {
             try {
-                dataOutputStream.writeUTF(chatUpdate.toString());
+                dataOutputStream.writeUTF(message);
             } catch (IOException e) {
-                System.out.println("Something went wrong whilst trying to send " + chatUpdate.toString() + " to " + dataOutputStream.toString());
+                System.out.println("Something went wrong whilst trying to send " + message + " to " + dataOutputStream.toString());
                 e.printStackTrace();
             }
         });

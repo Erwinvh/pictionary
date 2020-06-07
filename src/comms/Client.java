@@ -71,10 +71,10 @@ public class Client {
 
             this.objectInputStream = new ObjectInputStream(this.clientSocket.getInputStream());
 
-//            incomingObjectThread = new Thread(this::handleIncomingObjects);
-//            incomingObjectThread.start();
+            incomingObjectThread = new Thread(this::handleIncomingData);
+            incomingObjectThread.start();
 
-            incomingDataThread = new Thread(this::handleIncomingData);
+            incomingDataThread = new Thread(this::handleIncomingObjects);
             incomingDataThread.start();
 
             System.out.println("Client " + user.getName() + " successfully connected!");
@@ -88,7 +88,7 @@ public class Client {
         return false;
     }
 
-    private void handleIncomingObjects() {
+    private void handleIncomingData() {
         int errorCounter = 0;
 
         while (this.connected) {
@@ -101,11 +101,28 @@ public class Client {
                 disconnectFromServer();
             }
 
+            if (this.chatUpdateListener != null) {
+                synchronized (this.dataInputStream) {
+                    try {
+                        String message = this.dataInputStream.readUTF();
+                        System.out.println(message);
 
+                        if (!message.isEmpty()) {
+                            chatUpdateListener.onChatUpdate(message);
+                        }
+
+                        errorCounter--;
+
+                    } catch (IOException e) {
+                        errorCounter++;
+                        System.out.println("Something went wrong whilst receiving via dataStreams");
+                    }
+                }
+            }
         }
     }
 
-    private void handleIncomingData() {
+    private void handleIncomingObjects() {
         int errorCounter = 0;
 
         while (this.connected) {
@@ -116,7 +133,7 @@ public class Client {
             if (errorCounter >= 50) {
                 errorCounter = 0;
                 System.out.println("Something went wrong whilst handling incoming data!");
-                //disconnectFromServer();
+                disconnectFromServer();
             }
 
             synchronized (this.objectInputStream) {
@@ -147,25 +164,6 @@ public class Client {
                     System.out.println("Received a null object!");
                 } catch (ClassCastException e) {
                     e.printStackTrace();
-                }
-            }
-
-            if (this.chatUpdateListener != null) {
-
-                synchronized (this.dataInputStream) {
-                    try {
-                        String message = this.dataInputStream.readUTF();
-
-                        if (!message.isEmpty()) {
-                            chatUpdateListener.onChatUpdate(message);
-                        }
-
-                        errorCounter--;
-
-                    } catch (IOException e) {
-                        errorCounter++;
-                        System.out.println("Something went wrong whilst receiving via dataStreams");
-                    }
                 }
             }
         }

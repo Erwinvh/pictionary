@@ -61,9 +61,25 @@ public class Server {
 
         while (this.running) {
             System.out.println("Waiting for client to connect...");
-            final Socket client = this.serverSocket.accept();
+            final Socket socket = this.serverSocket.accept();
 
-            new Thread(() -> handleClientConnectionObject(client)).start();
+            System.out.println("A new client has connected (" + socket.toString() + "), handling connection.");
+
+            try (DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                 DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                 ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream())) {
+
+                // The client will send itself when connected
+                User user = (User) objectInputStream.readObject();
+                this.clients.addClient(user, objectOutputStream, dataOutputStream);
+
+                new Thread(() -> handleClientConnectionObject(user, socket, objectInputStream)).start();
+                new Thread(() -> handleClientConnectionData(user, socket, dataOutputStream, dataInputStream)).start();
+
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
 
         System.out.println("Server stopped");
@@ -79,38 +95,16 @@ public class Server {
         }
     }
 
-    private void handleClientConnectionObject(Socket socket) {
-        System.out.println("A new client has connected (" + socket.toString() + "), handling connection.");
-        User user = null;
-
-        try (DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream())) {
-
-            boolean connected = true;
-
-            // The client will send itself when connected
-            user = (User) objectInputStream.readObject();
-
-            Thread.currentThread().setName(user.getName());
-
-            this.clients.addClient(user, objectOutputStream, dataOutputStream);
-
+    private void handleClientConnectionObject(User user, Socket socket, ObjectInputStream objectInputStream) {
+        boolean connected = true;
+        try {
             while (connected) {
                 Object objectIn = objectInputStream.readObject();
 
                 if (objectIn instanceof Boolean) {
                     connected = (boolean) objectIn;
                 } else if (objectIn instanceof GameUpdate) {
-                    if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.CHAT)) {
-                        if (this.checkWord((ChatUpdate) objectIn)) {
-                            continue;
-                        }
-
-//                        this.clients.sendChatToAllClients((ChatUpdate) objectIn);
-                        continue;
-
-                    } else if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.SETTINGS)) {
+                    if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.SETTINGS)) {
                         this.adjustServerSettings((SettingsUpdate) objectIn);
                     } else if (((GameUpdate) objectIn).getGameUpdateType().equals(GameUpdate.GameUpdateType.STATE)) {
                         this.clients.adjustState((StateUpdate) objectIn);
@@ -147,6 +141,21 @@ public class Server {
         }
     }
 
+    private void handleClientConnectionData(User user, Socket socket, DataOutputStream dataOutputStream, DataInputStream dataInputStream) {
+        Thread.currentThread().setName(user.getName());
+
+        while (socket.isConnected()) {
+            try {
+                String message = dataInputStream.readUTF();
+                if (!this.checkWord(message)) {
+                    this.clients.sendChatToAllClients(message);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void adjustServerSettings(SettingsUpdate settingsUpdate) {
         ServerSettings adjustedSettings = settingsUpdate.getServerSettings();
         this.serverSettings.setTimeInSeconds(adjustedSettings.getTimeInSeconds());
@@ -156,29 +165,43 @@ public class Server {
         this.setupWordList();
     }
 
-    private boolean checkWord(ChatUpdate chatUpdate) {
-        String message = chatUpdate.getMessage().trim().toLowerCase();
+    private boolean checkWord(String chatMessage) {
+        String[] chatMess = chatMessage.split("#");
+        String user = chatMess[0];
+        boolean isDrawing = Boolean.valueOf(chatMess[1]);
+        String message = chatMess[2].trim().toLowerCase();
         String currentWord = this.currentWord.trim().toLowerCase();
 
-        if (chatUpdate.getUser().isDrawing() || correctlyGuesses.contains(chatUpdate.getUser())) return false;
+        if (isDrawing) return false;
+
+        for (User userInstance : correctlyGuesses) {
+            if (userInstance.getName().equalsIgnoreCase(user)) return false;
+        }
+
+        User foundUser = null;
+        for (User userInstance : this.clients.getConnectedUsers().keySet()) {
+            if (userInstance.getName().equalsIgnoreCase(user))
+                foundUser = userInstance;
+        }
+
+        if (foundUser == null) return false;
 
         if (message.equalsIgnoreCase(currentWord)) {
-            this.clients.sendChatToAllClients(new ChatUpdate(null, chatUpdate.getUser().getName() + " has guessed the word!", true));
+            this.clients.sendChatToAllClients(new ChatUpdate(null, user + " has guessed the word!", true).toString());
 
             if (this.correctlyGuesses.isEmpty()) {
-                chatUpdate.getUser().addScore(300);
-                this.correctlyGuesses.add(chatUpdate.getUser());
+                foundUser.addScore(300);
+                this.correctlyGuesses.add(foundUser);
                 this.recordTime = this.serverSettings.getTimeInSeconds() - this.timerThread.roundTime;
-
             } else {
                 int points = 300 - (25 / this.clients.getConnectedUsers().size()) * this.correctlyGuesses.size();
-                chatUpdate.getUser().addScore(points);
-                this.correctlyGuesses.add(chatUpdate.getUser());
+                foundUser.addScore(points);
+                this.correctlyGuesses.add(foundUser);
             }
+        }
 
-            if (correctlyGuesses.size() >= this.clients.getConnectedUsers().size() - 1)
-                this.timerThread.roundTime = 0;
-
+        if (correctlyGuesses.size() >= this.clients.getConnectedUsers().size() - 1) {
+            this.timerThread.roundTime = 0;
             return true;
         }
 
@@ -194,7 +217,7 @@ public class Server {
 
         if (matchedCharacters >= this.currentWord.length() - 2) {
             // ALMOST CORRECT!
-            this.clients.sendChatToSpecificClient(new ChatUpdate(null, "You are very close!", true), chatUpdate.getUser());
+            this.clients.sendChatToSpecificClient(new ChatUpdate(null, "You are very close!", true), foundUser);
         }
 
         return false;
