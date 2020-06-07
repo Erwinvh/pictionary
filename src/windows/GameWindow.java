@@ -192,12 +192,15 @@ public class GameWindow implements GameUpdateListener, ChatUpdateListener {
     }
 
     private void addNewMessage(String newMessage) {
-        Label messageLabel = new Label(newMessage);
+        String[] mess = newMessage.split("#");
 
-        if (!chatArrayList.contains(newMessage))
-            chatArrayList.add(newMessage);
+        String decodedMessage = mess[0]+": "+mess[2];
+        Label messageLabel = new Label(decodedMessage);
 
-        int messageRow = chatArrayList.indexOf(newMessage);
+        if (!chatArrayList.contains(decodedMessage))
+            chatArrayList.add(decodedMessage);
+
+        int messageRow = chatArrayList.indexOf(decodedMessage);
         int messageColumn = 1;
 
         HBox messageBox = new HBox();
@@ -454,10 +457,10 @@ public class GameWindow implements GameUpdateListener, ChatUpdateListener {
 
         sendButton.setOnAction(event -> {
             if (!messageInput.getText().trim().isEmpty()) {
-                ChatUpdate newChatUpdate = new ChatUpdate(Client.getInstance().getUser(), messageInput.getText().trim());
+                String message = Client.getInstance().getUser().getName()+"#"+Client.getInstance().getUser().isDrawing()+"#"+messageInput.getText().trim();
 
                 // Make the client send the message to the server
-                Client.getInstance().sendObject(newChatUpdate);
+                Client.getInstance().sendData(message);
                 messageInput.clear();
             }
         });

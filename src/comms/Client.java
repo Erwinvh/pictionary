@@ -23,6 +23,8 @@ public class Client {
 
     private Thread incomingObjectThread;
     private Thread incomingDataThread;
+    private Thread incomingChatThread;
+    private DataOutputStream dataOutputStream;
 
     public void setChatUpdateListener(ChatUpdateListener chatUpdateListener) {
         this.chatUpdateListener = chatUpdateListener;
@@ -70,12 +72,21 @@ public class Client {
             this.objectOutputStream.writeObject(this.getUser());
 
             this.objectInputStream = new ObjectInputStream(this.clientSocket.getInputStream());
+<<<<<<< Updated upstream
+=======
+
+            this.dataOutputStream = new DataOutputStream(this.clientSocket.getOutputStream());
+            this.dataInputStream = new DataInputStream(this.clientSocket.getInputStream());
+>>>>>>> Stashed changes
 
             incomingObjectThread = new Thread(this::handleIncomingData);
             incomingObjectThread.start();
 
             incomingDataThread = new Thread(this::handleIncomingObjects);
             incomingDataThread.start();
+
+            incomingChatThread = new Thread(this::handleIncomingChat);
+            incomingChatThread.start();
 
             System.out.println("Client " + user.getName() + " successfully connected!");
 
@@ -86,6 +97,33 @@ public class Client {
         }
 
         return false;
+    }
+
+    private void handleIncomingChat() {
+        while (this.connected){
+            this.connected = clientSocket.isConnected();
+            if (!this.connected) return;
+            if (this.errorCounter >= 15) {
+                System.out.println("Something went wrong whilst handling incoming chatMessage!");
+                disconnectFromServer();
+            }
+            if (this.chatUpdateListener != null) {
+                synchronized (this.dataInputStream) {
+                    try {
+                        String message = this.dataInputStream.readUTF();
+                        if (!message.isEmpty()) {
+                            chatUpdateListener.onChatUpdate(message);
+                        }
+
+                        this.errorCounter--;
+
+                    } catch (IOException e) {
+                        this.errorCounter++;
+                        System.out.println("Something went wrong whilst receiving via dataStreams");
+                    }
+                }
+            }
+        }
     }
 
     private void handleIncomingData() {
@@ -191,6 +229,17 @@ public class Client {
 
         try {
             this.objectOutputStream.writeObject(obj);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized void sendData(String message){
+        if (!this.connected)
+            System.out.println("Client is not connected and thus cannot send data.");
+
+        try {
+            this.dataOutputStream.writeUTF(message);
         } catch (IOException e) {
             e.printStackTrace();
         }
