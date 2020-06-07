@@ -73,8 +73,8 @@ public class Client {
 
             this.dataInputStream = new DataInputStream(this.clientSocket.getInputStream());
 
-            incomingObjectThread = new Thread(this::handleIncomingData);
-            incomingObjectThread.start();
+//            incomingObjectThread = new Thread(this::handleIncomingData);
+//            incomingObjectThread.start();
 
             incomingDataThread = new Thread(this::handleIncomingObjects);
             incomingDataThread.start();
@@ -103,40 +103,6 @@ public class Client {
                 synchronized (this.dataInputStream) {
                     try {
                         String message = this.dataInputStream.readUTF();
-                        if (!message.isEmpty()) {
-                            chatUpdateListener.onChatUpdate(message);
-                        }
-
-                        errorCounter--;
-
-                    } catch (IOException e) {
-                        errorCounter++;
-                        System.out.println("Something went wrong whilst receiving via dataStreams");
-                    }
-                }
-            }
-        }
-    }
-
-    private void handleIncomingData() {
-        int errorCounter = 0;
-
-        while (this.connected) {
-
-            this.connected = clientSocket.isConnected();
-            if (!this.connected) return;
-
-            if (errorCounter >= 50) {
-                System.out.println("Something went wrong whilst handling incoming objects!");
-                disconnectFromServer();
-            }
-
-            if (this.chatUpdateListener != null) {
-                synchronized (this.dataInputStream) {
-                    try {
-                        String message = this.dataInputStream.readUTF();
-                        System.out.println(message);
-
                         if (!message.isEmpty()) {
                             chatUpdateListener.onChatUpdate(message);
                         }
