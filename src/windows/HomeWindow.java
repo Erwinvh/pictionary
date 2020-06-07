@@ -12,10 +12,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -81,9 +83,8 @@ public class HomeWindow {
             setImageView();
         });
 
-        fileLocation = "resources/pictures/cat.jpg";
-        File file = new File(fileLocation);
-        profileImage.setImage(new Image(file.toURI().toString()));
+        this.fileLocation = getClass().getResource("/pictures/cat.jpg").toString();
+        profileImage.setImage(new Image(this.fileLocation));
 
         Button rightButton = new Button("->");
         rightButton.setOnAction(event -> {
@@ -107,9 +108,8 @@ public class HomeWindow {
     }
 
     private void setImageView() {
-        fileLocation = "resources/pictures/" + pictureList.get(pictureIndex) + ".jpg";
-        File newFile = new File(fileLocation);
-        profileImage.setImage(new Image(newFile.toURI().toString()));
+        fileLocation = getClass().getResource("/pictures/" + pictureList.get(pictureIndex) + ".jpg").toString();
+        profileImage.setImage(new Image(fileLocation));
     }
 
     private GridPane getJoinHostButtons() {
@@ -137,22 +137,23 @@ public class HomeWindow {
             }
         });
         hostButton.setPrefWidth(100);
-        Label serverAdressLabel = new Label("Serveraddress:");
+
+        Label serverAddressLabel = new Label("Server address:");
         Label portLabel = new Label("Port:");
         Region emptySpace = new Region();
         emptySpace.setPrefHeight(20);
 
-        joinHostButtons.add(serverAdressLabel,0,0);
+        joinHostButtons.add(serverAddressLabel, 0, 0);
         joinHostButtons.add(serverAddressTextField, 0, 1);
-        joinHostButtons.add(emptySpace,0,2);
-        joinHostButtons.add(portLabel,0,3);
+        joinHostButtons.add(emptySpace, 0, 2);
+        joinHostButtons.add(portLabel, 0, 3);
         joinHostButtons.add(portTextField, 0, 4);
         joinHostButtons.add(hostButton, 1, 1);
         joinHostButtons.add(joinButton, 1, 4);
 
         joinHostButtons.setHgap(70);
         joinHostButtons.setAlignment(Pos.CENTER_LEFT);
-        joinHostButtons.setPadding(new Insets(0,0,0,40));
+        joinHostButtons.setPadding(new Insets(0, 0, 0, 40));
 
         return joinHostButtons;
     }
@@ -162,7 +163,6 @@ public class HomeWindow {
         Client.getInstance().connectToServer(serverAddress, portNumber);
 
         new LobbyWindow(primaryStage);
-//        Client.getInstance().sendObject(new UserUpdate(Client.getInstance().getUser(), false));
     }
 
     private boolean inputCheck() {
