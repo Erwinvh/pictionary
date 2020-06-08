@@ -73,8 +73,8 @@ public class Client {
 
             this.dataInputStream = new DataInputStream(this.clientSocket.getInputStream());
 
-//            incomingObjectThread = new Thread(this::handleIncomingData);
-//            incomingObjectThread.start();
+            incomingObjectThread = new Thread(this::handleIncomingChat);
+            incomingObjectThread.start();
 
             incomingDataThread = new Thread(this::handleIncomingObjects);
             incomingDataThread.start();

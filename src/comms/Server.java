@@ -75,7 +75,7 @@ public class Server {
                 this.clients.addClient(user, objectOutputStream, dataOutputStream);
 
                 new Thread(() -> handleClientConnectionObject(user, socket, objectInputStream)).start();
-                new Thread(() -> handleClientConnectionData(user, socket, dataOutputStream, dataInputStream)).start();
+                new Thread(() -> handleClientConnectionData(user, socket, dataInputStream)).start();
 
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
@@ -141,7 +141,7 @@ public class Server {
         }
     }
 
-    private void handleClientConnectionData(User user, Socket socket, DataOutputStream dataOutputStream, DataInputStream dataInputStream) {
+    private void handleClientConnectionData(User user, Socket socket, DataInputStream dataInputStream) {
         Thread.currentThread().setName(user.getName());
 
         while (socket.isConnected()) {
@@ -151,7 +151,7 @@ public class Server {
                     this.clients.sendChatToAllClients(message);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                //System.out.println("Something went wrong whilst trying to send a chat message");
             }
         }
     }
